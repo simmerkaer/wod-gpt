@@ -14,7 +14,7 @@ function App() {
 
   return (
     <>
-      <Button onClick={() => setShowWod(true)}>Click me</Button>
+      <Button onClick={() => setShowWod(true)}>Generate WOD</Button>
       <ExerciseList
         exercises={exercises}
         selectedExercises={selectedExercises}
