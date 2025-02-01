@@ -5,6 +5,7 @@ import {
   InvocationContext,
 } from "@azure/functions";
 import { AzureOpenAI, AzureClientOptions } from "openai";
+import { wodGenerationPrompts } from "../prompts/wodGeneration";
 
 export async function wod(
   request: HttpRequest,
@@ -31,9 +32,16 @@ export async function wod(
   const openai = new AzureOpenAI(configuration);
 
   try {
+    const body = await request.json();
+    context.log("Request body:", body);
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
-      messages: [{ role: "user", content: "Say hello!" }],
+      messages: [
+        {
+          role: "user",
+          content: wodGenerationPrompts(body["exercises"], body["timeframe"]),
+        },
+      ],
       max_tokens: 800,
     });
 
