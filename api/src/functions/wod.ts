@@ -15,38 +15,48 @@ export async function wod(
   const openAiApiKey = process.env.OPEN_AI_TARGET_KEY;
 
   const payload = {
-    prompt: "Hello my friend",
-    max_tokens: 100,
+    messages: [
+      {
+        role: "system",
+        content: [
+          {
+            type: "text",
+            text: "You are an AI assistant that helps people find information.",
+          },
+        ],
+      },
+    ],
+    max_tokens: 800,
+  };
+
+  const headers = {
+    "Content-Type": "application/json",
+    "api-key": openAiApiKey,
   };
 
   try {
     const response = await fetch(openAiUri, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "api-key": openAiApiKey,
-      },
+      headers: headers,
       body: JSON.stringify(payload),
     });
 
     if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(
-        `Request failed with status ${response.status}: ${errorText}`,
-      );
+      throw new Error(`HTTP error! Status: ${response.status}`);
     }
 
     const data = await response.json();
-
+    const answer = data.choices[0].message.content;
+    context.log(answer);
     return {
-      status: response.status,
-      body: data,
+      status: 200,
+      body: answer,
     };
-  } catch (error: any) {
-    context.error("Error calling GPT model endpoint:", error);
+  } catch (error) {
+    context.error("Error calling the API:", error);
     return {
-      status: error.status || 500,
-      body: error.message || "An error occurred while processing your request.",
+      status: 500,
+      body: "Error calling the API",
     };
   }
 }
