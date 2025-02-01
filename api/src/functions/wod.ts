@@ -4,6 +4,7 @@ import {
   HttpResponseInit,
   InvocationContext,
 } from "@azure/functions";
+import { AzureOpenAI, AzureClientOptions } from "openai";
 
 export async function wod(
   request: HttpRequest,
@@ -14,46 +15,37 @@ export async function wod(
   const openAiUri = process.env.OPEN_AI_TARGET_URI;
   const openAiApiKey = process.env.OPEN_AI_TARGET_KEY;
 
-  const payload = {
-    messages: [
-      {
-        role: "system",
-        content: [
-          {
-            type: "text",
-            text: "You are an AI assistant that helps people find information.",
-          },
-        ],
-      },
-    ],
-    max_tokens: 800,
+  if (!openAiUri || !openAiApiKey) {
+    context.log(
+      "Missing OPEN_AI_TARGET_URI or OPEN_AI_TARGET_KEY environment variables.",
+    );
+    return { status: 500, body: "Configuration error" };
+  }
+
+  const configuration: AzureClientOptions = {
+    apiKey: openAiApiKey,
+    endpoint: openAiUri,
+    apiVersion: "2024-08-01-preview",
   };
 
-  const headers = {
-    "Content-Type": "application/json",
-    "api-key": openAiApiKey,
-  };
+  const openai = new AzureOpenAI(configuration);
 
   try {
-    const response = await fetch(openAiUri, {
-      method: "POST",
-      headers: headers,
-      body: JSON.stringify(payload),
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [{ role: "user", content: "Say hello!" }],
+      max_tokens: 800,
     });
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
+    const answer = completion.choices[0]!.message?.content;
+    context.log("Chat completion answer:", answer);
 
-    const data = await response.json();
-    const answer = data.choices[0].message.content;
-    context.log(answer);
     return {
       status: 200,
       body: answer,
     };
-  } catch (error) {
-    context.error("Error calling the API:", error);
+  } catch (error: any) {
+    context.log("Error calling the API:", error);
     return {
       status: 500,
       body: "Error calling the API",
