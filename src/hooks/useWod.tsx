@@ -1,30 +1,30 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
-export const useWod = (
-  exercises: string[],
-  timeframe: number,
-): string | null => {
-  const [data, setData] = useState<string | null>(null);
+export const useWod = (): [
+  (exercises: string[], timeframe: number) => void,
+  string | null,
+] => {
+  const [wod, setWod] = useState<string | null>(null);
 
-  useEffect(() => {
+  const fetchWod = (exercises: string[], timeframe: number) => {
     const requestBody = {
       exercises: exercises,
       timeframe: timeframe,
     };
 
     fetch("/api/wod", {
-      method: "POST", // Change to POST to send a request body
+      method: "POST",
       headers: {
-        "Content-Type": "application/json", // Ensure the header specifies JSON
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify(requestBody), // Send the JSON body
+      body: JSON.stringify(requestBody),
     })
       .then((res) => res.text())
-      .then((text) => setData(text))
+      .then((text) => setWod(text))
       .catch((error) => {
         console.error("Error fetching WOD data:", error);
       });
-  }, []);
+  };
 
-  return data;
+  return [fetchWod, wod];
 };

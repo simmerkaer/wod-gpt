@@ -24,7 +24,7 @@ const TimeFrame: React.FunctionComponent<TimeFrameProps> = ({
   children,
 }) => {
   return (
-    <Card>
+    <Card className="basis-12">
       <CardHeader className="pb-4">
         <CardTitle>WOD Generation</CardTitle>
         <CardDescription>I want to work out for roughly</CardDescription>
