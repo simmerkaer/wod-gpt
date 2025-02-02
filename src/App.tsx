@@ -10,7 +10,7 @@ function App() {
   const { selectedMovements, toggleMovement, ...movements } = useExercises();
   const [timeFrame, setTimeFrame] = useState(30);
   const [showWod, setShowWod] = useState(false);
-  const [fetchWod, wod] = useWod();
+  const [fetchWod, isLoading, wod] = useWod();
 
   const handleGenerateWod = () => {
     fetchWod(selectedMovements, timeFrame);
@@ -22,10 +22,11 @@ function App() {
       <div className="basis-1/3">
         <TimeFrame
           timeFrame={timeFrame}
+          isLoading={isLoading}
           setTimeFrame={setTimeFrame}
           handleGenerateWod={handleGenerateWod}
         />
-        {showWod && <GeneratedWod wod={wod} />}
+        <GeneratedWod wod={wod} />
       </div>
       <div className="basis-2/3">
         <ExerciseList

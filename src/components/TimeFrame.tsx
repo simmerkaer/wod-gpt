@@ -9,9 +9,11 @@ import {
 } from "./ui/card";
 import { Minus, Plus } from "lucide-react";
 import { Button } from "./ui/button";
+import { Loader2 } from "lucide-react";
 
 interface TimeFrameProps {
   timeFrame: number;
+  isLoading: boolean;
   setTimeFrame: (timeframe: number) => void;
   handleGenerateWod: () => void;
   children?: React.ReactNode;
@@ -19,6 +21,7 @@ interface TimeFrameProps {
 
 const TimeFrame: React.FunctionComponent<TimeFrameProps> = ({
   timeFrame,
+  isLoading,
   setTimeFrame,
   handleGenerateWod,
   children,
@@ -60,8 +63,12 @@ const TimeFrame: React.FunctionComponent<TimeFrameProps> = ({
         </div>
       </CardContent>
       <CardFooter>
-        <Button onClick={handleGenerateWod} className="w-full">
-          Generate WOD
+        <Button
+          onClick={handleGenerateWod}
+          className="w-full"
+          disabled={isLoading}
+        >
+          {isLoading ? <Loader2 className="animate-spin" /> : "Generate WOD"}
         </Button>
       </CardFooter>
       {children}

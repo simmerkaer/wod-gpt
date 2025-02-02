@@ -7,7 +7,7 @@ export const wodGenerationPrompts = (
 
     ${exercises.map((x) => `- ${x}`).join("\n")}
 
-    Important Rules:
+    **Important Rules:**
     - Use only the exercises listed above. Do not add any others.
     - Structure the workout to fit approximately within ${timeframeInMinutes} minutes.
     - The number of workout segments should vary based on the total duration:
@@ -17,10 +17,16 @@ export const wodGenerationPrompts = (
     - Each part of the workout should be prefixed **only** with "a)", "b)", "c)", etc., when multiple parts exist.
     - Do **not** include any headers, titles, or extra text like "Workout" or explanations—just output the workout itself.
 
-    Keep the workout concise and to the point.
+    **Workout Duration Guidelines:**
+    If the workout includes the following movements, use these pacing estimates to ensure it fits the timeframe:
+    - **BikeERG**: ~2:00 minutes per 1000m
+    - **Rower**: ~2:00 minutes per 500m
+    - **SkiERG**: ~2:00 minutes per 500m
+    - **Double Unders**: ~60 seconds per 100 reps
+    - **Burpees**: 7-8 minutes per 100 reps
 
-    Examples:
-
+    **Examples:**
+    
     ${wodExamples}
 
     These examples serve as inspiration. Generate a unique workout based on the provided exercises and timeframe.
