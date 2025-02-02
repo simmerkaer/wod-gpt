@@ -6,13 +6,14 @@ import {
 } from "@azure/functions";
 import { AzureOpenAI, AzureClientOptions } from "openai";
 import { wodGenerationPrompts } from "../prompts/wodGeneration";
+import { useAzureMonitor } from "@azure/monitor-opentelemetry";
+useAzureMonitor();
 
 export async function wod(
   request: HttpRequest,
   context: InvocationContext,
 ): Promise<HttpResponseInit> {
   context.log(`Http function processed request for url "${request.url}"`);
-
   const openAiUri = process.env.OPEN_AI_TARGET_URI;
   const openAiApiKey = process.env.OPEN_AI_TARGET_KEY;
 

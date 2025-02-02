@@ -13,7 +13,7 @@ function App() {
   const [showWod, setShowWod] = useState(false);
 
   return (
-    <>
+    <div className="flex flex-col items-center">
       <Button onClick={() => setShowWod(true)}>Generate WOD</Button>
       <ExerciseList
         exercises={exercises}
@@ -21,7 +21,7 @@ function App() {
         setSelectedExercises={setSelectedExercises}
       />
       {showWod && <GeneratedWod exercises={selectedExercises} timeframe={30} />}
-    </>
+    </div>
   );
 }
 
