@@ -19,11 +19,61 @@ export const wodGenerationPrompts = (
 
     **Workout Duration Guidelines:**
     If the workout includes the following movements, use these pacing estimates to ensure it fits the timeframe:
-    - **BikeERG**: ~2:00 minutes per 1000m
-    - **Rower**: ~2:00 minutes per 500m
-    - **SkiERG**: ~2:00 minutes per 500m
-    - **Double Unders**: ~60 seconds per 100 reps
-    - **Burpees**: 7-8 minutes per 100 reps
+
+    **ERG Machines (Pacing Estimates)**
+    - **BikeERG**: ~2:00 min per **1000m**  
+      - Sprint efforts: ~1:30 min per 1000m  
+      - Moderate efforts: ~2:00-2:30 min per 1000m  
+    - **Rower**: ~2:00 min per **500m**  
+      - Sprint efforts: ~1:40 min per 500m  
+      - Moderate efforts: ~2:10-2:30 min per 500m  
+    - **SkiERG**: ~2:00 min per **500m**  
+      - Sprint efforts: ~1:50 min per 500m  
+      - Moderate efforts: ~2:15-2:30 min per 500m  
+
+    **Jump Rope**
+    - **Double Unders**: ~1:00 min per **100 reps**  
+      - Fast athletes: ~0:45 min per 100  
+      - Beginners: ~1:15 min per 100  
+    - **Single Unders**: ~1:00 min per **200 reps**  
+
+    **Bodyweight Movements**
+    - **Air Squats**: ~1:00 min per **40-50 reps**  
+    - **Push-ups**: ~1:00 min per **30-40 reps**  
+    - **Burpees**: ~1:00 min per **12-15 reps**  
+    - **Box Jumps (24"/20")**: ~1:00 min per **15-18 reps**  
+    - **Pull-ups**: ~1:00 min per **15-20 reps**  
+      - Chest-to-bar: ~1:00 min per **12-15 reps**  
+      - Strict: ~1:00 min per **8-12 reps**  
+
+    **Barbell Movements (Moderate Weight)**
+    - **Deadlifts**: ~1:00 min per **15-20 reps**  
+    - **Squat Cleans**: ~1:00 min per **8-12 reps**  
+    - **Power Cleans**: ~1:00 min per **10-15 reps**  
+    - **Snatches**: ~1:00 min per **6-10 reps**  
+    - **Thrusters**: ~1:00 min per **10-12 reps**  
+
+    **Dumbbell/Kettlebell Movements**
+    - **Dumbbell Snatches**: ~1:00 min per **15-20 reps**  
+    - **Dumbbell Box Step-ups**: ~1:00 min per **12-15 reps**  
+    - **Kettlebell Swings (American)**: ~1:00 min per **15-20 reps**  
+
+    **Gymnastics Movements**
+    - **Handstand Push-ups (Strict)**: ~1:00 min per **6-10 reps**  
+    - **Handstand Push-ups (Kipping)**: ~1:00 min per **12-15 reps**  
+    - **Muscle-ups (Bar/Rings)**: ~1:00 min per **5-8 reps**  
+
+    **Running**
+    - **200m Run**: ~0:45-1:00 min  
+    - **400m Run**: ~1:30-2:00 min  
+    - **800m Run**: ~3:30-4:30 min  
+    - **1 Mile Run**: ~7:00-10:00 min  
+
+    **Other Movements**
+    - **Wall Balls (9/6 kg to 10'/9')**: ~1:00 min per **15-20 reps**  
+    - **Rowing for Calories**: ~1:00 min per **12-15 calories**  
+    - **BikeERG for Calories**: ~1:00 min per **15-20 calories**  
+    - **SkiERG for Calories**: ~1:00 min per **12-15 calories**  
 
     **Examples:**
     
