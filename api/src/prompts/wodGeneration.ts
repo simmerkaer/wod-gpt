@@ -7,26 +7,26 @@ export const wodGenerationPrompts = (
 
     ${exercises.map((x) => `- ${x}`).join("\n")}
 
-    Note: Do not include any exercises outside of the list above.
+    Important Rules:
+    - Use only the exercises listed above. Do not add any others.
+    - Structure the workout to fit approximately within ${timeframeInMinutes} minutes.
+    - The number of workout segments should vary based on the total duration:
+      - Shorter workouts (e.g., under 15 min) may have just one section.
+      - Medium-length workouts (e.g., 15-25 min) may have 1-2 sections.
+      - Longer workouts (e.g., 30+ min) may have 1 long section (e.g., EMOM30) or multiple shorter sections (e.g., 3 x 10 min).
+    - Each part of the workout should be prefixed with "a.", "b.", "c.", etc., but only if there are multiple parts.
+    - Ensure appropriate rep schemes, intensity, and structure.
 
-    The workout should be structured to fit within a rough timeframe of ${timeframeInMinutes} minutes. 
-    
-    Your generated workout should include appropriate exercise sequencesand rep schemes.
-    Ensure that each part of the workout adheres strictly to the provided exercise list.
-
-    Do not add any instructions or explanations to the workout. Keep it simple and to the point. 
-
-    If the workout includes miltiple parts then each part is preficed with "a." "b." "c." etc.
+    Keep the workout concise and to the point, without additional instructions or explanations.
 
     Examples:
 
     ${wodExamples}
 
-    Remember these are just examples and you should generate a unique workout based on the provided exercises and timeframe.
+    These examples serve as inspiration. Generate a unique workout based on the provided exercises and timeframe.
 
-    Remember to adhere to the exercise list and timeframe provided. Good luck!
-    
-    Please generate a complete workout plan based on these instructions.`;
+    Now, create a complete workout based on these instructions.
+  `;
 };
 
 export const wodExamples = `
