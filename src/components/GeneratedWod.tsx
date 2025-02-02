@@ -11,7 +11,7 @@ const GeneratedWod: React.FunctionComponent<GeneratedWodProps> = ({
   timeframe,
 }) => {
   const wod = useWod(exercises, timeframe);
-  return <pre className="text-left">{wod}</pre>;
+  return <pre className="text-left p-10 xl:w-300">{wod}</pre>;
 };
 
 export default GeneratedWod;

@@ -22,39 +22,35 @@ export const wodGenerationPrompts = (
 
     ${wodExamples}
 
+    Remember these are just examples and you should generate a unique workout based on the provided exercises and timeframe.
+
+    Remember to adhere to the exercise list and timeframe provided. Good luck!
+    
     Please generate a complete workout plan based on these instructions.`;
 };
 
 export const wodExamples = `
-######
-
+a)
 15-12-9-6-3 reps for time of:
 Deadlifts
 Burpee pull-ups
 
-Set the pull-up bar 6 inches above your reach.
+♀ 80 kg
+♂ 120 kg
 
-♀ 185 lb
-♂ 275 lb
-
-######
-
+b)
 For time:
 200-foot dumbbell overhead lunge
 50 dumbbell box step-ups
 50 strict handstand push-ups
 200-foot handstand walk
 
-♀ 35-lb dumbbell and a 20-inch box
-♂ 50-lb dumbbell and a 24-inch box
+♀ 15 kg dumbbell and a 50 cm box
+♂ 22,5 kg dumbbell and a 60 cm box
 
-######
-
+c)
 3 rounds for time of:
 15 chest-to-bar pull-ups
 30-calorie row
 45 air squats
-
-######
-
 `;
