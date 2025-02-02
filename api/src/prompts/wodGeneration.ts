@@ -8,6 +8,7 @@ export const wodGenerationPrompts = (
     ${exercises.map((x) => `- ${x}`).join("\n")}
 
     **Important Rules:**
+    - Use metric units for weights and distances (kg, m).
     - Use only the exercises listed above. Do not add any others.
     - Structure the workout to fit approximately within ${timeframeInMinutes} minutes.
     - The number of workout segments should vary based on the total duration:
