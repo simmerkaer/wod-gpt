@@ -10,7 +10,6 @@ import {
 import { Minus, Plus } from "lucide-react";
 import { Button } from "./ui/button";
 import { Loader2 } from "lucide-react";
-import wodGptHeader from "../assets/wod-gpt.png";
 
 interface TimeFrameProps {
   timeFrame: number;
