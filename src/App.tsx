@@ -5,6 +5,17 @@ import { useExercises } from "./hooks/useExercises";
 import GeneratedWod from "./components/GeneratedWod";
 import TimeFrame from "./components/TimeFrame";
 import { useWod } from "./hooks/useWod";
+import { Button } from "./components/ui/button";
+import {
+  DrawerTrigger,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerClose,
+  Drawer,
+} from "./components/ui/drawer";
 
 function App() {
   const { selectedMovements, toggleMovement, ...movements } = useExercises();
@@ -16,8 +27,8 @@ function App() {
   };
 
   return (
-    <div className="flex flex-row space-x-2">
-      <div className="basis-1/3">
+    <div className="md:flex w-[80vw]">
+      <div className="md:basis-1/3">
         <TimeFrame
           timeFrame={timeFrame}
           isLoading={isLoading}
@@ -26,12 +37,27 @@ function App() {
         />
         <GeneratedWod wod={wod} />
       </div>
-      <div className="basis-2/3">
-        <ExerciseList
-          movements={movements}
-          selectedMovements={selectedMovements}
-          handleToggleMovement={toggleMovement}
-        />
+      <div className="md:basis-2/3">
+        <Drawer>
+          <DrawerTrigger asChild>
+            <Button
+              variant="outline"
+              className="fixed bottom-4 right-4 bg-blue-600 text-white p-4 rounded-full shadow-lg hover:bg-blue-700 transition"
+            >
+              Select movements
+            </Button>
+          </DrawerTrigger>
+          <DrawerContent>
+            <DrawerHeader>
+              <DrawerTitle>Are you absolutely sure?</DrawerTitle>
+            </DrawerHeader>
+            <ExerciseList
+              movements={movements}
+              selectedMovements={selectedMovements}
+              handleToggleMovement={toggleMovement}
+            />
+          </DrawerContent>
+        </Drawer>
       </div>
     </div>
   );

@@ -5,7 +5,7 @@ interface GeneratedWodProps {
 }
 
 const GeneratedWod: React.FunctionComponent<GeneratedWodProps> = ({ wod }) => {
-  if (wod) return <pre className="text-left p-10 xl:w-300">{wod}</pre>;
+  if (wod) return <pre className="text-left mt-4">{wod}</pre>;
 };
 
 export default GeneratedWod;

@@ -10,6 +10,7 @@ import {
 import { Minus, Plus } from "lucide-react";
 import { Button } from "./ui/button";
 import { Loader2 } from "lucide-react";
+import wodGptHeader from "../assets/wod-gpt.png";
 
 interface TimeFrameProps {
   timeFrame: number;
@@ -27,9 +28,13 @@ const TimeFrame: React.FunctionComponent<TimeFrameProps> = ({
   children,
 }) => {
   return (
-    <Card className="basis-12">
+    <Card>
       <CardHeader className="pb-4">
-        <CardTitle>WOD Generation</CardTitle>
+        <CardTitle>
+          <p className="text-4xl bg-gradient-to-r from-red-500 to-purple-600 bg-clip-text text-transparent pb-2 font-extralight">
+            wod-gpt
+          </p>
+        </CardTitle>
         <CardDescription>I want to work out for roughly</CardDescription>
       </CardHeader>
       <CardContent className="pb-2">
@@ -65,7 +70,7 @@ const TimeFrame: React.FunctionComponent<TimeFrameProps> = ({
       <CardFooter>
         <Button
           onClick={handleGenerateWod}
-          className="w-full"
+          className="w-full bg-gradient-to-r from-red-500 to-purple-600"
           disabled={isLoading}
         >
           {isLoading ? <Loader2 className="animate-spin" /> : "Generate WOD"}
