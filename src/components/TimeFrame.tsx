@@ -70,7 +70,7 @@ const TimeFrame: React.FunctionComponent<TimeFrameProps> = ({
       <CardFooter>
         <Button
           onClick={handleGenerateWod}
-          className="w-full bg-gradient-to-r from-red-500 to-purple-600"
+          className="w-full bg-gradient-to-r from-red-500 to-purple-600 align-middle"
           disabled={isLoading}
         >
           {isLoading ? <Loader2 className="animate-spin" /> : "Generate WOD"}

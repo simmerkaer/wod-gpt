@@ -24,7 +24,7 @@ function App() {
   };
 
   return (
-    <div className="md:flex w-[80vw]">
+    <div className="w-[80vw]">
       <div className="md:basis-1/3">
         <TimeFrame
           timeFrame={timeFrame}
