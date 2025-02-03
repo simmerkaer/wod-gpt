@@ -1,7 +1,6 @@
 import {
   Card,
   CardHeader,
-  CardTitle,
   CardDescription,
   CardContent,
 } from "@/components/ui/card";
@@ -25,7 +24,6 @@ const ExerciseList: React.FunctionComponent<ExerciseListProps> = ({
   return (
     <Card>
       <CardHeader className="pb-4">
-        <CardTitle>Movements</CardTitle>
         <CardDescription>
           I want the workout to include these movements (click to toggle)
         </CardDescription>

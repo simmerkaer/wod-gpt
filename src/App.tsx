@@ -13,6 +13,7 @@ import {
   DrawerTitle,
   Drawer,
 } from "./components/ui/drawer";
+import { ScrollArea } from "./components/ui/scroll-area";
 
 function App() {
   const { selectedMovements, toggleMovement, ...movements } = useExercises();
@@ -24,7 +25,7 @@ function App() {
   };
 
   return (
-    <div className="w-[80vw]">
+    <div>
       <div className="md:basis-1/3">
         <TimeFrame
           timeFrame={timeFrame}
@@ -46,13 +47,15 @@ function App() {
           </DrawerTrigger>
           <DrawerContent>
             <DrawerHeader>
-              <DrawerTitle>Are you absolutely sure?</DrawerTitle>
+              <DrawerTitle>Movements</DrawerTitle>
             </DrawerHeader>
-            <ExerciseList
-              movements={movements}
-              selectedMovements={selectedMovements}
-              handleToggleMovement={toggleMovement}
-            />
+            <ScrollArea className="h-[80vh]">
+              <ExerciseList
+                movements={movements}
+                selectedMovements={selectedMovements}
+                handleToggleMovement={toggleMovement}
+              />
+            </ScrollArea>
           </DrawerContent>
         </Drawer>
       </div>
