@@ -19,7 +19,7 @@ const WorkoutSelector: React.FunctionComponent<WorkoutSelectorProps> = ({
           value === "random" ? "border border-blue-500" : ""
         }`}
       >
-        <div>Random WOD</div>
+        <div className="text-xs">Random WOD</div>
       </ToggleGroupItem>
       <ToggleGroupItem
         value="specified"
@@ -28,7 +28,7 @@ const WorkoutSelector: React.FunctionComponent<WorkoutSelectorProps> = ({
           value === "specified" ? "border border-blue-500" : ""
         }`}
       >
-        <div>Specific movements</div>
+        <div className="text-xs">Specific movements</div>
       </ToggleGroupItem>
     </ToggleGroup>
   );
