@@ -1,15 +1,20 @@
 import { useState } from "react";
 
 export const useWod = (): [
-  (exercises: string[], timeframe: number) => void,
+  (random: boolean, exercises: string[], timeframe: number) => void,
   boolean,
   string | null,
 ] => {
   const [wod, setWod] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const fetchWod = (exercises: string[], timeframe: number) => {
+  const fetchWod = (
+    random: boolean,
+    exercises: string[],
+    timeframe: number,
+  ) => {
     setIsLoading(true);
     const requestBody = {
+      random: random,
       exercises: exercises,
       timeframe: timeframe,
     };

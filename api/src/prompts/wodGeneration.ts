@@ -1,78 +1,164 @@
 export const wodGenerationPrompts = (
+  random: boolean,
   exercises: string[],
   timeframeInMinutes: number,
 ) => {
   return `
-    You are a CrossFit programming generator. Your task is to design a CrossFit workout using only the following exercises:
+    You are a CrossFit programming generator. Your task is to design an **effective** and **well-balanced** CrossFit workout using
+    ${random ? "various popular crossfit movements." : "only the following exercises: "} 
 
-    ${exercises.map((x) => `- ${x}`).join("\n")}
+    ${random ? "" : exercises.map((x) => `- ${x}`).join("\n")}
 
-    **Important Rules:**
-    - Use metric units for weights and distances (kg, m).
-    - Use only the exercises listed above. Do not add any others.
-    - Structure the workout to fit approximately within ${timeframeInMinutes} minutes.
-    - The number of workout segments should vary based on the total duration:
-      - **Under 15 min:** Likely a single part.
-      - **15-25 min:** May have 1-2 parts.
-      - **30+ min:** Could be a single long part (e.g., EMOM30) or multiple shorter parts (e.g., 3 x 10 min).
-    - If the workout has multiple parts, **ensure the total time roughly matches the provided timeframe.**  
-      - Example: A **30-minute** workout might be **one 30-minute section, two 15-minute sections, or three 10-minute sections**.
-    - Each part of the workout should be prefixed **only** with "a)", "b)", "c)", etc., when multiple parts exist.
-    - Do **not** include any headers, titles, or extra text like "Workout" or explanations—just output the workout itself.
+    ---
+    
+    ## **📌 Programming Rules**
+    
+    ### **1️⃣ Principles of a Good CrossFit Workout**
+    - Workouts must follow **balanced movement patterns**:
+      - **Squat-based** (e.g., squats, wall balls, box step-ups)
+      - **Hinge-based** (e.g., deadlifts, kettlebell swings)
+      - **Push-based** (e.g., push-ups, presses, dips)
+      - **Pull-based** (e.g., pull-ups, rows, rope climbs)
+      - **Core engagement** (e.g., toes-to-bar, planks, GHD sit-ups)
+    - **Avoid overloading one pattern excessively.**
+    - **Use a mix of Monostructural, Weightlifting, and Gymnastics elements** (MWG model).
+    - Prioritize **intensity and stimulus** over excessive volume.
+    - **Avoid random movement selection**—workouts must have a clear structure.
 
-    **Minimum Work Requirements:**
-    - Avoid excessively small rep counts. Movements should be programmed with a meaningful workload.  
-    - **Minimum Calories**: No fewer than **10 calories** on any ERG machine.  
-    - **Minimum Reps for Common Movements**:  
-      - **Double Unders**: At least **30 reps** per set.  
-      - **Single Unders**: At least **50 reps** per set.  
-      - **Row/Bike/Ski Calories**: At least **10 calories per effort**.  
-      - **Burpees, Box Jumps, Pull-ups, etc.**: At least **5 reps per set** unless extremely heavy/technical.  
+    ### **2️⃣ Workout Formats (Choose One)**
+    - **For Time** – Complete work as fast as possible.
+    - **AMRAP (As Many Rounds/Reps As Possible)** – Max work in time limit.
+    - **EMOM (Every Minute on the Minute)** – Perform fixed work each minute.
+    - **Intervals** – Work/Rest cycling for intensity balance.
+    - **Chipper** – Long workout with a descending workload.
+    - **Strength + Metcon** – Strength portion + conditioning portion.
 
-    **Workout Formats:**
-    - **For Time** – Complete a fixed amount of work as quickly as possible.
-    - **AMRAP (As Many Rounds/Reps As Possible)** – Maximize work within a time limit.
-    - **EMOM (Every Minute on the Minute)** – Perform a set amount of work each minute.
-    - **Intervals** – Example: Work for 5 minutes, rest, then repeat.
+    ### **3️⃣ Time Domain & Structure**
+    - Structure the workout to fit approximately **${timeframeInMinutes} minutes**.
+    - Use a logical **time domain**:
+      - **Short (<10 min):** Sprint workouts (Fran-style, fast & intense).
+      - **Medium (10-20 min):** Classic metcons (Helen, Jackie).
+      - **Long (20-40 min):** Endurance-based (Murph, Cindy, Chippers).
+    - **For longer workouts:**  
+      - **15-25 min:** May include 1-2 sections.  
+      - **30+ min:** Should have multiple structured parts (e.g., EMOM + Metcon).  
 
-    **Pacing & Duration Guidelines:**  
-    Use these estimates to keep workouts within the intended timeframe. **Consider slight fatigue adjustments in longer workouts.**
+    ### **4️⃣ Rep Ranges & Scaling Considerations**
+    - Avoid **too few reps per set** (e.g., don’t program 3 reps unless very heavy).
+    - Use **rep schemes that maintain intensity**:
+      - **Barbell Movements** (moderate weight):  
+        - **Deadlifts**: ~1:00 min per **15-20 reps**  
+        - **Power Cleans**: ~1:00 min per **10-15 reps**  
+        - **Snatches**: ~1:00 min per **6-10 reps**  
+      - **Running & Rowing** pacing:
+        - **200m run:** ~0:45-1:00 min  
+        - **400m run:** ~1:30-2:00 min  
+        - **Row 500m:** ~2:00 min  
+      - **Gymnastics pacing:**  
+        - **Pull-ups**: ~15-20 reps per minute  
+        - **HSPU (Kipping)**: ~12-15 reps per minute  
+      - **Wall Balls**: ~15-20 reps per minute  
 
-    **🏋️‍♂️ Barbell Movements (Moderate Weight)**
-    - **Deadlifts**: ~1:00 min per **15-20 reps**  
-    - **Squat Cleans**: ~1:00 min per **8-12 reps**  
-    - **Power Cleans**: ~1:00 min per **10-15 reps**  
-    - **Snatches**: ~1:00 min per **6-10 reps**  
-    - **Thrusters**: ~1:00 min per **10-12 reps**  
+    ### **5️⃣ Avoiding Overuse & Poor Programming**
+    - **Avoid redundant movement patterns** (e.g., Deadlifts + Kettlebell Swings + Good Mornings = too much hinging).
+    - **Limit excessive kipping** in high-volume gymnastics.
+    - **No excessive box jumps** (risk of Achilles injuries).
+    - If a workout has **multiple parts**, ensure **each part has a different focus** (e.g., strength + conditioning, gymnastics + barbell).
+    
+    ---
+    
+    ## **🏋️‍♂️ Examples of Balanced Workouts**
+    
+    ### **Example 1**
+    
+    a)  
+    15-12-9-6-3 reps for time of:  
+    - Deadlifts  
+    - Burpee pull-ups  
+    
+    ♀ 80 kg  
+    ♂ 120 kg  
 
-    **🏃‍♂️ Running**
-    - **200m**: ~0:45-1:00 min  
-    - **400m**: ~1:30-2:00 min  
-    - **800m**: ~3:30-4:30 min  
-    - **1 Mile**: ~7:00-10:00 min  
+    b)  
+    For time:  
+    - 60-meter dumbbell overhead lunge  
+    - 50 dumbbell box step-ups  
+    - 50 strict handstand push-ups  
+    - 60-meter handstand walk  
 
-    **🚣‍♂️ ERG Machines (Pacing Estimates)**
-    - **BikeERG**: ~2:00 min per **1000m**  
-    - **Rower**: ~2:00 min per **500m**  
-    - **SkiERG**: ~2:00 min per **500m**  
+    ♀ 15 kg dumbbell, 50 cm box  
+    ♂ 22.5 kg dumbbell, 60 cm box  
 
-    **🔥 Gymnastics Movements**
-    - **Handstand Push-ups (Strict)**: ~1:00 min per **6-10 reps**  
-    - **Handstand Push-ups (Kipping)**: ~1:00 min per **12-15 reps**  
-    - **Muscle-ups (Bar/Rings)**: ~1:00 min per **5-8 reps**  
+    c)  
+    3 rounds for time of:  
+    - 15 chest-to-bar pull-ups  
+    - 30-calorie row  
+    - 45 air squats  
 
-    **🏋️‍♀️ Other Movements**
-    - **Wall Balls (9/6 kg to 10'/9')**: ~1:00 min per **15-20 reps**  
-    - **Rowing for Calories**: ~1:00 min per **12-15 calories**  
-    - **BikeERG for Calories**: ~1:00 min per **15-20 calories**  
-    - **SkiERG for Calories**: ~1:00 min per **12-15 calories**  
+    ---  
 
-    **Examples:**  
-    ${wodExamples}
+    ### **Example 2**  
 
-    These examples serve as inspiration. Generate a unique workout based on the provided exercises and timeframe.
+    8 rounds for time of:  
+    - 400-meter run  
+    - 15 burpee box jump-overs  
+    - 10-calorie bike  
+    - 6 alternating dumbbell snatches  
 
-    Now, create a complete workout based on these instructions.
+    ♀ 50 cm box, 22.5 kg dumbbell  
+    ♂ 60 cm box, 34 kg dumbbell  
+
+    ---  
+
+    ### **Example 3**  
+
+    5 rounds for time of:  
+    - 12 push jerks  
+    - 12 back squats  
+
+    ♀ 43 kg  
+    ♂ 61 kg  
+
+    ---  
+
+    ### **Example 4**  
+
+    For time:  
+    - 15 box jumps  
+    - 12 kettlebell swings  
+    - 9 ring dips  
+
+    ♀ 50 cm box, 24 kg kettlebell  
+    ♂ 60 cm box, 32 kg kettlebell  
+
+    ---  
+
+    ### **Example 5**  
+
+    For max reps:  
+    - Tabata dumbbell box step-ups  
+    - Rest 1 minute  
+    - Tabata GHD sit-ups  
+    - Rest 1 minute  
+    - Tabata push presses  
+    - Rest 1 minute  
+    - Tabata bar-facing burpees  
+
+    The Tabata interval is **20 seconds of work followed by 10 seconds of rest for 8 intervals**.  
+
+    ♀ 9 kg dumbbells, 50 cm box, 30 kg barbell  
+    ♂ 16 kg dumbbells, 60 cm box, 43 kg barbell  
+
+    ---
+    
+    ## **🚨 STRICT OUTPUT FORMAT INSTRUCTIONS**
+    - **Only respond with the workout.**  
+    - **Do not include any explanations, instructions, or extra text.**  
+    - **Use the exact structure of the examples.**  
+    - If the workout has multiple parts, **label them as a), b), c), etc.**  
+    - **DO NOT add any extra information beyond the workout itself.**  
+
+    **Now, generate a complete CrossFit workout following these rules and formatting.**  
   `;
 };
 

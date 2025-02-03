@@ -34,20 +34,26 @@ export async function wod(
 
   try {
     const body = await request.json();
-    context.log("Request body:", body);
+
+    const prompt = wodGenerationPrompts(
+      body["random"],
+      body["exercises"],
+      body["timeframe"],
+    );
+
+    context.log("Prompt:", prompt);
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
         {
           role: "user",
-          content: wodGenerationPrompts(body["exercises"], body["timeframe"]),
+          content: prompt,
         },
       ],
-      max_tokens: 800,
+      max_tokens: 1200,
     });
 
     const answer = completion.choices[0]!.message?.content;
-    context.log("Chat completion answer:", answer);
 
     return {
       status: 200,
