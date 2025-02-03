@@ -28,15 +28,24 @@ function App() {
 
   return (
     <div className="flex flex-col flex-grow">
-      <div className="flex-grow md:w-1/2 md:mx-auto">
-        <MainMenu
-          timeFrame={timeFrame}
-          isLoading={isLoading}
-          workoutType={workoutType}
-          setTimeFrame={setTimeFrame}
-          handleGenerateWod={handleGenerateWod}
-          setWorkoutType={setWorkoutType}
-        />
+      <div className={`flex-grow md:w-1/2 md:mx-auto`}>
+        <div className="mx-auto flex w-full max-w-lg items-center justify-center">
+          <div className="relative z-10 flex w-full cursor-pointer items-center overflow-hidden rounded-xl p-[1.5px]">
+            {isLoading && (
+              <div className="animate-rotate absolute inset-0 h-full w-full rounded-full bg-[conic-gradient(#0ea5e9_20deg,transparent_120deg)]"></div>
+            )}
+            <div className="relative z-20 flex w-full rounded-[0.60rem]">
+              <MainMenu
+                timeFrame={timeFrame}
+                isLoading={isLoading}
+                workoutType={workoutType}
+                setTimeFrame={setTimeFrame}
+                handleGenerateWod={handleGenerateWod}
+                setWorkoutType={setWorkoutType}
+              />
+            </div>
+          </div>
+        </div>
       </div>
       <div className="flex justify-center mt-8">
         <GeneratedWod wod={wod} />

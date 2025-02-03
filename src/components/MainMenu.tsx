@@ -30,7 +30,7 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
   handleGenerateWod,
 }) => {
   return (
-    <Card>
+    <Card className="flex-grow rounded-[10px]">
       <CardHeader className="pb-4">
         <CardTitle>
           <p className="text-4xl bg-gradient-to-r from-red-500 to-purple-600 bg-clip-text text-transparent pb-2 font-extralight">
