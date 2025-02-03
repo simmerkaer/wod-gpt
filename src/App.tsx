@@ -9,12 +9,10 @@ import { useWod } from "./hooks/useWod";
 function App() {
   const { selectedMovements, toggleMovement, ...movements } = useExercises();
   const [timeFrame, setTimeFrame] = useState(30);
-  const [showWod, setShowWod] = useState(false);
   const [fetchWod, isLoading, wod] = useWod();
 
   const handleGenerateWod = () => {
     fetchWod(selectedMovements, timeFrame);
-    setShowWod(true);
   };
 
   return (
