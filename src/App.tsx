@@ -25,17 +25,19 @@ function App() {
   };
 
   return (
-    <div>
-      <div className="md:basis-1/3">
+    <div className="flex flex-col flex-grow">
+      <div className="flex-grow md:w-1/2 md:mx-auto">
         <TimeFrame
           timeFrame={timeFrame}
           isLoading={isLoading}
           setTimeFrame={setTimeFrame}
           handleGenerateWod={handleGenerateWod}
         />
+      </div>
+      <div className="flex justify-center mt-8">
         <GeneratedWod wod={wod} />
       </div>
-      <div className="md:basis-2/3">
+      <div>
         <Drawer>
           <DrawerTrigger asChild>
             <Button
@@ -47,7 +49,7 @@ function App() {
           </DrawerTrigger>
           <DrawerContent>
             <DrawerHeader>
-              <DrawerTitle>Movements</DrawerTitle>
+              <DrawerTitle className="text-center">Movements</DrawerTitle>
             </DrawerHeader>
             <ScrollArea className="h-[80vh]">
               <ExerciseList
