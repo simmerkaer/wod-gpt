@@ -89,7 +89,7 @@ export const wodGenerationPrompts = (
     b)
     5 Rounds
     - 15 Kettlebell Swings (24/16 kg)
-    - 10 Push Press (95/65 lb)
+    - 10 Push Press (45/30 kg)
     - 10 Box Jumps (24”/20”)
     - 15 Push-Ups
 
@@ -104,7 +104,7 @@ export const wodGenerationPrompts = (
     b)
     3 Rounds
     - 400m Run
-    - 12 Overhead Squats (95/65 lb)
+    - 12 Overhead Squats (45/30 kg)
     - 15 Pull-Ups
     - 20 Ab Mat Sit-Ups
 
