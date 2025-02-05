@@ -41,7 +41,8 @@ export const wodGenerationPrompts = (
       - **Long (20-40 min):** Endurance-based (Murph, Cindy, Chippers).
     - **For longer workouts:**  
       - **15-25 min:** May include 1-2 sections.  
-      - **30+ min:** Should have multiple structured parts (e.g., EMOM + Metcon).  
+      - **30+ min:** Should have multiple structured parts (e.g., EMOM + Metcon). 
+    - **Seperate each section* with "a)", "b)", "c)", etc. 
 
     ### **4️⃣ Rep Ranges & Scaling Considerations**
     - Avoid **too few reps per set** (e.g., don’t program 3 reps unless very heavy).
@@ -67,77 +68,89 @@ export const wodGenerationPrompts = (
     
     ## 🏋️‍♂️ Examples of Balanced Workouts
     
-    ### Example 1
-    
-    a)  
-    15-12-9-6-3 reps for time of:  
-    - Deadlifts  
-    - Burpee pull-ups  
-    
-    ♀ 80 kg  
-    ♂ 120 kg  
+    ### Example 1 ###
 
-    b)  
-    For time:  
-    - 60-meter dumbbell overhead lunge  
-    - 50 dumbbell box step-ups  
-    - 50 strict handstand push-ups  
-    - 60-meter handstand walk  
+    4 sets (1 set every 5 minutes)
+    - 25/20 Calorie Bike Erg
+    - 25 Wall Balls (20/14)
+    - 100 Double Unders
 
-    ♀ 15 kg dumbbell, 50 cm box  
-    ♂ 22.5 kg dumbbell, 60 cm box  
+    ### Example 2 ###
 
-    c)  
-    3 rounds for time of:  
-    - 15 chest-to-bar pull-ups  
-    - 30-calorie row  
-    - 45 air squats  
+    a)
+    3 rounds
+    Min 1: 10/8 Calorie Bike Erg (OR 100m Run)
+    Min 2: 8 Box Jumps (20”/16”)
+    Min 3: 10/8 Calorie Echo Bike
+    Min 4: 3 Burpee Pull-Ups (OR 1 Bar Muscle Up)
+    Min 5: 100m Run
+    Min 6: 30 second Handstand Walk (practice)
 
-    ### Example 2
+    b)
+    5 Rounds
+    - 15 Kettlebell Swings (24/16 kg)
+    - 10 Push Press (95/65 lb)
+    - 10 Box Jumps (24”/20”)
+    - 15 Push-Ups
 
-    8 rounds for time of:  
-    - 400-meter run  
-    - 15 burpee box jump-overs  
-    - 10-calorie bike  
-    - 6 alternating dumbbell snatches  
+    ### Example 3 ###
 
-    ♀ 50 cm box, 22.5 kg dumbbell  
-    ♂ 60 cm box, 35 kg dumbbell  
+    a)
+    10 Sets (1 Set every 3 Minutes)
+    1000m Bike Erg
+    Even Sets: 12 Dumbbell Snatches (30/22,5 kg)
+    Odd Sets: 12 Dumbbell Clean and Jerks (30/22,5 kg)
 
-    ### Example 3
+    b)
+    3 Rounds
+    - 400m Run
+    - 12 Overhead Squats (95/65 lb)
+    - 15 Pull-Ups
+    - 20 Ab Mat Sit-Ups
 
-    5 rounds for time of:  
-    - 12 push jerks  
-    - 12 back squats  
+    ### Example 4 ###
 
-    ♀ 40 kg  
-    ♂ 60 kg  
+    3 Sets
+    300m Run
+    12 Bar Muscle Up
+    300m Run
+    9 Bar Muscle Up
+    300m Run
+    6 Bar Muscle Up
+    300m Run
+    -Rest 1:1-
 
-    ### Example 4 
+    ### Example 5 ###
 
-    For time:  
-    - 15 box jumps  
-    - 12 kettlebell swings  
-    - 9 ring dips  
+    8 sets
+    10/8 Calorie Row
+    8 Burpee Over Row
+    10/8 Calorie Row
+    Rest 1:1 between sets
 
-    ♀ 50 cm box, 24 kg kettlebell  
-    ♂ 60 cm box, 32 kg kettlebell  
+    ### Example 6 ###
 
-    ### Example 5  
+    4 Sets:
+    10 Toes to Bar
+    10 Burpee Box Jump Overs (24”/20”)
+    10 Toes to Bar
+    10 Burpee Box Jump Overs (24”/20”)
+    10 Toes to Bar
+    -rest 1:1 b/t sets-
 
-    For max reps:  
-    - Tabata dumbbell box step-ups  
-    - Rest 1 minute  
-    - Tabata GHD sit-ups  
-    - Rest 1 minute  
-    - Tabata push presses  
-    - Rest 1 minute  
-    - Tabata bar-facing burpees  
+    ### Example 7 ###
 
-    The Tabata interval is 20 seconds of work followed by 10 seconds of rest for 8 intervals.  
-
-    ♀ 10 kg dumbbells, 50 cm box, 30 kg barbell  
-    ♂ 17,5 kg dumbbells, 60 cm box, 40 kg barbell  
+    3 Rounds
+    20/15 Cal Bike Erg
+    10 Sandbag Clean (70/45 kg)
+    -Rest 5:00-
+    5 Rounds
+    20/15 Cal Bike Erg
+    30 m Sandbag Carry (70/45 kg)
+    -Rest 5:00-
+    3 Rounds
+    20/15 Cal Bike Erg
+    10 Sandbag Clean (70/45 kg)  
 
     ---
     
