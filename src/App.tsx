@@ -60,7 +60,7 @@ function App() {
               <DrawerTrigger asChild>
                 <Button
                   variant="outline"
-                  className="fixed bottom-4 right-4 bg-blue-600 text-white p-4 rounded-full shadow-lg hover:bg-blue-700 transition"
+                  className="fixed bottom-4 right-4 bg-[#0ea5e9] text-white p-4 rounded-full shadow-lg hover:bg-blue-700 transition"
                 >
                   Select movements
                 </Button>

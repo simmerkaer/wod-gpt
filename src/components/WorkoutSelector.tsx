@@ -16,7 +16,7 @@ const WorkoutSelector: React.FunctionComponent<WorkoutSelectorProps> = ({
         value="random"
         aria-label="specified"
         className={`flex-1 ${
-          value === "random" ? "border border-blue-500" : ""
+          value === "random" ? "border border-[#0ea5e9]" : ""
         }`}
       >
         <div className="text-xs">Random WOD</div>
@@ -25,7 +25,7 @@ const WorkoutSelector: React.FunctionComponent<WorkoutSelectorProps> = ({
         value="specified"
         aria-label="specified"
         className={`flex-1  ${
-          value === "specified" ? "border border-blue-500" : ""
+          value === "specified" ? "border border-[#0ea5e9]" : ""
         }`}
       >
         <div className="text-xs">Specific movements</div>
