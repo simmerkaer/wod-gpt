@@ -65,11 +65,9 @@ export const wodGenerationPrompts = (
     - **No excessive box jumps** (risk of Achilles injuries).
     - If a workout has **multiple parts**, ensure **each part has a different focus** (e.g., strength + conditioning, gymnastics + barbell).
     
-    ---
+    ## 🏋️‍♂️ Examples of Balanced Workouts
     
-    ## **🏋️‍♂️ Examples of Balanced Workouts**
-    
-    ### **Example 1**
+    ### Example 1
     
     a)  
     15-12-9-6-3 reps for time of:  
@@ -95,9 +93,7 @@ export const wodGenerationPrompts = (
     - 30-calorie row  
     - 45 air squats  
 
-    ---  
-
-    ### **Example 2**  
+    ### Example 2
 
     8 rounds for time of:  
     - 400-meter run  
@@ -106,22 +102,18 @@ export const wodGenerationPrompts = (
     - 6 alternating dumbbell snatches  
 
     ♀ 50 cm box, 22.5 kg dumbbell  
-    ♂ 60 cm box, 34 kg dumbbell  
+    ♂ 60 cm box, 35 kg dumbbell  
 
-    ---  
-
-    ### **Example 3**  
+    ### Example 3
 
     5 rounds for time of:  
     - 12 push jerks  
     - 12 back squats  
 
-    ♀ 43 kg  
-    ♂ 61 kg  
+    ♀ 40 kg  
+    ♂ 60 kg  
 
-    ---  
-
-    ### **Example 4**  
+    ### Example 4 
 
     For time:  
     - 15 box jumps  
@@ -131,9 +123,7 @@ export const wodGenerationPrompts = (
     ♀ 50 cm box, 24 kg kettlebell  
     ♂ 60 cm box, 32 kg kettlebell  
 
-    ---  
-
-    ### **Example 5**  
+    ### Example 5  
 
     For max reps:  
     - Tabata dumbbell box step-ups  
@@ -144,10 +134,10 @@ export const wodGenerationPrompts = (
     - Rest 1 minute  
     - Tabata bar-facing burpees  
 
-    The Tabata interval is **20 seconds of work followed by 10 seconds of rest for 8 intervals**.  
+    The Tabata interval is 20 seconds of work followed by 10 seconds of rest for 8 intervals.  
 
-    ♀ 9 kg dumbbells, 50 cm box, 30 kg barbell  
-    ♂ 16 kg dumbbells, 60 cm box, 43 kg barbell  
+    ♀ 10 kg dumbbells, 50 cm box, 30 kg barbell  
+    ♂ 17,5 kg dumbbells, 60 cm box, 40 kg barbell  
 
     ---
     
@@ -161,77 +151,3 @@ export const wodGenerationPrompts = (
     **Now, generate a complete CrossFit workout following these rules and formatting.**  
   `;
 };
-
-export const wodExamples = `
-
-### Example 1
-
-a)
-15-12-9-6-3 reps for time of:
-Deadlifts
-Burpee pull-ups
-
-♀ 80 kg
-♂ 120 kg
-
-b)
-For time:
-200-foot dumbbell overhead lunge
-50 dumbbell box step-ups
-50 strict handstand push-ups
-200-foot handstand walk
-
-♀ 15 kg dumbbell and a 50 cm box
-♂ 22,5 kg dumbbell and a 60 cm box
-
-c)
-3 rounds for time of:
-15 chest-to-bar pull-ups
-30-calorie row
-45 air squats
-
-### Example 2
-
-8 rounds for time of:
-400-meter run
-15 burpee box jump-overs
-10-calorie bike
-6 alternating dumbbell snatches
-
-♀ 20-inch box and 50-lb dumbbell
-♂ 24-inch box and 75-lb dumbbell
-
-### Example 3
-
-5 rounds for time of:
-12 push jerks
-12 back squats
-
-♀ 95 lb
-♂ 135 lb
-
-### Example 4
-
-15 box jumps
-12 kettlebell swings
-9 ring dips
-
-♀ 20-inch box and 53-lb kettlebell
-♂ 24-inch box and 70-lb kettlebell
-
-### Example 5
-
-For max reps:
-Tabata dumbbell box step-ups
-Rest 1 minute
-Tabata GHD sit-ups
-Rest 1 minute
-Tabata push presses
-Rest 1 minute
-Tabata bar-facing burpees
-
-The Tabata interval is 20 seconds of work followed by 10 seconds of rest for 8 intervals.
-
-♀ 20-lb dumbbells, 20-inch box, and 65-lb barbell
-♂ 35-lb dumbbells, 24-inch box, and 95-lb barbell
-`;
