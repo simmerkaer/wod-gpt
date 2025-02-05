@@ -6,8 +6,6 @@ import {
 } from "@azure/functions";
 import { AzureOpenAI, AzureClientOptions } from "openai";
 import { wodGenerationPrompts } from "../prompts/wodGeneration";
-import { useAzureMonitor } from "@azure/monitor-opentelemetry";
-useAzureMonitor();
 
 export async function wod(
   request: HttpRequest,
@@ -41,7 +39,6 @@ export async function wod(
       body["timeframe"],
     );
 
-    context.log("Prompt:", prompt);
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [

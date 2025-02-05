@@ -11,6 +11,7 @@ import { Button } from "./ui/button";
 import { Loader2 } from "lucide-react";
 import TimeFrame from "./TimeFrame";
 import WorkoutSelector, { WorkoutType } from "./WorkoutSelector";
+import GiveFeedback from "./GiveFeedback";
 
 interface MainMenuProps {
   timeFrame: number;
@@ -52,6 +53,7 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
           >
             {isLoading ? <Loader2 className="animate-spin" /> : "Generate WOD"}
           </Button>
+          <GiveFeedback />
         </div>
       </CardFooter>
     </Card>
