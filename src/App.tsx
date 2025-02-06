@@ -1,10 +1,10 @@
 import { useState } from "react";
 import "./App.css";
-import ExerciseList from "./components/ExerciseList";
-import { useExercises } from "./hooks/useExercises";
+import MovementList from "./components/MovementList";
+import { useMovements } from "./hooks/useExercises";
 import GeneratedWod from "./components/GeneratedWod";
 import MainMenu from "./components/MainMenu";
-import { useWod } from "./hooks/useWod";
+import { useGenerateWod } from "./hooks/useWod";
 import { Button } from "./components/ui/button";
 import {
   DrawerTrigger,
@@ -19,10 +19,10 @@ import { ToggleDarkMode } from "./components/ToggleDarkMode";
 import { ThemeProvider } from "./ThemeProvider";
 
 function App() {
-  const { selectedMovements, toggleMovement, ...movements } = useExercises();
+  const { selectedMovements, toggleMovement, movements } = useMovements();
   const [timeFrame, setTimeFrame] = useState(30);
   const [workoutType, setWorkoutType] = useState<WorkoutType>("random");
-  const [fetchWod, isLoading, wod] = useWod();
+  const [fetchWod, isLoading, wod] = useGenerateWod();
 
   const handleGenerateWod = () => {
     fetchWod(workoutType === "random", selectedMovements, timeFrame);
@@ -51,7 +51,7 @@ function App() {
             </div>
           </div>
         </div>
-        <div className="flex justify-center mt-8">
+        <div className="flex flex-col items-center justify-center mt-8">
           <GeneratedWod wod={wod} />
         </div>
         <div>
@@ -70,7 +70,7 @@ function App() {
                   <DrawerTitle className="text-center">Movements</DrawerTitle>
                 </DrawerHeader>
                 <ScrollArea className="h-[80vh]">
-                  <ExerciseList
+                  <MovementList
                     movements={movements}
                     selectedMovements={selectedMovements}
                     handleToggleMovement={toggleMovement}

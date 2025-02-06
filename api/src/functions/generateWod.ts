@@ -7,7 +7,7 @@ import {
 import { AzureOpenAI, AzureClientOptions } from "openai";
 import { wodGenerationPrompts } from "../prompts/wodGeneration";
 
-export async function wod(
+export async function generateWod(
   request: HttpRequest,
   context: InvocationContext,
 ): Promise<HttpResponseInit> {
@@ -39,7 +39,7 @@ export async function wod(
       body["timeframe"],
     );
 
-    const completion = await openai.chat.completions.create({
+    const generatedWorkoutResponse = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
         {
@@ -50,11 +50,11 @@ export async function wod(
       max_tokens: 1200,
     });
 
-    const answer = completion.choices[0]!.message?.content;
+    const workout = generatedWorkoutResponse.choices[0]!.message?.content;
 
     return {
       status: 200,
-      body: answer,
+      jsonBody: workout,
     };
   } catch (error: any) {
     context.log("Error calling the API:", error);
@@ -65,9 +65,9 @@ export async function wod(
   }
 }
 
-app.http("wod", {
-  route: "wod",
+app.http("generateWod", {
+  route: "generateWod",
   methods: ["GET", "POST"],
   authLevel: "anonymous",
-  handler: wod,
+  handler: generateWod,
 });

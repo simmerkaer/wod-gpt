@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export const useWod = (): [
+export const useGenerateWod = (): [
   (random: boolean, exercises: string[], timeframe: number) => void,
   boolean,
   string | null,
@@ -19,15 +19,17 @@ export const useWod = (): [
       timeframe: timeframe,
     };
 
-    fetch("/api/wod", {
+    fetch("/api/generateWod", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(requestBody),
     })
-      .then((res) => res.text())
-      .then((text) => setWod(text))
+      .then((res) => res.json())
+      .then((body) => {
+        setWod(body);
+      })
       .finally(() => setIsLoading(false))
       .catch((error) => {
         console.error("Error fetching WOD data:", error);

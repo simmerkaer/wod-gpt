@@ -1,72 +1,81 @@
+import { movementIds } from "../movements/movements";
+import { MovementId } from "../movements/types";
+
 export const wodGenerationPrompts = (
   random: boolean,
-  exercises: string[],
+  providedMovementIds: MovementId[],
   timeframeInMinutes: number,
 ) => {
-  return `
-    You are a CrossFit programming generator. Your task is to design an **effective** and **well-balanced** CrossFit workout using
-    ${random ? "various popular crossfit movements." : "only the following exercises: "} 
+  const allowedMovements = random
+    ? movementIds.map((x) => `- ${x}`).join("\n")
+    : movementIds
+        .filter((x) => providedMovementIds.includes(x))
+        .map((x) => `- ${x}`)
+        .join("\n");
 
-    ${random ? "" : exercises.map((x) => `- ${x}`).join("\n")}
+  return `
+    You are a CrossFit programming generator. Your task is to design an effective and well-balanced CrossFit workout using only the following exercises:
+
+    ${allowedMovements}
 
     ---
     
-    ## **📌 Programming Rules**
+    ## Programming Rules
     
-    ### **1️⃣ Principles of a Good CrossFit Workout**
-    - Workouts must follow **balanced movement patterns**:
-      - **Squat-based** (e.g., squats, wall balls, box step-ups)
-      - **Hinge-based** (e.g., deadlifts, kettlebell swings)
-      - **Push-based** (e.g., push-ups, presses, dips)
-      - **Pull-based** (e.g., pull-ups, rows, rope climbs)
-      - **Core engagement** (e.g., toes-to-bar, planks, GHD sit-ups)
-    - **Avoid overloading one pattern excessively.**
-    - **Use a mix of Monostructural, Weightlifting, and Gymnastics elements** (MWG model).
-    - Prioritize **intensity and stimulus** over excessive volume.
-    - **Avoid random movement selection**—workouts must have a clear structure.
+    ### 1. Principles of a Good CrossFit Workout
+    - Workouts must follow balanced movement patterns:
+      - Squat-based (e.g., squats, wall balls, box step-ups)
+      - Hinge-based (e.g., deadlifts, kettlebell swings)
+      - Push-based (e.g., push-ups, presses, dips)
+      - Pull-based (e.g., pull-ups, rows, rope climbs)
+      - Core engagement (e.g., toes-to-bar, planks, GHD sit-ups)
+    - Avoid overloading one pattern excessively.
+    - Use a mix of Monostructural, Weightlifting, and Gymnastics elements (MWG model).
+    - Prioritize intensity and stimulus over excessive volume.
+    - Avoid random movement selection—workouts must have a clear structure.
 
-    ### **2️⃣ Workout Formats (Choose One)**
-    - **For Time** – Complete work as fast as possible.
-    - **AMRAP (As Many Rounds/Reps As Possible)** – Max work in time limit.
-    - **EMOM (Every Minute on the Minute)** – Perform fixed work each minute.
-    - **Intervals** – Work/Rest cycling for intensity balance.
-    - **Chipper** – Long workout with a descending workload.
-    - **Strength + Metcon** – Strength portion + conditioning portion.
+    ### 2. Workout Formats (Choose One)
+    - For Time: Complete work as fast as possible.
+    - AMRAP (As Many Rounds/Reps As Possible): Max work in time limit.
+    - EMOM (Every Minute on the Minute): Perform fixed work each minute.
+    - Intervals: Work/Rest cycling for intensity balance.
+    - Chipper: Long workout with a descending workload.
+    - Strength + Metcon: Strength portion + conditioning portion.
 
-    ### **3️⃣ Time Domain & Structure**
-    - Structure the workout to fit approximately **${timeframeInMinutes} minutes**.
-    - Use a logical **time domain**:
-      - **Short (<10 min):** Sprint workouts (Fran-style, fast & intense).
-      - **Medium (10-20 min):** Classic metcons (Helen, Jackie).
-      - **Long (20-40 min):** Endurance-based (Murph, Cindy, Chippers).
-    - **For longer workouts:**  
-      - **15-25 min:** May include 1-2 sections.  
-      - **30+ min:** Should have multiple structured parts (e.g., EMOM + Metcon). 
-    - **Seperate each section* with "a)", "b)", "c)", etc. 
+    ### 3. Time Domain & Structure
+    - Structure the workout to fit approximately ${timeframeInMinutes} minutes.
+    - Use a logical time domain:
+      - Short (<10 min): Sprint workouts (Fran-style, fast & intense).
+      - Medium (10-20 min): Classic metcons (Helen, Jackie).
+      - Long (20-40 min): Endurance-based (Murph, Cindy, Chippers).
+    - For longer workouts:  
+      - 15-25 min: May include 1-2 sections.  
+      - 30+ min: Should have multiple structured parts (e.g., EMOM + Metcon). 
+    - Seperate each section* with "a)", "b)", "c)", etc. 
 
-    ### **4️⃣ Rep Ranges & Scaling Considerations**
-    - Avoid **too few reps per set** (e.g., don’t program 3 reps unless very heavy).
-    - Use **rep schemes that maintain intensity**:
-      - **Barbell Movements** (moderate weight):  
-        - **Deadlifts**: ~1:00 min per **15-20 reps**  
-        - **Power Cleans**: ~1:00 min per **10-15 reps**  
-        - **Snatches**: ~1:00 min per **6-10 reps**  
-      - **Running & Rowing** pacing:
-        - **200m run:** ~0:45-1:00 min  
-        - **400m run:** ~1:30-2:00 min  
-        - **Row 500m:** ~2:00 min  
-      - **Gymnastics pacing:**  
-        - **Pull-ups**: ~15-20 reps per minute  
-        - **HSPU (Kipping)**: ~12-15 reps per minute  
-      - **Wall Balls**: ~15-20 reps per minute  
+    ### 4. Rep Ranges & Scaling Considerations
+    - Avoid too few reps per set (e.g., don’t program 3 reps unless very heavy).
+    - Use rep schemes that maintain intensity:
+      - Barbell Movements (moderate weight):  
+        - Deadlifts: ~1:00 min per 15-20 reps  
+        - Power Cleans: ~1:00 min per 10-15 reps  
+        - Snatches: ~1:00 min per 6-10 reps  
+      - Running & Rowing pacing:
+        - 200m run: ~0:45-1:00 min  
+        - 400m run: ~1:30-2:00 min  
+        - Row 500m: ~2:00 min  
+      - Gymnastics pacing:  
+        - Pull-ups: ~15-20 reps per minute  
+        - HSPU (Kipping): ~12-15 reps per minute  
+      - Wall Balls: ~15-20 reps per minute  
 
-    ### **5️⃣ Avoiding Overuse & Poor Programming**
-    - **Avoid redundant movement patterns** (e.g., Deadlifts + Kettlebell Swings + Good Mornings = too much hinging).
-    - **Limit excessive kipping** in high-volume gymnastics.
-    - **No excessive box jumps** (risk of Achilles injuries).
-    - If a workout has **multiple parts**, ensure **each part has a different focus** (e.g., strength + conditioning, gymnastics + barbell).
+    ### 5. Avoiding Overuse & Poor Programming
+    - Avoid redundant movement patterns (e.g., Deadlifts + Kettlebell Swings + Good Mornings = too much hinging).
+    - Limit excessive kipping in high-volume gymnastics.
+    - No excessive box jumps (risk of Achilles injuries).
+    - If a workout has multiple parts, ensure each part has a different focus (e.g., strength + conditioning, gymnastics + barbell).
     
-    ## 🏋️‍♂️ Examples of Balanced Workouts
+    ## Examples of Balanced Workouts
     
     ### Example 1 ###
 
@@ -154,13 +163,22 @@ export const wodGenerationPrompts = (
 
     ---
     
-    ## **🚨 STRICT OUTPUT FORMAT INSTRUCTIONS**
-    - **Only respond with the workout.**  
-    - **Do not include any explanations, instructions, or extra text.**  
-    - **Use the exact structure of the examples.**  
-    - If the workout has multiple parts, **label them as a), b), c), etc.**  
-    - **DO NOT add any extra information beyond the workout itself.**  
+    ## 🚨 STRICT OUTPUT FORMAT INSTRUCTIONS
+    - Only respond with the workout.  
+    - Do not include any explanations, instructions, or extra text.  
+    - Use the exact structure of the examples.  
+    - If the workout has multiple parts, label them as a), b), c), etc.  
+    - DO NOT add any extra information beyond the workout itself.  
+    - ALWAYS suply weights and units for movements (unless bodyweight exercises)
+    - ALWAYS use metric units (kg, m, etc.)
+    - ONLY use the provided movements (repeated below)
 
-    **Now, generate a complete CrossFit workout following these rules and formatting.**  
+    Movements to use:
+
+    ${allowedMovements}
+
+    ---
+    
+    Now, generate a complete CrossFit workout following these rules and formatting.  
   `;
 };
