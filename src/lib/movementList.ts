@@ -26,20 +26,9 @@ const movements: Movement[] = [
   { id: "sit_up", name: "sit-ups", category: "bodyweight" },
   { id: "air_squat", name: "air squats", category: "bodyweight" },
   { id: "handstand_pushup", name: "handstand pushups", category: "bodyweight" },
-  { id: "handstand_walk", name: "handstand walks", category: "bodyweight" },
   { id: "pistol_squat", name: "pistol squats", category: "bodyweight" },
   { id: "toes_to_bar", name: "toes-to-bar", category: "bodyweight" },
   { id: "knee_to_elbow", name: "knees-to-elbows", category: "bodyweight" },
-  {
-    id: "bar_muscle_up",
-    name: "bar muscle-ups",
-    category: "bodyweight",
-  },
-  {
-    id: "ring_muscle_up",
-    name: "ring muscle-ups",
-    category: "bodyweight",
-  },
   { id: "dip", name: "dips", category: "bodyweight" },
 
   // Weightlifting Movements
@@ -98,6 +87,17 @@ const movements: Movement[] = [
   },
 
   // Gymnastics Movements
+  { id: "handstand_walk", name: "handstand walks", category: "gymnastics" },
+  {
+    id: "bar_muscle_up",
+    name: "bar muscle-ups",
+    category: "gymnastics",
+  },
+  {
+    id: "ring_muscle_up",
+    name: "ring muscle-ups",
+    category: "gymnastics",
+  },
   { id: "rope_climb", name: "rope climbs", category: "gymnastics" },
   { id: "l_sit", name: "L-sits", category: "gymnastics" },
   { id: "skin_the_cat", name: "skin the cat", category: "gymnastics" },
