@@ -10,6 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "./ui/card";
+import { Separator } from "./ui/separator";
 import WorkoutSelector, { WorkoutType } from "./WorkoutSelector";
 
 interface MainMenuProps {
@@ -49,6 +50,7 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
       </CardContent>
       <CardFooter>
         <div className="flex-grow flex flex-col gap-2">
+          <Separator className="my-2" />
           <GiveFeedback />
         </div>
       </CardFooter>
