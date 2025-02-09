@@ -1,4 +1,17 @@
+import { useFeedback } from "@/hooks/useFeedback";
 import * as React from "react";
+import { useState } from "react";
+import { useMediaQuery } from "usehooks-ts";
+import { FeedbackForm } from "./FeedbackForm";
+import { Button } from "./ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "./ui/dialog";
 import {
   Drawer,
   DrawerContent,
@@ -7,107 +20,47 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "./ui/drawer";
-import { Button } from "./ui/button";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "./ui/form";
-import { Input } from "./ui/input";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Textarea } from "./ui/textarea";
-import { useFeedback } from "@/hooks/useFeedback";
-import { useState } from "react";
-
-const formSchema = z.object({
-  email: z.string().optional().or(z.string().email()),
-  feedback: z.string().min(2).max(1000),
-});
 
 interface GiveFeedbackProps {}
 
 const GiveFeedback: React.FunctionComponent<GiveFeedbackProps> = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [feedbackProvided, setFeedbackProvided] = useState(false);
   const [giveFeedback, isLoading] = useFeedback();
+  const isDesktop = useMediaQuery("(min-width: 768px)");
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      email: "",
-      feedback: "",
-    },
-  });
+  const renderButton = () => (
+    <Button variant="outline" className="text-xs border-2">
+      Help us improve!
+    </Button>
+  );
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    giveFeedback(values.email ?? "anon", values.feedback);
-    setFeedbackProvided(true);
+  const description =
+    "We are always looking to improve our workout generation. Please provide feedback below if you have any suggestions or issues.";
+
+  if (isDesktop) {
+    return (
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogTrigger asChild>{renderButton()}</DialogTrigger>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Edit profile</DialogTitle>
+            <DialogDescription>{description}</DialogDescription>
+          </DialogHeader>
+          <FeedbackForm isLoading={isLoading} giveFeedback={giveFeedback} />
+        </DialogContent>
+      </Dialog>
+    );
   }
 
   return (
     <Drawer open={isOpen} onOpenChange={setIsOpen}>
-      <DrawerTrigger asChild>
-        <Button variant="outline" className="text-xs border-2">
-          Help us improve!
-        </Button>
-      </DrawerTrigger>
+      <DrawerTrigger asChild>{renderButton()}</DrawerTrigger>
       <DrawerContent>
         <DrawerHeader>
           <DrawerTitle className="text-center">Provide feedback</DrawerTitle>
-          <DrawerDescription>
-            We are always looking to improve our workout generation. Please
-            provide feedback below if you have any suggestions or issues.
-          </DrawerDescription>
+          <DrawerDescription>{description}</DrawerDescription>
         </DrawerHeader>
-        <div className="p-4">
-          {feedbackProvided ? (
-            <div className="text-center"> Thank you! </div>
-          ) : (
-            <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-8"
-              >
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Email</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                      <FormDescription>Optional</FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="feedback"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Feedback</FormLabel>
-                      <FormControl>
-                        <Textarea {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <Button type="submit" disabled={isLoading}>
-                  Submit
-                </Button>
-              </form>
-            </Form>
-          )}
-        </div>
+        <FeedbackForm isLoading={isLoading} giveFeedback={giveFeedback} />
       </DrawerContent>
     </Drawer>
   );
