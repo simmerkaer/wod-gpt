@@ -1,4 +1,3 @@
-import movements from "@/lib/movementList";
 import { MovementId } from "@/lib/movementId";
 import { useState } from "react";
 
@@ -19,7 +18,6 @@ export const useMovements = () => {
   };
 
   return {
-    movements,
     selectedMovements,
     toggleMovement,
   };

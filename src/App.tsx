@@ -2,17 +2,7 @@ import { useState } from "react";
 import "./App.css";
 import GeneratedWod from "./components/GeneratedWod";
 import MainMenu from "./components/MainMenu";
-import MovementList from "./components/MovementList";
 import { ToggleDarkMode } from "./components/ToggleDarkMode";
-import { Button } from "./components/ui/button";
-import {
-  Drawer,
-  DrawerContent,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "./components/ui/drawer";
-import { ScrollArea } from "./components/ui/scroll-area";
 import { WorkoutType } from "./components/WorkoutSelector";
 import { useMovements } from "./hooks/useExercises";
 import { useGenerateWod } from "./hooks/useWod";
@@ -20,7 +10,7 @@ import { DarkBackground, LightBackground } from "./lib/backgrounds";
 import { useTheme } from "./ThemeProvider";
 
 function App() {
-  const { selectedMovements, toggleMovement, movements } = useMovements();
+  const { selectedMovements, toggleMovement } = useMovements();
   const [workoutType, setWorkoutType] = useState<WorkoutType>("random");
   const [fetchWod, isLoading, wod] = useGenerateWod();
   const { theme } = useTheme();
@@ -50,8 +40,10 @@ function App() {
               <MainMenu
                 isLoading={isLoading}
                 workoutType={workoutType}
+                selectedMovements={selectedMovements}
                 handleGenerateWod={handleGenerateWod}
                 setWorkoutType={handleWorkoutChange}
+                toggleMovement={toggleMovement}
               />
             </div>
           </div>
@@ -59,32 +51,6 @@ function App() {
       </div>
       <div className="flex flex-col items-center justify-center mt-8">
         <GeneratedWod wod={wod} />
-      </div>
-      <div>
-        {workoutType === "specified" && (
-          <Drawer>
-            <DrawerTrigger asChild>
-              <Button
-                variant="outline"
-                className="fixed bottom-4 right-4 bg-[#0ea5e9] text-white p-4 rounded-full shadow-lg hover:bg-blue-700 transition"
-              >
-                Select movements
-              </Button>
-            </DrawerTrigger>
-            <DrawerContent>
-              <DrawerHeader>
-                <DrawerTitle className="text-center">Movements</DrawerTitle>
-              </DrawerHeader>
-              <ScrollArea className="h-[80vh]">
-                <MovementList
-                  movements={movements}
-                  selectedMovements={selectedMovements}
-                  handleToggleMovement={toggleMovement}
-                />
-              </ScrollArea>
-            </DrawerContent>
-          </Drawer>
-        )}
       </div>
     </div>
   );

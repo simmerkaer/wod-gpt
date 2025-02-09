@@ -102,7 +102,6 @@ const movements: Movement[] = [
   { id: "l_sit", name: "L-sits", category: "gymnastics" },
   { id: "skin_the_cat", name: "skin the cat", category: "gymnastics" },
   { id: "ring_row", name: "ring rows", category: "gymnastics" },
-  { id: "ring_muscle_up", name: "ring muscle-ups", category: "gymnastics" },
   { id: "ghd_sit_up", name: "GHD sit-ups", category: "gymnastics" },
   {
     id: "ghd_hip_extension",

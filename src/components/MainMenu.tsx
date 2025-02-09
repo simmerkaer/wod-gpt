@@ -1,6 +1,8 @@
+import { MovementId } from "@/lib/movementId";
 import { Loader2 } from "lucide-react";
 import * as React from "react";
 import GiveFeedback from "./GiveFeedback";
+import SelectMovements from "./SelectMovements";
 import { Button } from "./ui/button";
 import {
   Card,
@@ -16,6 +18,8 @@ import WorkoutSelector, { WorkoutType } from "./WorkoutSelector";
 interface MainMenuProps {
   isLoading: boolean;
   workoutType: WorkoutType;
+  selectedMovements: MovementId[];
+  toggleMovement: (movement: MovementId) => void;
   setWorkoutType: (workoutType: WorkoutType) => void;
   handleGenerateWod: () => void;
 }
@@ -23,6 +27,8 @@ interface MainMenuProps {
 const MainMenu: React.FunctionComponent<MainMenuProps> = ({
   isLoading,
   workoutType,
+  selectedMovements,
+  toggleMovement,
   setWorkoutType,
   handleGenerateWod,
 }) => {
@@ -39,13 +45,24 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
       <CardContent className="pb-2">
         <div className="flex-grow flex flex-col gap-2">
           <WorkoutSelector value={workoutType} onValueChange={setWorkoutType} />
-          <Button
-            onClick={handleGenerateWod}
-            className="w-full bg-gradient-to-r from-red-500 to-purple-600 align-middle"
-            disabled={isLoading}
-          >
-            {isLoading ? <Loader2 className="animate-spin" /> : "Generate WOD"}
-          </Button>
+          <div className="flex flex-row gap-2">
+            <Button
+              onClick={handleGenerateWod}
+              className="w-full bg-gradient-to-r from-red-500 to-purple-600 align-middle flex-grow"
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <Loader2 className="animate-spin" />
+              ) : (
+                "Generate WOD"
+              )}
+            </Button>
+            <SelectMovements
+              disabled={workoutType === "random"}
+              selectedMovements={selectedMovements}
+              toggleMovement={toggleMovement}
+            />
+          </div>
         </div>
       </CardContent>
       <CardFooter>

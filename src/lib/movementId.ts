@@ -12,8 +12,6 @@ export type MovementId =
   | "pistol_squat"
   | "toes_to_bar"
   | "knee_to_elbow"
-  | "bar_muscle_up"
-  | "ring_muscle_up"
   | "dip"
   // Weightlifting Movements
   | "deadlift"
@@ -42,6 +40,7 @@ export type MovementId =
   | "skin_the_cat"
   | "ring_row"
   | "ring_muscle_up"
+  | "bar_muscle_up"
   | "ghd_sit_up"
   | "ghd_hip_extension"
   // Box Movements
