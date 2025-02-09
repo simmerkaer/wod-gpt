@@ -29,6 +29,11 @@ function App() {
     fetchWod(workoutType === "random", selectedMovements);
   };
 
+  const handleWorkoutChange = (type: WorkoutType) => {
+    if (!type) return;
+    setWorkoutType(type);
+  };
+
   return (
     <div className="flex flex-col flex-grow">
       <div className="fixed left-0 top-0 -z-10 h-full w-full">
@@ -46,7 +51,7 @@ function App() {
                 isLoading={isLoading}
                 workoutType={workoutType}
                 handleGenerateWod={handleGenerateWod}
-                setWorkoutType={setWorkoutType}
+                setWorkoutType={handleWorkoutChange}
               />
             </div>
           </div>
