@@ -1,4 +1,7 @@
+import { Loader2 } from "lucide-react";
 import * as React from "react";
+import GiveFeedback from "./GiveFeedback";
+import { Button } from "./ui/button";
 import {
   Card,
   CardContent,
@@ -7,11 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "./ui/card";
-import { Button } from "./ui/button";
-import { Loader2 } from "lucide-react";
-import TimeFrame from "./TimeFrame";
 import WorkoutSelector, { WorkoutType } from "./WorkoutSelector";
-import GiveFeedback from "./GiveFeedback";
 
 interface MainMenuProps {
   timeFrame: number;
@@ -23,11 +22,9 @@ interface MainMenuProps {
 }
 
 const MainMenu: React.FunctionComponent<MainMenuProps> = ({
-  timeFrame,
   isLoading,
   workoutType,
   setWorkoutType,
-  setTimeFrame,
   handleGenerateWod,
 }) => {
   return (
@@ -38,12 +35,9 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
             wod-gpt
           </p>
         </CardTitle>
-        <CardDescription>I want to work out for roughly</CardDescription>
+        <CardDescription>Free AI driven crossfit workouts</CardDescription>
       </CardHeader>
       <CardContent className="pb-2">
-        <TimeFrame timeFrame={timeFrame} setTimeFrame={setTimeFrame} />
-      </CardContent>
-      <CardFooter>
         <div className="flex-grow flex flex-col gap-2">
           <WorkoutSelector value={workoutType} onValueChange={setWorkoutType} />
           <Button
@@ -53,6 +47,10 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
           >
             {isLoading ? <Loader2 className="animate-spin" /> : "Generate WOD"}
           </Button>
+        </div>
+      </CardContent>
+      <CardFooter>
+        <div className="flex-grow flex flex-col gap-2">
           <GiveFeedback />
         </div>
       </CardFooter>
