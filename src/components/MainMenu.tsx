@@ -13,11 +13,9 @@ import {
 import WorkoutSelector, { WorkoutType } from "./WorkoutSelector";
 
 interface MainMenuProps {
-  timeFrame: number;
   isLoading: boolean;
   workoutType: WorkoutType;
   setWorkoutType: (workoutType: WorkoutType) => void;
-  setTimeFrame: (timeframe: number) => void;
   handleGenerateWod: () => void;
 }
 

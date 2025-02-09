@@ -1,33 +1,32 @@
 import { useState } from "react";
 import "./App.css";
-import MovementList from "./components/MovementList";
-import { useMovements } from "./hooks/useExercises";
 import GeneratedWod from "./components/GeneratedWod";
 import MainMenu from "./components/MainMenu";
-import { useGenerateWod } from "./hooks/useWod";
+import MovementList from "./components/MovementList";
+import { ToggleDarkMode } from "./components/ToggleDarkMode";
 import { Button } from "./components/ui/button";
 import {
-  DrawerTrigger,
+  Drawer,
   DrawerContent,
   DrawerHeader,
   DrawerTitle,
-  Drawer,
+  DrawerTrigger,
 } from "./components/ui/drawer";
 import { ScrollArea } from "./components/ui/scroll-area";
 import { WorkoutType } from "./components/WorkoutSelector";
-import { ToggleDarkMode } from "./components/ToggleDarkMode";
-import { useTheme } from "./ThemeProvider";
+import { useMovements } from "./hooks/useExercises";
+import { useGenerateWod } from "./hooks/useWod";
 import { DarkBackground, LightBackground } from "./lib/backgrounds";
+import { useTheme } from "./ThemeProvider";
 
 function App() {
   const { selectedMovements, toggleMovement, movements } = useMovements();
-  const [timeFrame, setTimeFrame] = useState(30);
   const [workoutType, setWorkoutType] = useState<WorkoutType>("random");
   const [fetchWod, isLoading, wod] = useGenerateWod();
   const { theme } = useTheme();
 
   const handleGenerateWod = () => {
-    fetchWod(workoutType === "random", selectedMovements, timeFrame);
+    fetchWod(workoutType === "random", selectedMovements);
   };
 
   return (
@@ -44,10 +43,8 @@ function App() {
             ></div>
             <div className="relative z-20 flex w-full rounded-[0.60rem]">
               <MainMenu
-                timeFrame={timeFrame}
                 isLoading={isLoading}
                 workoutType={workoutType}
-                setTimeFrame={setTimeFrame}
                 handleGenerateWod={handleGenerateWod}
                 setWorkoutType={setWorkoutType}
               />

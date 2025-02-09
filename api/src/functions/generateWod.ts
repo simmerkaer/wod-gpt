@@ -4,7 +4,7 @@ import {
   HttpResponseInit,
   InvocationContext,
 } from "@azure/functions";
-import { AzureOpenAI, AzureClientOptions } from "openai";
+import { AzureClientOptions, AzureOpenAI } from "openai";
 import { wodGenerationPrompts } from "../prompts/wodGeneration";
 
 export async function generateWod(
@@ -33,11 +33,7 @@ export async function generateWod(
   try {
     const body = await request.json();
 
-    const prompt = wodGenerationPrompts(
-      body["random"],
-      body["exercises"],
-      body["timeframe"],
-    );
+    const prompt = wodGenerationPrompts(body["random"], body["exercises"]);
 
     const generatedWorkoutResponse = await openai.chat.completions.create({
       model: "gpt-4o-mini",

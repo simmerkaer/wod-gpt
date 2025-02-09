@@ -4,7 +4,6 @@ import { MovementId } from "../movements/types";
 export const wodGenerationPrompts = (
   random: boolean,
   providedMovementIds: MovementId[],
-  timeframeInMinutes: number,
 ) => {
   const allowedMovements = random
     ? movementIds.map((x) => `- ${x}`).join("\n")
@@ -43,7 +42,6 @@ export const wodGenerationPrompts = (
     - Strength + Metcon: Strength portion + conditioning portion.
 
     ### 3. Time Domain & Structure
-    - Structure the workout to fit approximately ${timeframeInMinutes} minutes.
     - Use a logical time domain:
       - Short (<10 min): Sprint workouts (Fran-style, fast & intense).
       - Medium (10-20 min): Classic metcons (Helen, Jackie).
