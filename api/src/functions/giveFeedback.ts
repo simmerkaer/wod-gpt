@@ -1,10 +1,6 @@
-import {
-  app,
-  HttpRequest,
-  HttpResponseInit,
-  InvocationContext,
-  output,
-} from "@azure/functions";
+import { app, HttpRequest, InvocationContext, output } from "@azure/functions";
+
+import { EmailClient } from "@azure/communication-email";
 
 interface CosmosFeedbackItem {
   id: string;
@@ -44,6 +40,33 @@ export async function giveFeedback(
 
     // Output to Database
     context.extraOutputs.set(sendToCosmosDb, cosmosDoc);
+
+    const emailClient = new EmailClient(process.env.EMAIL_CONNECTION_STRING);
+    const emailMessage = {
+      senderAddress:
+        "DoNotReply@7d11ab1a-f055-4d7b-97c3-6408dc888f60.azurecomm.net",
+      content: {
+        subject: "wod-gpt: Feedback Received",
+        html: `
+    <html>
+      <body>
+        <h1>Feedback from wod-gpt</h1>
+
+        <b>Date:</b> ${date}<br>
+        <b>Email:</b> ${email}<br>
+        <br>
+        <b>Feedback:</b> <br>
+        ${feedback}
+      </body>
+    </html>`,
+      },
+      recipients: {
+        to: [{ address: "simmerkaer@gmail.com" }],
+      },
+    };
+
+    const poller = await emailClient.beginSend(emailMessage);
+    await poller.pollUntilDone();
 
     return { body: "Feedback received" };
   } catch (error) {
