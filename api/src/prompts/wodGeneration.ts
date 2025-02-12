@@ -33,39 +33,42 @@ export const wodGenerationPrompts = (
     - Prioritize intensity and stimulus over excessive volume.
     - Avoid random movement selection—workouts must have a clear structure.
 
-    ### 2. Workout Formats (Choose One)
-    - For Time: Complete work as fast as possible.
-    - AMRAP (As Many Rounds/Reps As Possible): Max work in time limit.
-    - EMOM (Every Minute on the Minute): Perform fixed work each minute.
-    - Intervals: Work/Rest cycling for intensity balance.
-    - Chipper: Long workout with a descending workload.
-    - Strength + Metcon: Strength portion + conditioning portion.
+    ### 2. Workout Formats (Choose One or a Mix)
+    - **For Time**: Complete work as fast as possible.
+    - **AMRAP (As Many Rounds/Reps As Possible)**: Max work in time limit.
+    - **EMOM (Every Minute on the Minute)**: Perform fixed work each minute.
+    - **Intervals**: Work/Rest cycling for intensity balance.
+    - **Chipper**: Long workout with a descending workload.
+    - **Strength + Metcon**: Strength portion + conditioning portion.
+    - **Partner/Team Workouts** (if appropriate): Shared work with clear structure.
+
+    *⚠️ Ensure a variety of workout formats across multiple generated workouts.*  
 
     ### 3. Time Domain & Structure
-    - Use a logical time domain:
-      - Short (<10 min): Sprint workouts (Fran-style, fast & intense).
-      - Medium (10-20 min): Classic metcons (Helen, Jackie).
-      - Long (20-40 min): Endurance-based (Murph, Cindy, Chippers).
-    - For longer workouts:  
-      - 15-25 min: May include 1-2 sections.  
-      - 30+ min: Should have multiple structured parts (e.g., EMOM + Metcon). 
-    - Seperate each section* with "a)", "b)", "c)", etc. 
+    - Logical time domains based on intensity:
+      - **Short (<10 min)**: Sprint workouts (Fran-style, fast & intense).
+      - **Medium (10-20 min)**: Classic metcons (Helen, Jackie).
+      - **Long (20-40 min)**: Endurance-based (Murph, Cindy, Chippers).
+    - For longer workouts:
+      - **15-25 min**: May include 1-2 sections.
+      - **30+ min**: Should have multiple structured parts (e.g., EMOM + Metcon).
+    - Separate each section with **"a)", "b)", "c)", etc.**
 
     ### 4. Rep Ranges & Scaling Considerations
     - Avoid too few reps per set (e.g., don’t program 3 reps unless very heavy).
     - Use rep schemes that maintain intensity:
-      - Barbell Movements (moderate weight):  
+      - **Barbell Movements (moderate weight)**:  
         - Deadlifts: ~1:00 min per 15-20 reps  
         - Power Cleans: ~1:00 min per 10-15 reps  
         - Snatches: ~1:00 min per 6-10 reps  
-      - Running & Rowing pacing:
+      - **Running & Rowing pacing**:
         - 200m run: ~0:45-1:00 min  
         - 400m run: ~1:30-2:00 min  
         - Row 500m: ~2:00 min  
-      - Gymnastics pacing:  
+      - **Gymnastics pacing**:  
         - Pull-ups: ~15-20 reps per minute  
         - HSPU (Kipping): ~12-15 reps per minute  
-      - Wall Balls: ~15-20 reps per minute  
+      - **Wall Balls**: ~15-20 reps per minute  
 
     ### 5. Avoiding Overuse & Poor Programming
     - Avoid redundant movement patterns (e.g., Deadlifts + Kettlebell Swings + Good Mornings = too much hinging).
@@ -75,101 +78,71 @@ export const wodGenerationPrompts = (
     
     ## Examples of Balanced Workouts
     
-    ### Example 1 ###
+    ### Example 1 (For Time) ###
 
-    4 sets (1 set every 5 minutes)
-    - 25/20 Calorie Bike Erg
-    - 25 Wall Balls (20/14)
-    - 100 Double Unders
-
-    ### Example 2 ###
-
-    a)
-    3 rounds
-    Min 1: 10/8 Calorie Bike Erg (OR 100m Run)
-    Min 2: 8 Box Jumps (20”/16”)
-    Min 3: 10/8 Calorie Echo Bike
-    Min 4: 3 Burpee Pull-Ups (OR 1 Bar Muscle Up)
-    Min 5: 100m Run
-    Min 6: 30 second Handstand Walk (practice)
-
-    b)
-    5 Rounds
-    - 15 Kettlebell Swings (24/16 kg)
-    - 10 Push Press (45/30 kg)
-    - 10 Box Jumps (24”/20”)
-    - 15 Push-Ups
-
-    ### Example 3 ###
-
-    a)
-    10 Sets (1 Set every 3 Minutes)
-    1000m Bike Erg
-    Even Sets: 12 Dumbbell Snatches (30/22,5 kg)
-    Odd Sets: 12 Dumbbell Clean and Jerks (30/22,5 kg)
-
-    b)
-    3 Rounds
+    4 rounds for time:
     - 400m Run
-    - 12 Overhead Squats (45/30 kg)
-    - 15 Pull-Ups
-    - 20 Ab Mat Sit-Ups
+    - 12 Thrusters (45/30 kg)
+    - 12 Pull-Ups
+    - 15 Box Jumps (24”/20”)
 
-    ### Example 4 ###
+    ### Example 2 (EMOM) ###
 
-    3 Sets
-    300m Run
-    12 Bar Muscle Up
-    300m Run
-    9 Bar Muscle Up
-    300m Run
-    6 Bar Muscle Up
-    300m Run
-    -Rest 1:1-
+    a) 10-Minute EMOM:
+    - Minute 1: 12/10 Cal Row
+    - Minute 2: 10 Dumbbell Snatches (22.5/15 kg)
 
-    ### Example 5 ###
+    b) 3 Rounds:
+    - 30 Double Unders
+    - 15 Toes-to-Bar
+    - 10 Hang Power Cleans (60/40 kg)
 
-    8 sets
-    10/8 Calorie Row
-    8 Burpee Over Row
-    10/8 Calorie Row
-    Rest 1:1 between sets
+    ### Example 3 (AMRAP) ###
 
-    ### Example 6 ###
+    16-Minute AMRAP:
+    - 200m Run
+    - 10 Power Snatches (50/35 kg)
+    - 12 Burpee Box Jump Overs (24”/20”)
 
-    4 Sets:
-    10 Toes to Bar
-    10 Burpee Box Jump Overs (24”/20”)
-    10 Toes to Bar
-    10 Burpee Box Jump Overs (24”/20”)
-    10 Toes to Bar
-    -rest 1:1 b/t sets-
+    ### Example 4 (Chipper) ###
 
-    ### Example 7 ###
+    For Time:
+    - 50 Wall Balls (9/6 kg)
+    - 40 Box Jump Overs (24”/20”)
+    - 30 Toes-to-Bar
+    - 20 Deadlifts (80/55 kg)
+    - 10 Bar Muscle-Ups
 
-    3 Rounds
-    20/15 Cal Bike Erg
-    10 Sandbag Clean (70/45 kg)
-    -Rest 5:00-
-    5 Rounds
-    20/15 Cal Bike Erg
-    30 m Sandbag Carry (70/45 kg)
-    -Rest 5:00-
-    3 Rounds
-    20/15 Cal Bike Erg
-    10 Sandbag Clean (70/45 kg)  
+    ### Example 5 (Interval) ###
 
-    ---
+    5 Sets (1 Set every 4 minutes):
+    - 20/15 Cal Row
+    - 10 Sandbag Cleans (70/45 kg)
+    - 15 Push-Ups
+    - Rest Remainder of Time
+
+    ### Example 6 (Strength + Metcon) ###
+
+    a) Strength:
+    - 5x3 Back Squats (80-85% 1RM)
+
+    b) 3 Rounds for Time:
+    - 200m Run
+    - 10 Power Cleans (60/40 kg)
+    - 12 Handstand Push-Ups
+
+    --- 
     
     ## 🚨 STRICT OUTPUT FORMAT INSTRUCTIONS
     - Only respond with the workout.  
-    - Do not include any explanations, instructions, or extra text.  
+    - Do NOT include any explanations, instructions, or extra text.  
+    - Do NOT include workout format headers like "### For Time ###"—only provide the workout itself.  
     - Use the exact structure of the examples.  
     - If the workout has multiple parts, label them as a), b), c), etc.  
-    - DO NOT add any extra information beyond the workout itself.  
-    - ALWAYS suply weights and units for movements (unless bodyweight exercises)
-    - ALWAYS use metric units (kg, m, etc.)
-    - ONLY use the provided movements (repeated below)
+    - Ensure diverse workout formats across multiple responses (not just "X rounds").  
+    - ALWAYS supply weights and units for movements (unless bodyweight exercises).  
+    - ALWAYS use metric units (kg, m, etc.).  
+    - ONLY use the provided movements (repeated below).  
 
     Movements to use:
 
