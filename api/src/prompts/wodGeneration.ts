@@ -94,7 +94,7 @@ export const wodGenerationPrompts = (
     Min 6: 30 second Handstand Walk (practice)
 
     b)
-    5 Rounds
+    EMOM 16
     - 15 Kettlebell Swings (24/16 kg)
     - 10 Push Press (45/30 kg)
     - 10 Box Jumps (24”/20”)
@@ -129,11 +129,10 @@ export const wodGenerationPrompts = (
 
     ### Example 5 ###
 
-    8 sets
+    AMRAP 15
     10/8 Calorie Row
     8 Burpee Over Row
     10/8 Calorie Row
-    Rest 1:1 between sets
 
     ### Example 6 ###
 
