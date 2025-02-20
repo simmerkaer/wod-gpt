@@ -1,5 +1,5 @@
 import { MovementId } from "@/lib/movementId";
-import { Loader2 } from "lucide-react";
+import { Loader2, PlusIcon } from "lucide-react";
 import * as React from "react";
 import GiveFeedback from "./GiveFeedback";
 import SelectMovements from "./SelectMovements";
@@ -14,7 +14,7 @@ import {
 } from "./ui/card";
 import { Separator } from "./ui/separator";
 import WorkoutSelector, { WorkoutType } from "./WorkoutSelector";
-import { Badge } from "./ui/badge";
+import { badgeVariants } from "./ui/badge";
 import SelectedMovements from "./SelectedMovements";
 
 interface MainMenuProps {
@@ -48,7 +48,29 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
         <div className="flex-grow flex flex-col gap-2">
           <WorkoutSelector value={workoutType} onValueChange={setWorkoutType} />
           {workoutType === "specified" && (
-            <SelectedMovements selectedMovements={selectedMovements} />
+            <SelectedMovements
+              selectedMovements={selectedMovements}
+              addMoreMovementsButton={
+                <SelectMovements
+                  selectedMovements={selectedMovements}
+                  trigger={
+                    <button
+                      className={badgeVariants({
+                        variant: "secondary",
+                        className:
+                          "cursor-pointer select-none focus:ring-offset-1",
+                      })}
+                    >
+                      <PlusIcon className="h-3 w-3" />
+                    </button>
+                  }
+                  toggleMovement={toggleMovement}
+                ></SelectMovements>
+              }
+              onRemoveMovement={function (movement: string): void {
+                throw new Error("Function not implemented.");
+              }}
+            />
           )}
           <div className="flex flex-row gap-2">
             <Button
@@ -62,11 +84,6 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
                 "Generate WOD"
               )}
             </Button>
-            <SelectMovements
-              disabled={workoutType === "random"}
-              selectedMovements={selectedMovements}
-              toggleMovement={toggleMovement}
-            />
           </div>
         </div>
       </CardContent>
