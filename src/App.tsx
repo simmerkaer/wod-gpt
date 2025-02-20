@@ -4,6 +4,7 @@ import FancyLoadingSpinner from "./components/FancyLoadingSpinner";
 import GeneratedWod from "./components/GeneratedWod";
 import MainMenu from "./components/MainMenu";
 import { ToggleDarkMode } from "./components/ToggleDarkMode";
+import { Toaster } from "./components/ui/toaster";
 import { WorkoutType } from "./components/WorkoutSelector";
 import { useMovements } from "./hooks/useExercises";
 import { useGenerateWod } from "./hooks/useWod";
@@ -48,6 +49,7 @@ function App() {
       <div className="flex flex-col items-center justify-center mt-8">
         <GeneratedWod wod={wod} />
       </div>
+      <Toaster />
     </div>
   );
 }
