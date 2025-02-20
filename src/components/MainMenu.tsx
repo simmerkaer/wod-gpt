@@ -14,6 +14,8 @@ import {
 } from "./ui/card";
 import { Separator } from "./ui/separator";
 import WorkoutSelector, { WorkoutType } from "./WorkoutSelector";
+import { Badge } from "./ui/badge";
+import SelectedMovements from "./SelectedMovements";
 
 interface MainMenuProps {
   isLoading: boolean;
@@ -45,6 +47,9 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
       <CardContent className="pb-2">
         <div className="flex-grow flex flex-col gap-2">
           <WorkoutSelector value={workoutType} onValueChange={setWorkoutType} />
+          {workoutType === "specified" && (
+            <SelectedMovements selectedMovements={selectedMovements} />
+          )}
           <div className="flex flex-row gap-2">
             <Button
               onClick={handleGenerateWod}

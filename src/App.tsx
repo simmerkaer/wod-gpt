@@ -32,7 +32,7 @@ function App() {
       <ToggleDarkMode />
       <div className={`flex-grow md:w-1/2 md:mx-auto`}>
         <div className="mx-auto flex w-full max-w-lg items-center justify-center">
-          <div className="relative z-10 flex w-full cursor-pointer items-center overflow-hidden rounded-xl p-[1.5px]">
+          <div className="relative z-10 flex w-full items-center overflow-hidden rounded-xl p-[1.5px]">
             <div
               className={`${isLoading ? "visible" : "invisible"} animate-rotate absolute inset-0 h-full w-full rounded-full bg-[conic-gradient(#0ea5e9_20deg,transparent_120deg)]`}
             ></div>
