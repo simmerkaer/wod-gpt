@@ -1,21 +1,19 @@
 import {
   Card,
-  CardHeader,
-  CardDescription,
   CardContent,
+  CardDescription,
+  CardHeader,
 } from "@/components/ui/card";
-import { Movement, MovementCatergory } from "@/lib/movementList";
 import { MovementId } from "@/lib/movementId";
+import movements, { MovementCatergory } from "@/lib/movementList";
 import * as React from "react";
 
 interface MovementListProps {
-  movements: Movement[];
   selectedMovements: MovementId[];
   handleToggleMovement: (movement: MovementId) => void;
 }
 
 const MovementList: React.FunctionComponent<MovementListProps> = ({
-  movements,
   selectedMovements,
   handleToggleMovement,
 }) => {

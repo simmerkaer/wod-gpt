@@ -67,9 +67,7 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
                   toggleMovement={toggleMovement}
                 ></SelectMovements>
               }
-              onRemoveMovement={function (movement: string): void {
-                console.log(movement);
-              }}
+              onRemoveMovement={toggleMovement}
             />
           )}
           <div className="flex flex-row gap-2">

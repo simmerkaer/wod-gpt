@@ -1,11 +1,13 @@
+import { MovementId } from "@/lib/movementId";
+import movements from "@/lib/movementList";
+import { XIcon } from "lucide-react";
 import * as React from "react";
 import { Badge } from "./ui/badge";
-import { XIcon } from "lucide-react";
 
 interface SelectedMovementsProps {
-  selectedMovements: string[];
+  selectedMovements: MovementId[];
   addMoreMovementsButton: React.ReactNode;
-  onRemoveMovement: (movement: string) => void;
+  onRemoveMovement: (movement: MovementId) => void;
 }
 
 const SelectedMovements: React.FunctionComponent<SelectedMovementsProps> = ({
@@ -22,7 +24,7 @@ const SelectedMovements: React.FunctionComponent<SelectedMovementsProps> = ({
           key={x}
           onClick={() => onRemoveMovement(x)}
         >
-          {x}
+          {movements.find((y) => y.id === x)?.name ?? "invalid movement name"}
           <XIcon className="h-3 w-3" />
         </Badge>
       ))}

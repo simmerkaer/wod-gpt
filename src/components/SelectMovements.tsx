@@ -1,5 +1,4 @@
 import { MovementId } from "@/lib/movementId";
-import movements from "@/lib/movementList";
 import * as React from "react";
 import MovementList from "./MovementList";
 import {
@@ -31,7 +30,6 @@ const SelectMovements: React.FunctionComponent<SelectMovementsProps> = ({
         </DrawerHeader>
         <ScrollArea className="h-[80vh]">
           <MovementList
-            movements={movements}
             selectedMovements={selectedMovements}
             handleToggleMovement={toggleMovement}
           />
