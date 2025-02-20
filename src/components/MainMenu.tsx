@@ -2,7 +2,9 @@ import { MovementId } from "@/lib/movementId";
 import { Loader2, PlusIcon } from "lucide-react";
 import * as React from "react";
 import GiveFeedback from "./GiveFeedback";
+import SelectedMovements from "./SelectedMovements";
 import SelectMovements from "./SelectMovements";
+import { badgeVariants } from "./ui/badge";
 import { Button } from "./ui/button";
 import {
   Card,
@@ -14,8 +16,6 @@ import {
 } from "./ui/card";
 import { Separator } from "./ui/separator";
 import WorkoutSelector, { WorkoutType } from "./WorkoutSelector";
-import { badgeVariants } from "./ui/badge";
-import SelectedMovements from "./SelectedMovements";
 
 interface MainMenuProps {
   isLoading: boolean;
@@ -68,7 +68,7 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
                 ></SelectMovements>
               }
               onRemoveMovement={function (movement: string): void {
-                throw new Error("Function not implemented.");
+                console.log(movement);
               }}
             />
           )}
