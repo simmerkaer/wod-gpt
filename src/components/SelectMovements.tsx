@@ -27,7 +27,12 @@ const SelectMovements: React.FunctionComponent<SelectMovementsProps> = ({
   return (
     <Drawer>
       <DrawerTrigger asChild>
-        <Button size="icon" disabled={disabled} variant="outline">
+        <Button
+          size="icon"
+          disabled={disabled}
+          variant="outline"
+          className={disabled ? "" : "border-[#0ea5e9]"}
+        >
           <Dumbbell />
         </Button>
       </DrawerTrigger>
