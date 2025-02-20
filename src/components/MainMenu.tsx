@@ -47,29 +47,28 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
       <CardContent className="pb-2">
         <div className="flex-grow flex flex-col gap-2">
           <WorkoutSelector value={workoutType} onValueChange={setWorkoutType} />
-          {workoutType === "specified" && (
-            <SelectedMovements
-              selectedMovements={selectedMovements}
-              addMoreMovementsButton={
-                <SelectMovements
-                  selectedMovements={selectedMovements}
-                  trigger={
-                    <button
-                      className={badgeVariants({
-                        variant: "secondary",
-                        className:
-                          "cursor-pointer select-none focus:ring-offset-1",
-                      })}
-                    >
-                      <PlusIcon className="h-3 w-3" />
-                    </button>
-                  }
-                  toggleMovement={toggleMovement}
-                ></SelectMovements>
-              }
-              onRemoveMovement={toggleMovement}
-            />
-          )}
+          <SelectedMovements
+            show={workoutType === "specified"}
+            selectedMovements={selectedMovements}
+            addMoreMovementsButton={
+              <SelectMovements
+                selectedMovements={selectedMovements}
+                trigger={
+                  <button
+                    className={badgeVariants({
+                      variant: "secondary",
+                      className:
+                        "cursor-pointer select-none focus:ring-offset-1",
+                    })}
+                  >
+                    <PlusIcon className="h-3 w-3" />
+                  </button>
+                }
+                toggleMovement={toggleMovement}
+              />
+            }
+            onRemoveMovement={toggleMovement}
+          />
           <div className="flex flex-row gap-2">
             <Button
               onClick={handleGenerateWod}
