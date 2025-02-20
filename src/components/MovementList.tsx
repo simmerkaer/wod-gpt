@@ -19,17 +19,20 @@ const MovementList: React.FunctionComponent<MovementListProps> = ({
   selectedMovements,
   handleToggleMovement,
 }) => {
-  const movementCategories: MovementCatergory[] = [
-    "bodyweight",
-    "weightlifting",
-    "kettlebell",
-    "gymnastics",
-    "box",
-    "cardio",
-    "odd_object",
-    "wall_ball",
-    "dumbbell",
-    "other_functional",
+  const movementCategories: {
+    category: MovementCatergory;
+    displayTitle: string;
+  }[] = [
+    { category: "bodyweight", displayTitle: "Bodyweight" },
+    { category: "weightlifting", displayTitle: "Weightlifting" },
+    { category: "kettlebell", displayTitle: "Kettlebell" },
+    { category: "gymnastics", displayTitle: "Gymnastics" },
+    { category: "box", displayTitle: "Box" },
+    { category: "cardio", displayTitle: "Cardio" },
+    { category: "odd_object", displayTitle: "Odd Object" },
+    { category: "wall_ball", displayTitle: "Wall Ball" },
+    { category: "dumbbell", displayTitle: "Dumbbell" },
+    { category: "other_functional", displayTitle: "Other Functional" },
   ];
 
   return (
@@ -43,13 +46,13 @@ const MovementList: React.FunctionComponent<MovementListProps> = ({
         <div className="flex items-center justify-center space-x-2">
           <div className="flex flex-wrap space-x-2 m-2">
             {movementCategories.map((category) => (
-              <div key={category} className="mb-6 w-full">
+              <div key={category.category} className="mb-6 w-full">
                 <h2 className="text-xl font-bold capitalize mb-2">
-                  {category.replace(/([A-Z])/g, " $1").trim()}
+                  {category.displayTitle}
                 </h2>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 w-full">
                   {movements
-                    .filter((x) => x.category === category)
+                    .filter((x) => x.category === category.category)
                     .map((movement) => (
                       <div
                         key={movement.id}

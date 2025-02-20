@@ -87,6 +87,8 @@ const movements: Movement[] = [
   },
 
   // Gymnastics Movements
+  { id: "wall_walk", name: "wall walks", category: "gymnastics" },
+
   { id: "handstand_walk", name: "handstand walks", category: "gymnastics" },
   {
     id: "bar_muscle_up",
@@ -133,7 +135,6 @@ const movements: Movement[] = [
 
   // Wall Ball Movements
   { id: "wall_ball_shot", name: "wall ball shots", category: "wall_ball" },
-  { id: "wall_walk", name: "wall walks", category: "wall_ball" },
 
   // Dumbbell Movements
   { id: "dumbbell_snatch", name: "dumbbell snatches", category: "dumbbell" },
