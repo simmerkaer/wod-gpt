@@ -1,3 +1,4 @@
+import { useToast } from "@/hooks/use-toast";
 import { ClipboardCopy } from "lucide-react";
 import React from "react";
 import { Button } from "./ui/button";
@@ -7,7 +8,12 @@ interface GeneratedWodProps {
 }
 
 const GeneratedWod: React.FunctionComponent<GeneratedWodProps> = ({ wod }) => {
+  const { toast } = useToast();
+
   const copyToClipboard = () => {
+    toast({
+      title: "Workout copied to clipboard 📋💪",
+    });
     navigator.clipboard.writeText(wod || "");
   };
 

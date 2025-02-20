@@ -1,5 +1,6 @@
 import { useState } from "react";
 import "./App.css";
+import FancyLoadingSpinner from "./components/FancyLoadingSpinner";
 import GeneratedWod from "./components/GeneratedWod";
 import MainMenu from "./components/MainMenu";
 import { ToggleDarkMode } from "./components/ToggleDarkMode";
@@ -30,23 +31,18 @@ function App() {
         {theme === "dark" ? <DarkBackground /> : <LightBackground />}
       </div>
       <ToggleDarkMode />
-      <div className={`flex-grow md:w-1/2 md:mx-auto`}>
+      <div className="flex-grow md:w-1/2 md:mx-auto">
         <div className="mx-auto flex w-full max-w-lg items-center justify-center">
-          <div className="relative z-10 flex w-full items-center overflow-hidden rounded-xl p-[1.5px]">
-            <div
-              className={`${isLoading ? "visible" : "invisible"} animate-rotate absolute inset-0 h-full w-full rounded-full bg-[conic-gradient(#0ea5e9_20deg,transparent_120deg)]`}
-            ></div>
-            <div className="relative z-20 flex w-full rounded-[0.60rem]">
-              <MainMenu
-                isLoading={isLoading}
-                workoutType={workoutType}
-                selectedMovements={selectedMovements}
-                handleGenerateWod={handleGenerateWod}
-                setWorkoutType={handleWorkoutChange}
-                toggleMovement={toggleMovement}
-              />
-            </div>
-          </div>
+          <FancyLoadingSpinner isLoading={isLoading}>
+            <MainMenu
+              isLoading={isLoading}
+              workoutType={workoutType}
+              selectedMovements={selectedMovements}
+              handleGenerateWod={handleGenerateWod}
+              setWorkoutType={handleWorkoutChange}
+              toggleMovement={toggleMovement}
+            />
+          </FancyLoadingSpinner>
         </div>
       </div>
       <div className="flex flex-col items-center justify-center mt-8">
