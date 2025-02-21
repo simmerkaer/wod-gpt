@@ -28,7 +28,7 @@ const SelectMovements: React.FunctionComponent<SelectMovementsProps> = ({
         <DrawerHeader>
           <DrawerTitle className="text-center">Movements</DrawerTitle>
         </DrawerHeader>
-        <ScrollArea className="h-[80vh]">
+        <ScrollArea className="overflow-y-auto">
           <MovementList
             selectedMovements={selectedMovements}
             handleToggleMovement={toggleMovement}
