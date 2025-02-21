@@ -48,7 +48,9 @@ const SelectMovements: React.FunctionComponent<SelectMovementsProps> = ({
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 w-full mt-4">
               {movements
-                .filter((movement) => movement.name.startsWith(search))
+                .filter((movement) =>
+                  movement.name.toLowerCase().startsWith(search.toLowerCase()),
+                )
                 .map((movement) => (
                   <ToggableMovement
                     movement={movement}
