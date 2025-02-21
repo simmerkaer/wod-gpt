@@ -31,7 +31,7 @@ const SelectMovements: React.FunctionComponent<SelectMovementsProps> = ({
       <DrawerTrigger asChild>{trigger}</DrawerTrigger>
       <DrawerContent>
         <DrawerHeader>
-          <DrawerTitle className="text-center">Movements</DrawerTitle>
+          <DrawerTitle className="text-center"></DrawerTitle>
         </DrawerHeader>
         <ScrollArea className="overflow-y-auto px-4">
           <Input

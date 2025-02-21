@@ -1,5 +1,5 @@
 import { MovementId } from "@/lib/movementId";
-import { Loader2, PlusIcon } from "lucide-react";
+import { Loader2, PlusIcon, ZapIcon } from "lucide-react";
 import * as React from "react";
 import GiveFeedback from "./GiveFeedback";
 import SelectedMovements from "./SelectedMovements";
@@ -78,7 +78,10 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
               {isLoading ? (
                 <Loader2 className="animate-spin" />
               ) : (
-                "Generate WOD"
+                <>
+                  <span>Generate WOD</span>
+                  <ZapIcon />
+                </>
               )}
             </Button>
           </div>

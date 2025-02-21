@@ -28,7 +28,7 @@ const WorkoutSelector: React.FunctionComponent<WorkoutSelectorProps> = ({
           value === "specified" ? "border border-[#0ea5e9]" : ""
         }`}
       >
-        <div className="text-xs">Specific movements</div>
+        <div className="text-xs">Select movements</div>
       </ToggleGroupItem>
     </ToggleGroup>
   );
