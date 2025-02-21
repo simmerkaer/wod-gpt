@@ -1,5 +1,7 @@
 # WOD-GPT
 
+![WOD-GPT](wod-gpt-image.png)
+
 An AI-powered crossfit workout generator that creates custom workouts based on your preferences.
 
 ## Frontend
