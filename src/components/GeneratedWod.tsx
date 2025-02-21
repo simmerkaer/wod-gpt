@@ -1,6 +1,7 @@
 import { useToast } from "@/hooks/use-toast";
 import { ClipboardCopy } from "lucide-react";
 import React from "react";
+import { Typewriter } from "./Typewriter";
 import { Button } from "./ui/button";
 
 interface GeneratedWodProps {
@@ -20,7 +21,7 @@ const GeneratedWod: React.FunctionComponent<GeneratedWodProps> = ({ wod }) => {
   if (wod)
     return (
       <div>
-        <pre className="text-left text-wrap">{wod}</pre>
+        <Typewriter text={wod} />
         <Button variant="outline" onClick={copyToClipboard} className="mt-10">
           <ClipboardCopy />
           Copy workout to clipboard
