@@ -21,8 +21,8 @@ interface FeedbackFormProps {
 }
 
 const formSchema = z.object({
-  email: z.string().optional().or(z.string().email()),
-  feedback: z.string().min(2).max(1000),
+  email: z.string().email().optional().nullable(),
+  feedback: z.string().min(2).max(3000),
 });
 
 export const FeedbackForm: React.FunctionComponent<FeedbackFormProps> = ({
@@ -34,8 +34,8 @@ export const FeedbackForm: React.FunctionComponent<FeedbackFormProps> = ({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: "",
-      feedback: "",
+      email: null,
+      feedback: undefined,
     },
   });
 

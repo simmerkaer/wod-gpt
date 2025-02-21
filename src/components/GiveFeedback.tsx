@@ -43,7 +43,7 @@ const GiveFeedback: React.FunctionComponent<GiveFeedbackProps> = () => {
         <DialogTrigger asChild>{renderButton()}</DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Edit profile</DialogTitle>
+            <DialogTitle>Provide feedback</DialogTitle>
             <DialogDescription>{description}</DialogDescription>
           </DialogHeader>
           <FeedbackForm isLoading={isLoading} giveFeedback={giveFeedback} />
