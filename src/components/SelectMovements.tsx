@@ -1,6 +1,8 @@
 import { MovementId } from "@/lib/movementId";
+import movements from "@/lib/movementList";
 import * as React from "react";
 import MovementList from "./MovementList";
+import ToggableMovement from "./ToggableMovement";
 import {
   Drawer,
   DrawerContent,
@@ -8,6 +10,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "./ui/drawer";
+import { Input } from "./ui/input";
 import { ScrollArea } from "./ui/scroll-area";
 
 interface SelectMovementsProps {
@@ -21,6 +24,8 @@ const SelectMovements: React.FunctionComponent<SelectMovementsProps> = ({
   trigger,
   toggleMovement,
 }) => {
+  const [search, setSearch] = React.useState("");
+
   return (
     <Drawer>
       <DrawerTrigger asChild>{trigger}</DrawerTrigger>
@@ -28,11 +33,31 @@ const SelectMovements: React.FunctionComponent<SelectMovementsProps> = ({
         <DrawerHeader>
           <DrawerTitle className="text-center">Movements</DrawerTitle>
         </DrawerHeader>
-        <ScrollArea className="overflow-y-auto">
-          <MovementList
-            selectedMovements={selectedMovements}
-            handleToggleMovement={toggleMovement}
+        <ScrollArea className="overflow-y-auto px-4">
+          <Input
+            className="mb-2"
+            placeholder="Search"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
           />
+          {search === "" ? (
+            <MovementList
+              selectedMovements={selectedMovements}
+              handleToggleMovement={toggleMovement}
+            />
+          ) : (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 w-full mt-4">
+              {movements
+                .filter((movement) => movement.name.startsWith(search))
+                .map((movement) => (
+                  <ToggableMovement
+                    movement={movement}
+                    selectedMovements={selectedMovements}
+                    handleToggleMovement={toggleMovement}
+                  />
+                ))}
+            </div>
+          )}
         </ScrollArea>
       </DrawerContent>
     </Drawer>
