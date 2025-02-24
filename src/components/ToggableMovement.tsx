@@ -16,11 +16,11 @@ const ToggableMovement: React.FunctionComponent<ToggableMovementProps> = ({
   return (
     <div
       key={movement.id}
-      className={`p-4 text-center rounded-lg cursor-pointer transition-all flex items-center justify-center text-sm sm:text-base font-medium
+      className={`p-4 text-center rounded-lg cursor-pointer transition-all flex items-center justify-center text-sm sm:text-base font-medium md:p-1
 ${
   selectedMovements.includes(movement.id)
     ? "bg-blue-500 text-white"
-    : "bg-gray-200 text-gray-800 hover:bg-gray-300"
+    : "bg-secondary text-primary hover:bg-gray-300"
 }`}
       onClick={() => handleToggleMovement(movement.id)}
     >
