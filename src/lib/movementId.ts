@@ -62,6 +62,7 @@ export type MovementId =
   | "sled_drag"
   | "farmer_carry"
   | "atlas_stone_lift"
+  | "tire_flip"
   // Wall Ball Movements
   | "wall_ball_shot"
   | "wall_walk"

@@ -132,6 +132,7 @@ const movements: Movement[] = [
   { id: "sled_drag", name: "sled drags", category: "odd_object" },
   { id: "farmer_carry", name: "farmer carries", category: "odd_object" },
   { id: "atlas_stone_lift", name: "atlas stone lifts", category: "odd_object" },
+  { id: "tire_flip", name: "tire flips", category: "odd_object" },
 
   // Wall Ball Movements
   { id: "wall_ball_shot", name: "wall ball shots", category: "wall_ball" },

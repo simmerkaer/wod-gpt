@@ -35,7 +35,7 @@ const GiveFeedback: React.FunctionComponent<GiveFeedbackProps> = () => {
   );
 
   const description =
-    "We are always looking to improve our workout generation. Please provide feedback below if you have any suggestions or issues.";
+    "We are always looking to improve our workout generation. Please provide feedback below if you have any suggestions or issues. Enter you email adress if you would like a message when feedback has been implemented.";
 
   if (isDesktop) {
     return (
