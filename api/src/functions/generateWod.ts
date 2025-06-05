@@ -25,25 +25,25 @@ export async function generateWod(
   const configuration: AzureClientOptions = {
     apiKey: openAiApiKey,
     endpoint: openAiUri,
-    apiVersion: "2024-08-01-preview",
+    apiVersion: "2024-12-01-preview",
   };
 
-  const openai = new AzureOpenAI(configuration);
+  const client = new AzureOpenAI(configuration);
 
   try {
     const body = await request.json();
 
     const prompt = wodGenerationPrompts(body["random"], body["exercises"]);
 
-    const generatedWorkoutResponse = await openai.chat.completions.create({
-      model: "o4-mini",
+    const generatedWorkoutResponse = await client.chat.completions.create({
+      model: "gpt-4.1",
       messages: [
         {
           role: "user",
           content: prompt,
         },
       ],
-      max_tokens: 1200,
+      max_tokens: 5000,
     });
 
     const workout = generatedWorkoutResponse.choices[0]!.message?.content;
