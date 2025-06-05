@@ -36,7 +36,7 @@ export async function generateWod(
     const prompt = wodGenerationPrompts(body["random"], body["exercises"]);
 
     const generatedWorkoutResponse = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
+      model: "o4-mini",
       messages: [
         {
           role: "user",
