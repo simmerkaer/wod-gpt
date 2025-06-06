@@ -29,7 +29,9 @@ const MovementList: React.FunctionComponent<MovementListProps> = ({
   ];
 
   // Function to get all movements in a category
-  const getMovementsInCategory = (category: MovementCatergory): MovementId[] => {
+  const getMovementsInCategory = (
+    category: MovementCatergory,
+  ): MovementId[] => {
     return movements
       .filter((movement) => movement.category === category)
       .map((movement) => movement.id);
@@ -39,7 +41,7 @@ const MovementList: React.FunctionComponent<MovementListProps> = ({
   const areAllMovementsSelected = (category: MovementCatergory): boolean => {
     const categoryMovements = getMovementsInCategory(category);
     return categoryMovements.every((movementId) =>
-      selectedMovements.includes(movementId)
+      selectedMovements.includes(movementId),
     );
   };
 
