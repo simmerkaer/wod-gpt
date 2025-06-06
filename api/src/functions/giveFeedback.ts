@@ -1,4 +1,4 @@
-import { app, HttpRequest, InvocationContext, output } from "@azure/functions";
+import { app, HttpRequest, InvocationContext } from "@azure/functions";
 
 import { EmailClient } from "@azure/communication-email";
 
@@ -8,12 +8,7 @@ interface CosmosFeedbackItem {
   email: string;
   feedback: string;
 }
-const sendToCosmosDb = output.cosmosDB({
-  databaseName: "wod-gpt",
-  containerName: "feedback",
-  createIfNotExists: false,
-  connection: "COSMOS_DB_CONNECTION_STRING",
-});
+
 export async function giveFeedback(
   request: HttpRequest,
   context: InvocationContext,
@@ -38,13 +33,10 @@ export async function giveFeedback(
       feedback,
     };
 
-    // Output to Database
-    context.extraOutputs.set(sendToCosmosDb, cosmosDoc);
-
     const emailClient = new EmailClient(process.env.EMAIL_CONNECTION_STRING);
     const emailMessage = {
       senderAddress:
-        "DoNotReply@7d11ab1a-f055-4d7b-97c3-6408dc888f60.azurecomm.net",
+        "DoNotReply@cfb782b4-b261-44b6-84df-c552ce46488d.azurecomm.net",
       content: {
         subject: "wod-gpt: Feedback Received",
         html: `
@@ -79,5 +71,4 @@ app.http("giveFeedback", {
   methods: ["POST"],
   authLevel: "anonymous",
   handler: giveFeedback,
-  extraOutputs: [sendToCosmosDb],
 });
