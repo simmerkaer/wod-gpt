@@ -5,7 +5,9 @@ import FormatSelector, { FormatType } from "./FormatSelector";
 import GiveFeedback from "./GiveFeedback";
 import SelectedMovements from "./SelectedMovements";
 import SelectMovements from "./SelectMovements";
-import SpecificFormatSelector, { WorkoutFormat } from "./SpecificFormatSelector";
+import SpecificFormatSelector, {
+  WorkoutFormat,
+} from "./SpecificFormatSelector";
 import { badgeVariants } from "./ui/badge";
 import { Button } from "./ui/button";
 import {
@@ -81,7 +83,10 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
           />
           <FormatSelector value={formatType} onValueChange={setFormatType} />
           {formatType === "specific" && (
-            <SpecificFormatSelector value={workoutFormat} onValueChange={setWorkoutFormat} />
+            <SpecificFormatSelector
+              value={workoutFormat}
+              onValueChange={setWorkoutFormat}
+            />
           )}
           <div className="flex flex-row gap-2">
             <Button

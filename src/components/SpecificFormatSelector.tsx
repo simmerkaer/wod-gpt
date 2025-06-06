@@ -6,7 +6,13 @@ interface SpecificFormatSelectorProps {
   onValueChange: (value: WorkoutFormat) => void;
 }
 
-export type WorkoutFormat = "amrap" | "emom" | "for_time" | "intervals" | "chipper" | "strength_metcon";
+export type WorkoutFormat =
+  | "amrap"
+  | "emom"
+  | "for_time"
+  | "intervals"
+  | "chipper"
+  | "strength_metcon";
 
 const containerVariants = {
   hidden: { opacity: 0, y: -20 },
@@ -17,17 +23,17 @@ const containerVariants = {
   },
 };
 
-const SpecificFormatSelector: React.FunctionComponent<SpecificFormatSelectorProps> = ({
-  value,
-  onValueChange,
-}) => {
+const SpecificFormatSelector: React.FunctionComponent<
+  SpecificFormatSelectorProps
+> = ({ value, onValueChange }) => {
   return (
-    <motion.div
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-    >
-      <ToggleGroup type="single" value={value} onValueChange={onValueChange} className="flex flex-wrap gap-1 w-full">
+    <motion.div variants={containerVariants} initial="hidden" animate="visible">
+      <ToggleGroup
+        type="single"
+        value={value}
+        onValueChange={onValueChange}
+        className="flex flex-wrap gap-1 w-full"
+      >
         <ToggleGroupItem
           value="amrap"
           aria-label="AMRAP"

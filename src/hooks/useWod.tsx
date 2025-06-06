@@ -1,15 +1,25 @@
-import { useState } from "react";
 import { FormatType } from "@/components/FormatSelector";
 import { WorkoutFormat } from "@/components/SpecificFormatSelector";
+import { useState } from "react";
 
 export const useGenerateWod = (): [
-  (random: boolean, exercises: string[], formatType: FormatType, workoutFormat?: WorkoutFormat) => void,
+  (
+    random: boolean,
+    exercises: string[],
+    formatType: FormatType,
+    workoutFormat?: WorkoutFormat,
+  ) => void,
   boolean,
   string | null,
 ] => {
   const [wod, setWod] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const fetchWod = (random: boolean, exercises: string[], formatType: FormatType, workoutFormat?: WorkoutFormat) => {
+  const fetchWod = (
+    random: boolean,
+    exercises: string[],
+    formatType: FormatType,
+    workoutFormat?: WorkoutFormat,
+  ) => {
     setIsLoading(true);
     const requestBody = {
       random: random,

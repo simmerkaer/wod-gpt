@@ -22,7 +22,12 @@ function App() {
   const { theme } = useTheme();
 
   const handleGenerateWod = () => {
-    fetchWod(workoutType === "random", selectedMovements, formatType, workoutFormat);
+    fetchWod(
+      workoutType === "random",
+      selectedMovements,
+      formatType,
+      workoutFormat,
+    );
   };
 
   const handleWorkoutChange = (type: WorkoutType) => {

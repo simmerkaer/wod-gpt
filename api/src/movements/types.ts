@@ -79,4 +79,10 @@ export type MovementId =
 
 export type FormatType = "random" | "specific";
 
-export type WorkoutFormat = "amrap" | "emom" | "for_time" | "intervals" | "chipper" | "strength_metcon";
+export type WorkoutFormat =
+  | "amrap"
+  | "emom"
+  | "for_time"
+  | "intervals"
+  | "chipper"
+  | "strength_metcon";

@@ -1,5 +1,5 @@
 import { movementIds } from "../movements/movements";
-import { MovementId, FormatType, WorkoutFormat } from "../movements/types";
+import { FormatType, MovementId, WorkoutFormat } from "../movements/types";
 
 export const wodGenerationPrompts = (
   random: boolean,
@@ -15,9 +15,10 @@ export const wodGenerationPrompts = (
         .join("\n");
 
   // Generate format-specific instructions
-  const formatInstructions = formatType === "specific" && workoutFormat 
-    ? getSpecificFormatInstructions(workoutFormat)
-    : getRandomFormatInstructions();
+  const formatInstructions =
+    formatType === "specific" && workoutFormat
+      ? getSpecificFormatInstructions(workoutFormat)
+      : getRandomFormatInstructions();
 
   return `
     You are a CrossFit programming generator. Your task is to design an effective and well-balanced CrossFit workout using only the following exercises:

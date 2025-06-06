@@ -34,10 +34,10 @@ export async function generateWod(
     const body = await request.json();
 
     const prompt = wodGenerationPrompts(
-      body["random"], 
-      body["exercises"], 
-      body["formatType"], 
-      body["workoutFormat"]
+      body["random"],
+      body["exercises"],
+      body["formatType"],
+      body["workoutFormat"],
     );
 
     const generatedWorkoutResponse = await client.chat.completions.create({
