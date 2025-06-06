@@ -76,3 +76,7 @@ export type MovementId =
   | "bear_crawl"
   | "burpee_box_jump_over"
   | "devils_press";
+
+export type FormatType = "random" | "specific";
+
+export type WorkoutFormat = "amrap" | "emom" | "for_time" | "intervals" | "chipper" | "strength_metcon";

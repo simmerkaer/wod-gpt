@@ -1,9 +1,11 @@
 import { MovementId } from "@/lib/movementId";
 import { Loader2, PlusIcon, ZapIcon } from "lucide-react";
 import * as React from "react";
+import FormatSelector, { FormatType } from "./FormatSelector";
 import GiveFeedback from "./GiveFeedback";
 import SelectedMovements from "./SelectedMovements";
 import SelectMovements from "./SelectMovements";
+import SpecificFormatSelector, { WorkoutFormat } from "./SpecificFormatSelector";
 import { badgeVariants } from "./ui/badge";
 import { Button } from "./ui/button";
 import {
@@ -20,18 +22,26 @@ import WorkoutSelector, { WorkoutType } from "./WorkoutSelector";
 interface MainMenuProps {
   isLoading: boolean;
   workoutType: WorkoutType;
+  formatType: FormatType;
+  workoutFormat: WorkoutFormat;
   selectedMovements: MovementId[];
   toggleMovement: (movement: MovementId) => void;
   setWorkoutType: (workoutType: WorkoutType) => void;
+  setFormatType: (formatType: FormatType) => void;
+  setWorkoutFormat: (workoutFormat: WorkoutFormat) => void;
   handleGenerateWod: () => void;
 }
 
 const MainMenu: React.FunctionComponent<MainMenuProps> = ({
   isLoading,
   workoutType,
+  formatType,
+  workoutFormat,
   selectedMovements,
   toggleMovement,
   setWorkoutType,
+  setFormatType,
+  setWorkoutFormat,
   handleGenerateWod,
 }) => {
   return (
@@ -69,6 +79,10 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
             }
             onRemoveMovement={toggleMovement}
           />
+          <FormatSelector value={formatType} onValueChange={setFormatType} />
+          {formatType === "specific" && (
+            <SpecificFormatSelector value={workoutFormat} onValueChange={setWorkoutFormat} />
+          )}
           <div className="flex flex-row gap-2">
             <Button
               onClick={handleGenerateWod}

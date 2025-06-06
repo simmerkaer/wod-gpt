@@ -33,7 +33,12 @@ export async function generateWod(
   try {
     const body = await request.json();
 
-    const prompt = wodGenerationPrompts(body["random"], body["exercises"]);
+    const prompt = wodGenerationPrompts(
+      body["random"], 
+      body["exercises"], 
+      body["formatType"], 
+      body["workoutFormat"]
+    );
 
     const generatedWorkoutResponse = await client.chat.completions.create({
       model: "gpt-4.1",

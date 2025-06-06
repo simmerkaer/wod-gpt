@@ -1,8 +1,10 @@
 import { useState } from "react";
 import "./App.css";
 import FancyLoadingSpinner from "./components/FancyLoadingSpinner";
+import { FormatType } from "./components/FormatSelector";
 import GeneratedWod from "./components/GeneratedWod";
 import MainMenu from "./components/MainMenu";
+import { WorkoutFormat } from "./components/SpecificFormatSelector";
 import { ToggleDarkMode } from "./components/ToggleDarkMode";
 import { Toaster } from "./components/ui/toaster";
 import { WorkoutType } from "./components/WorkoutSelector";
@@ -14,16 +16,28 @@ import { useTheme } from "./ThemeProvider";
 function App() {
   const { selectedMovements, toggleMovement } = useMovements();
   const [workoutType, setWorkoutType] = useState<WorkoutType>("random");
+  const [formatType, setFormatType] = useState<FormatType>("random");
+  const [workoutFormat, setWorkoutFormat] = useState<WorkoutFormat>("amrap");
   const [fetchWod, isLoading, wod] = useGenerateWod();
   const { theme } = useTheme();
 
   const handleGenerateWod = () => {
-    fetchWod(workoutType === "random", selectedMovements);
+    fetchWod(workoutType === "random", selectedMovements, formatType, workoutFormat);
   };
 
   const handleWorkoutChange = (type: WorkoutType) => {
     if (!type) return;
     setWorkoutType(type);
+  };
+
+  const handleFormatChange = (type: FormatType) => {
+    if (!type) return;
+    setFormatType(type);
+  };
+
+  const handleWorkoutFormatChange = (format: WorkoutFormat) => {
+    if (!format) return;
+    setWorkoutFormat(format);
   };
 
   return (
@@ -38,9 +52,13 @@ function App() {
             <MainMenu
               isLoading={isLoading}
               workoutType={workoutType}
+              formatType={formatType}
+              workoutFormat={workoutFormat}
               selectedMovements={selectedMovements}
               handleGenerateWod={handleGenerateWod}
               setWorkoutType={handleWorkoutChange}
+              setFormatType={handleFormatChange}
+              setWorkoutFormat={handleWorkoutFormatChange}
               toggleMovement={toggleMovement}
             />
           </FancyLoadingSpinner>
