@@ -44,7 +44,7 @@ const SelectedMovements: React.FunctionComponent<SelectedMovementsProps> = ({
             animate="visible"
           >
             <Badge
-              className="rounded-full pr-1 gap-1.5 cursor-pointer"
+              className="rounded-full pr-2 pl-3 py-1.5 gap-1.5 cursor-pointer text-sm"
               variant={"secondary"}
               onClick={() => onRemoveMovement(x)}
             >

@@ -82,7 +82,7 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
                       className={badgeVariants({
                         variant: "secondary",
                         className:
-                          "cursor-pointer select-none focus:ring-offset-1 hover:ring-1",
+                          "rounded-full pr-2 pl-3 py-1.5 gap-1.5 cursor-pointer !text-sm select-none focus:ring-offset-1 hover:ring-1",
                       })}
                     >
                       <PlusIcon className="h-3 w-3 mr-2" /> add movements
