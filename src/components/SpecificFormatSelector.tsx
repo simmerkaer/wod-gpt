@@ -32,12 +32,12 @@ const SpecificFormatSelector: React.FunctionComponent<
         type="single"
         value={value}
         onValueChange={onValueChange}
-        className="flex flex-wrap gap-1 w-full"
+        className="grid grid-cols-3 gap-2 w-full"
       >
         <ToggleGroupItem
           value="amrap"
           aria-label="AMRAP"
-          className={`text-xs flex-1 min-w-0 ${
+          className={`text-xs ${
             value === "amrap" ? "border border-[#0ea5e9]" : ""
           }`}
         >
@@ -46,7 +46,7 @@ const SpecificFormatSelector: React.FunctionComponent<
         <ToggleGroupItem
           value="emom"
           aria-label="EMOM"
-          className={`text-xs flex-1 min-w-0 ${
+          className={`text-xs ${
             value === "emom" ? "border border-[#0ea5e9]" : ""
           }`}
         >
@@ -55,7 +55,7 @@ const SpecificFormatSelector: React.FunctionComponent<
         <ToggleGroupItem
           value="for_time"
           aria-label="For Time"
-          className={`text-xs flex-1 min-w-0 ${
+          className={`text-xs ${
             value === "for_time" ? "border border-[#0ea5e9]" : ""
           }`}
         >
@@ -64,7 +64,7 @@ const SpecificFormatSelector: React.FunctionComponent<
         <ToggleGroupItem
           value="intervals"
           aria-label="Intervals"
-          className={`text-xs flex-1 min-w-0 ${
+          className={`text-xs ${
             value === "intervals" ? "border border-[#0ea5e9]" : ""
           }`}
         >
@@ -73,7 +73,7 @@ const SpecificFormatSelector: React.FunctionComponent<
         <ToggleGroupItem
           value="chipper"
           aria-label="Chipper"
-          className={`text-xs flex-1 min-w-0 ${
+          className={`text-xs ${
             value === "chipper" ? "border border-[#0ea5e9]" : ""
           }`}
         >
@@ -82,7 +82,7 @@ const SpecificFormatSelector: React.FunctionComponent<
         <ToggleGroupItem
           value="strength_metcon"
           aria-label="Strength + Metcon"
-          className={`text-xs flex-1 min-w-0 ${
+          className={`text-xs ${
             value === "strength_metcon" ? "border border-[#0ea5e9]" : ""
           }`}
         >

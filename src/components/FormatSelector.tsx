@@ -1,3 +1,4 @@
+import { Settings, Shuffle } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "./ui/toggle-group";
 
 interface FormatSelectorProps {
@@ -11,24 +12,29 @@ const FormatSelector: React.FunctionComponent<FormatSelectorProps> = ({
   onValueChange,
 }) => {
   return (
-    <ToggleGroup type="single" value={value} onValueChange={onValueChange}>
+    <ToggleGroup
+      type="single"
+      value={value}
+      onValueChange={onValueChange}
+      className="grid w-full grid-cols-2"
+    >
       <ToggleGroupItem
         value="random"
         aria-label="random format"
-        className={`flex-1 ${
-          value === "random" ? "border border-[#0ea5e9]" : ""
-        }`}
+        className="flex flex-col gap-2 p-4 h-auto data-[state=on]:bg-primary/10 data-[state=on]:border-primary"
       >
-        <div className="text-xs">Random format</div>
+        <Shuffle className="h-5 w-5" />
+        <div className="text-sm font-medium">Random</div>
+        <div className="text-xs text-muted-foreground">Surprise me</div>
       </ToggleGroupItem>
       <ToggleGroupItem
         value="specific"
         aria-label="specific format"
-        className={`flex-1  ${
-          value === "specific" ? "border border-[#0ea5e9]" : ""
-        }`}
+        className="flex flex-col gap-2 p-4 h-auto data-[state=on]:bg-primary/10 data-[state=on]:border-primary"
       >
-        <div className="text-xs">Specific format</div>
+        <Settings className="h-5 w-5" />
+        <div className="text-sm font-medium">Specific</div>
+        <div className="text-xs text-muted-foreground">Choose format type</div>
       </ToggleGroupItem>
     </ToggleGroup>
   );

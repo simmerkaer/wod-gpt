@@ -1,3 +1,4 @@
+import { Settings, Shuffle } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "./ui/toggle-group";
 
 interface WorkoutSelectorProps {
@@ -11,24 +12,33 @@ const WorkoutSelector: React.FunctionComponent<WorkoutSelectorProps> = ({
   onValueChange,
 }) => {
   return (
-    <ToggleGroup type="single" value={value} onValueChange={onValueChange}>
+    <ToggleGroup
+      type="single"
+      value={value}
+      onValueChange={onValueChange}
+      className="grid w-full grid-cols-2"
+    >
       <ToggleGroupItem
         value="random"
-        aria-label="specified"
-        className={`flex-1 ${
-          value === "random" ? "border border-[#0ea5e9]" : ""
-        }`}
+        aria-label="random movements"
+        className="flex flex-col gap-2 p-4 h-auto data-[state=on]:bg-primary/10 data-[state=on]:border-primary"
       >
-        <div className="text-xs">Random movements</div>
+        <Shuffle className="h-5 w-5" />
+        <div className="text-sm font-medium">Random</div>
+        <div className="text-xs text-muted-foreground">
+          Let AI pick movements
+        </div>
       </ToggleGroupItem>
       <ToggleGroupItem
         value="specified"
-        aria-label="specified"
-        className={`flex-1  ${
-          value === "specified" ? "border border-[#0ea5e9]" : ""
-        }`}
+        aria-label="specified movements"
+        className="flex flex-col gap-2 p-4 h-auto data-[state=on]:bg-primary/10 data-[state=on]:border-primary"
       >
-        <div className="text-xs">Select movements</div>
+        <Settings className="h-5 w-5" />
+        <div className="text-sm font-medium">Custom</div>
+        <div className="text-xs text-muted-foreground">
+          Choose your movements
+        </div>
       </ToggleGroupItem>
     </ToggleGroup>
   );

@@ -57,42 +57,71 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
         <CardDescription>Free AI driven crossfit workouts</CardDescription>
       </CardHeader>
       <CardContent className="pb-2">
-        <div className="flex-grow flex flex-col gap-2">
-          <WorkoutSelector value={workoutType} onValueChange={setWorkoutType} />
-          <SelectedMovements
-            show={workoutType === "specified"}
-            selectedMovements={selectedMovements}
-            addMoreMovementsButton={
-              <SelectMovements
-                selectedMovements={selectedMovements}
-                trigger={
-                  <button
-                    className={badgeVariants({
-                      variant: "secondary",
-                      className:
-                        "cursor-pointer select-none focus:ring-offset-1 hover:ring-1",
-                    })}
-                  >
-                    <PlusIcon className="h-3 w-3 mr-2" /> add more
-                  </button>
-                }
-                toggleMovement={toggleMovement}
-              />
-            }
-            onRemoveMovement={toggleMovement}
-          />
-          <FormatSelector value={formatType} onValueChange={setFormatType} />
-          {formatType === "specific" && (
-            <SpecificFormatSelector
-              value={workoutFormat}
-              onValueChange={setWorkoutFormat}
+        <div className="flex-grow flex flex-col gap-6">
+          {/* Movement Selection Section */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-3">
+              <div className="flex-1 h-px bg-border"></div>
+              <h3 className="text-sm font-medium text-muted-foreground text-center whitespace-nowrap px-2">
+                Movement Selection
+              </h3>
+              <div className="flex-1 h-px bg-border"></div>
+            </div>
+            <WorkoutSelector
+              value={workoutType}
+              onValueChange={setWorkoutType}
             />
-          )}
-          <div className="flex flex-row gap-2">
+            <SelectedMovements
+              show={workoutType === "specified"}
+              selectedMovements={selectedMovements}
+              addMoreMovementsButton={
+                <SelectMovements
+                  selectedMovements={selectedMovements}
+                  trigger={
+                    <button
+                      className={badgeVariants({
+                        variant: "secondary",
+                        className:
+                          "cursor-pointer select-none focus:ring-offset-1 hover:ring-1",
+                      })}
+                    >
+                      <PlusIcon className="h-3 w-3 mr-2" /> add movements
+                    </button>
+                  }
+                  toggleMovement={toggleMovement}
+                />
+              }
+              onRemoveMovement={toggleMovement}
+            />
+          </div>
+
+          {/* Workout Format Section */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-3">
+              <div className="flex-1 h-px bg-border"></div>
+              <h3 className="text-sm font-medium text-muted-foreground text-center whitespace-nowrap px-2">
+                Workout Format
+              </h3>
+              <div className="flex-1 h-px bg-border"></div>
+            </div>
+            <FormatSelector value={formatType} onValueChange={setFormatType} />
+            {formatType === "specific" && (
+              <div className="pl-2">
+                <SpecificFormatSelector
+                  value={workoutFormat}
+                  onValueChange={setWorkoutFormat}
+                />
+              </div>
+            )}
+          </div>
+
+          {/* Generate Button */}
+          <div className="pt-2">
             <Button
               onClick={handleGenerateWod}
-              className="w-full bg-gradient-to-r from-red-500 to-purple-600 align-middle flex-grow"
+              className="w-full bg-gradient-to-r from-red-500 to-purple-600 align-middle"
               disabled={isLoading}
+              size="lg"
             >
               {isLoading ? (
                 <Loader2 className="animate-spin" />
