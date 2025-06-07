@@ -38,6 +38,7 @@ export async function generateWod(
       body["exercises"],
       body["formatType"],
       body["workoutFormat"],
+      body["weightUnit"] || "kg", // Default to kg if not provided
     );
 
     const generatedWorkoutResponse = await client.chat.completions.create({

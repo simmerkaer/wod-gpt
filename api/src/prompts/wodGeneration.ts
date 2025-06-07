@@ -1,11 +1,17 @@
 import { movementIds } from "../movements/movements";
-import { FormatType, MovementId, WorkoutFormat } from "../movements/types";
+import {
+  FormatType,
+  MovementId,
+  WeightUnit,
+  WorkoutFormat,
+} from "../movements/types";
 
 export const wodGenerationPrompts = (
   random: boolean,
   providedMovementIds: MovementId[],
   formatType: FormatType,
   workoutFormat?: WorkoutFormat,
+  weightUnit: WeightUnit = "kg",
 ) => {
   const allowedMovements = random
     ? movementIds.map((x) => `- ${x}`).join("\n")
@@ -19,6 +25,11 @@ export const wodGenerationPrompts = (
     formatType === "specific" && workoutFormat
       ? getSpecificFormatInstructions(workoutFormat)
       : getRandomFormatInstructions();
+
+  const unitInstructions =
+    weightUnit === "lbs"
+      ? "- ALWAYS use imperial units (lbs, ft, in, etc.)."
+      : "- ALWAYS use metric units (kg, m, etc.).";
 
   return `
     You are a CrossFit programming generator. Your task is to design an effective and well-balanced CrossFit workout using only the following exercises:
@@ -140,7 +151,7 @@ export const wodGenerationPrompts = (
     - If the workout has multiple parts, label them as a), b), c), etc.  
     - Ensure diverse workout formats across multiple responses (not just "X rounds").  
     - ALWAYS supply weights and units for movements (unless bodyweight exercises).  
-    - ALWAYS use metric units (kg, m, etc.).  
+    ${unitInstructions}
     - ONLY use the provided movements (repeated below).  
 
     Movements to use:

@@ -19,6 +19,7 @@ import {
   CardTitle,
 } from "./ui/card";
 import { Separator } from "./ui/separator";
+import UnitSelector, { WeightUnit } from "./UnitSelector";
 import WorkoutSelector, { WorkoutType } from "./WorkoutSelector";
 
 interface MainMenuProps {
@@ -26,11 +27,13 @@ interface MainMenuProps {
   workoutType: WorkoutType;
   formatType: FormatType;
   workoutFormat: WorkoutFormat;
+  weightUnit: WeightUnit;
   selectedMovements: MovementId[];
   toggleMovement: (movement: MovementId) => void;
   setWorkoutType: (workoutType: WorkoutType) => void;
   setFormatType: (formatType: FormatType) => void;
   setWorkoutFormat: (workoutFormat: WorkoutFormat) => void;
+  setWeightUnit: (weightUnit: WeightUnit) => void;
   handleGenerateWod: () => void;
 }
 
@@ -39,11 +42,13 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
   workoutType,
   formatType,
   workoutFormat,
+  weightUnit,
   selectedMovements,
   toggleMovement,
   setWorkoutType,
   setFormatType,
   setWorkoutFormat,
+  setWeightUnit,
   handleGenerateWod,
 }) => {
   return (
@@ -113,6 +118,18 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
                 />
               </div>
             )}
+          </div>
+
+          {/* Weight Unit Section */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-3">
+              <div className="flex-1 h-px bg-border"></div>
+              <h3 className="text-sm font-medium text-muted-foreground text-center whitespace-nowrap px-2">
+                Weight Units
+              </h3>
+              <div className="flex-1 h-px bg-border"></div>
+            </div>
+            <UnitSelector value={weightUnit} onValueChange={setWeightUnit} />
           </div>
 
           {/* Generate Button */}

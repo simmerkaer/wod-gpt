@@ -1,5 +1,6 @@
 import { FormatType } from "@/components/FormatSelector";
 import { WorkoutFormat } from "@/components/SpecificFormatSelector";
+import { WeightUnit } from "@/components/UnitSelector";
 import { useState } from "react";
 
 export const useGenerateWod = (): [
@@ -7,7 +8,8 @@ export const useGenerateWod = (): [
     random: boolean,
     exercises: string[],
     formatType: FormatType,
-    workoutFormat?: WorkoutFormat,
+    workoutFormat: WorkoutFormat | undefined,
+    weightUnit: WeightUnit,
   ) => void,
   boolean,
   string | null,
@@ -18,7 +20,8 @@ export const useGenerateWod = (): [
     random: boolean,
     exercises: string[],
     formatType: FormatType,
-    workoutFormat?: WorkoutFormat,
+    workoutFormat: WorkoutFormat | undefined,
+    weightUnit: WeightUnit,
   ) => {
     setIsLoading(true);
     const requestBody = {
@@ -26,6 +29,7 @@ export const useGenerateWod = (): [
       exercises: exercises,
       formatType: formatType,
       workoutFormat: workoutFormat,
+      weightUnit: weightUnit,
     };
 
     fetch("/api/generateWod", {

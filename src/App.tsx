@@ -7,6 +7,7 @@ import MainMenu from "./components/MainMenu";
 import { WorkoutFormat } from "./components/SpecificFormatSelector";
 import { ToggleDarkMode } from "./components/ToggleDarkMode";
 import { Toaster } from "./components/ui/toaster";
+import { WeightUnit } from "./components/UnitSelector";
 import { WorkoutType } from "./components/WorkoutSelector";
 import { useMovements } from "./hooks/useExercises";
 import { useGenerateWod } from "./hooks/useWod";
@@ -18,6 +19,7 @@ function App() {
   const [workoutType, setWorkoutType] = useState<WorkoutType>("random");
   const [formatType, setFormatType] = useState<FormatType>("random");
   const [workoutFormat, setWorkoutFormat] = useState<WorkoutFormat>("amrap");
+  const [weightUnit, setWeightUnit] = useState<WeightUnit>("kg");
   const [fetchWod, isLoading, wod] = useGenerateWod();
   const { theme } = useTheme();
 
@@ -27,6 +29,7 @@ function App() {
       selectedMovements,
       formatType,
       workoutFormat,
+      weightUnit,
     );
   };
 
@@ -45,6 +48,11 @@ function App() {
     setWorkoutFormat(format);
   };
 
+  const handleWeightUnitChange = (unit: WeightUnit) => {
+    if (!unit) return;
+    setWeightUnit(unit);
+  };
+
   return (
     <div className="flex flex-col flex-grow">
       <div className="fixed left-0 top-0 -z-10 h-full w-full">
@@ -59,11 +67,13 @@ function App() {
               workoutType={workoutType}
               formatType={formatType}
               workoutFormat={workoutFormat}
+              weightUnit={weightUnit}
               selectedMovements={selectedMovements}
               handleGenerateWod={handleGenerateWod}
               setWorkoutType={handleWorkoutChange}
               setFormatType={handleFormatChange}
               setWorkoutFormat={handleWorkoutFormatChange}
+              setWeightUnit={handleWeightUnitChange}
               toggleMovement={toggleMovement}
             />
           </FancyLoadingSpinner>

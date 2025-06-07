@@ -86,3 +86,5 @@ export type WorkoutFormat =
   | "intervals"
   | "chipper"
   | "strength_metcon";
+
+export type WeightUnit = "kg" | "lbs";
