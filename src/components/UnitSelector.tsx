@@ -22,18 +22,18 @@ const UnitSelector: React.FunctionComponent<UnitSelectorProps> = ({
       <ToggleGroupItem
         value="kg"
         aria-label="Kilograms"
-        className="flex flex-col gap-2 p-4 h-auto data-[state=on]:bg-primary/10 data-[state=on]:border-primary"
+        className="flex flex-col gap-1.5 p-3 h-auto data-[state=on]:bg-primary/10 data-[state=on]:border-primary"
       >
-        <Scale className="h-5 w-5" />
+        <Scale className="h-4 w-4" />
         <div className="text-sm font-medium">Metric</div>
         <div className="text-xs text-muted-foreground">Kilograms (kg)</div>
       </ToggleGroupItem>
       <ToggleGroupItem
         value="lbs"
         aria-label="Pounds"
-        className="flex flex-col gap-2 p-4 h-auto data-[state=on]:bg-primary/10 data-[state=on]:border-primary"
+        className="flex flex-col gap-1.5 p-3 h-auto data-[state=on]:bg-primary/10 data-[state=on]:border-primary"
       >
-        <Weight className="h-5 w-5" />
+        <Weight className="h-4 w-4" />
         <div className="text-sm font-medium">Imperial</div>
         <div className="text-xs text-muted-foreground">Pounds (lbs)</div>
       </ToggleGroupItem>

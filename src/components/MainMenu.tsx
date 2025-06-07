@@ -62,10 +62,10 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
         <CardDescription>Free AI driven crossfit workouts</CardDescription>
       </CardHeader>
       <CardContent className="pb-2">
-        <div className="flex-grow flex flex-col gap-6">
+        <div className="flex-grow flex flex-col gap-4">
           {/* Movement Selection Section */}
-          <div className="space-y-3">
-            <div className="flex items-center gap-3">
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
               <div className="flex-1 h-px bg-border"></div>
               <h3 className="text-sm font-medium text-muted-foreground text-center whitespace-nowrap px-2">
                 Movement Selection
@@ -101,8 +101,8 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
           </div>
 
           {/* Workout Format Section */}
-          <div className="space-y-3">
-            <div className="flex items-center gap-3">
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
               <div className="flex-1 h-px bg-border"></div>
               <h3 className="text-sm font-medium text-muted-foreground text-center whitespace-nowrap px-2">
                 Workout Format
@@ -121,8 +121,8 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
           </div>
 
           {/* Weight Unit Section */}
-          <div className="space-y-3">
-            <div className="flex items-center gap-3">
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
               <div className="flex-1 h-px bg-border"></div>
               <h3 className="text-sm font-medium text-muted-foreground text-center whitespace-nowrap px-2">
                 Weight Units
@@ -133,7 +133,7 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
           </div>
 
           {/* Generate Button */}
-          <div className="pt-2">
+          <div className="pt-1">
             <Button
               onClick={handleGenerateWod}
               className="w-full bg-gradient-to-r from-red-500 to-purple-600 align-middle"

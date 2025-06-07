@@ -21,9 +21,9 @@ const WorkoutSelector: React.FunctionComponent<WorkoutSelectorProps> = ({
       <ToggleGroupItem
         value="random"
         aria-label="random movements"
-        className="flex flex-col gap-2 p-4 h-auto data-[state=on]:bg-primary/10 data-[state=on]:border-primary"
+        className="flex flex-col gap-1.5 p-3 h-auto data-[state=on]:bg-primary/10 data-[state=on]:border-primary"
       >
-        <Shuffle className="h-5 w-5" />
+        <Shuffle className="h-4 w-4" />
         <div className="text-sm font-medium">Random</div>
         <div className="text-xs text-muted-foreground">
           Let AI pick movements
@@ -32,9 +32,9 @@ const WorkoutSelector: React.FunctionComponent<WorkoutSelectorProps> = ({
       <ToggleGroupItem
         value="specified"
         aria-label="specified movements"
-        className="flex flex-col gap-2 p-4 h-auto data-[state=on]:bg-primary/10 data-[state=on]:border-primary"
+        className="flex flex-col gap-1.5 p-3 h-auto data-[state=on]:bg-primary/10 data-[state=on]:border-primary"
       >
-        <Settings className="h-5 w-5" />
+        <Settings className="h-4 w-4" />
         <div className="text-sm font-medium">Custom</div>
         <div className="text-xs text-muted-foreground">
           Choose your movements
