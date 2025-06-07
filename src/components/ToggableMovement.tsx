@@ -20,7 +20,7 @@ const ToggableMovement: React.FunctionComponent<ToggableMovementProps> = ({
 ${
   selectedMovements.includes(movement.id)
     ? "bg-blue-500 text-white"
-    : "bg-secondary text-primary hover:bg-gray-300"
+    : "bg-secondary text-primary"
 }`}
       onClick={() => handleToggleMovement(movement.id)}
     >
