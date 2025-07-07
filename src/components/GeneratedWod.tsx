@@ -22,7 +22,12 @@ const GeneratedWod: React.FunctionComponent<GeneratedWodProps> = ({ wod }) => {
     return (
       <div>
         <Typewriter text={wod} />
-        <Button variant="outline" onClick={copyToClipboard} className="mt-10">
+        <Button
+          id="gtm-generate-wod"
+          variant="outline"
+          onClick={copyToClipboard}
+          className="mt-10"
+        >
           <ClipboardCopy />
           Copy workout to clipboard
         </Button>
