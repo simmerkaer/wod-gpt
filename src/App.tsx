@@ -20,7 +20,8 @@ function App() {
   const [formatType, setFormatType] = useState<FormatType>("random");
   const [workoutFormat, setWorkoutFormat] = useState<WorkoutFormat>("amrap");
   const [weightUnit, setWeightUnit] = useState<WeightUnit>("kg");
-  const [fetchWod, { wod, timing, confidence, source, isLoading, error }] = useGenerateWod();
+  const [fetchWod, { wod, timing, confidence, isLoading, error }] =
+    useGenerateWod();
   const { theme } = useTheme();
 
   const handleGenerateWod = () => {
@@ -79,8 +80,8 @@ function App() {
           </FancyLoadingSpinner>
         </div>
         <div className="flex flex-col items-center justify-center mt-8">
-          <GeneratedWod 
-            wod={wod} 
+          <GeneratedWod
+            wod={wod}
             timing={timing}
             confidence={confidence}
             error={error}
