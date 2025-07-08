@@ -83,7 +83,6 @@ function App() {
             wod={wod} 
             timing={timing}
             confidence={confidence}
-            source={source}
             error={error}
           />
         </div>

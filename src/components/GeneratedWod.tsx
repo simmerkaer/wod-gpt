@@ -11,7 +11,6 @@ interface GeneratedWodProps {
   wod: string | null;
   timing: WorkoutTiming | null;
   confidence: number;
-  source: "ai" | "parsed" | "default";
   error: string | null;
 }
 
@@ -19,7 +18,6 @@ const GeneratedWod: React.FunctionComponent<GeneratedWodProps> = ({
   wod,
   timing,
   confidence,
-  source,
   error,
 }) => {
   const { toast } = useToast();
