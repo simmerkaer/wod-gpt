@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://wod-gpt.com/sitemap.xml
+
+# Block access to API endpoints (if exposed publicly)
+Disallow: /api/

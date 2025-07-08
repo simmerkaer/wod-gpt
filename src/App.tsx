@@ -60,8 +60,8 @@ function App() {
         {theme === "dark" ? <DarkBackground /> : <LightBackground />}
       </div>
       <ToggleDarkMode />
-      <div className="flex-grow md:w-1/2 md:mx-auto">
-        <div className="mx-auto flex w-full max-w-lg items-center justify-center">
+      <main className="flex-grow md:w-1/2 md:mx-auto">
+        <section className="mx-auto flex w-full max-w-lg items-center justify-center" aria-label="Workout Generator">
           <FancyLoadingSpinner isLoading={isLoading}>
             <MainMenu
               isLoading={isLoading}
@@ -78,16 +78,16 @@ function App() {
               toggleMovement={toggleMovement}
             />
           </FancyLoadingSpinner>
-        </div>
-        <div className="flex flex-col items-center justify-center mt-8">
+        </section>
+        <section className="flex flex-col items-center justify-center mt-8" aria-label="Generated Workout">
           <GeneratedWod
             wod={wod}
             timing={timing}
             confidence={confidence}
             error={error}
           />
-        </div>
-      </div>
+        </section>
+      </main>
       <Toaster />
     </div>
   );
