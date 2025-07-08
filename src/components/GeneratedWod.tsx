@@ -62,8 +62,42 @@ const GeneratedWod: React.FunctionComponent<GeneratedWodProps> = ({
     return (
       <>
         <div ref={workoutRef}>
-          <Typewriter text={wod} />
-          <div className="mt-10 flex gap-2">
+          {/* Timer Section - Always visible above workout */}
+          {timing && (
+            <div className="w-full max-w-2xl mb-8">
+              <Timer
+                type={timing.type === 'none' ? 'countdown' : timing.type}
+                initialMinutes={timing.duration}
+                intervalMinutes={
+                  timing.intervals?.work === 1 ? 1 : // EMOM case
+                  (timing.intervals?.work || 0) + (timing.intervals?.rest || 0) // Interval case (work + rest)
+                }
+                workoutText={wod || ''}
+                onFinish={() => {
+                  console.log('Workout timer finished!');
+                }}
+              />
+              
+              {/* Timer Quality Indicator */}
+              <div className="mt-4 text-center">
+                <div className="text-sm text-gray-500 dark:text-gray-400">
+                  {timing.description}
+                  {confidence < 0.8 && (
+                    <span className="ml-2 text-yellow-600 dark:text-yellow-400">
+                      ⚠️ Timer may need adjustment
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+          
+          <div className="flex justify-center">
+            <div className="text-left">
+              <Typewriter text={wod} />
+            </div>
+          </div>
+          <div className="mt-10 flex justify-center gap-2">
             <Button
               id="gtm-generate-wod"
               variant="outline"
@@ -124,7 +158,7 @@ const GeneratedWod: React.FunctionComponent<GeneratedWodProps> = ({
               )}
 
               {/* Workout Text Section */}
-              <div className="max-w-4xl w-full text-center flex-1 overflow-y-auto">
+              <div className="max-w-4xl w-full flex-1 overflow-y-auto flex justify-center">
                 <pre className="text-xl text-left text-wrap leading-relaxed">
                   {wod}
                 </pre>

@@ -54,7 +54,7 @@ const WorkoutLength: React.FunctionComponent<WorkoutLengthProps> = ({
             key={option.value}
             variant="ghost"
             className={cn(
-              "h-auto p-3 flex flex-col items-start text-left",
+              "h-auto p-3 flex flex-col items-center text-center",
               selectedLength === option.value && "bg-primary/10 border-primary",
             )}
             onClick={() => onLengthChange(option.value)}
