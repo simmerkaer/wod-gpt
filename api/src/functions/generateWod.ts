@@ -44,7 +44,9 @@ export async function generateWod(
       body["exercises"],
       body["formatType"],
       workoutFormat,
-      body["weightUnit"] || "kg"
+      body["weightUnit"] || "kg",
+      body["workoutLength"],
+      body["customMinutes"]
     );
 
     return {
@@ -77,7 +79,9 @@ async function generateStructuredWorkout(
   exercises: string[],
   formatType: string,
   workoutFormat: WorkoutFormat,
-  weightUnit: string
+  weightUnit: string,
+  workoutLength?: string,
+  customMinutes?: number
 ) {
   // Layer 1: Try OpenAI structured outputs (Primary)
   try {
@@ -88,7 +92,9 @@ async function generateStructuredWorkout(
       exercises as MovementId[],
       formatType as FormatType,
       workoutFormat,
-      weightUnit as WeightUnit
+      weightUnit as WeightUnit,
+      workoutLength,
+      customMinutes
     );
 
     const response = await client.chat.completions.create({
@@ -141,7 +147,9 @@ async function generateStructuredWorkout(
       exercises as MovementId[],
       formatType as FormatType,
       workoutFormat,
-      weightUnit as WeightUnit
+      weightUnit as WeightUnit,
+      workoutLength,
+      customMinutes
     );
 
     const response = await client.chat.completions.create({

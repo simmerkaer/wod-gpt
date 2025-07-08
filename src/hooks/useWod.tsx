@@ -1,6 +1,7 @@
 import { FormatType } from "@/components/FormatSelector";
 import { WorkoutFormat } from "@/components/SpecificFormatSelector";
 import { WeightUnit } from "@/components/UnitSelector";
+import { WorkoutLengthOption } from "@/components/WorkoutLength";
 import { useState } from "react";
 import { 
   WorkoutData, 
@@ -27,6 +28,8 @@ export const useGenerateWod = (): [
     formatType: FormatType,
     workoutFormat: WorkoutFormat | undefined,
     weightUnit: WeightUnit,
+    workoutLength: WorkoutLengthOption,
+    customMinutes: number,
   ) => void,
   UseWodResult,
 ] => {
@@ -42,6 +45,8 @@ export const useGenerateWod = (): [
     formatType: FormatType,
     workoutFormat: WorkoutFormat | undefined,
     weightUnit: WeightUnit,
+    workoutLength: WorkoutLengthOption,
+    customMinutes: number,
   ) => {
     setIsLoading(true);
     setError(null);
@@ -52,6 +57,8 @@ export const useGenerateWod = (): [
       formatType: formatType,
       workoutFormat: workoutFormat || 'amrap',
       weightUnit: weightUnit,
+      workoutLength: workoutLength,
+      customMinutes: customMinutes,
     };
 
     try {

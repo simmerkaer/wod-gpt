@@ -13,6 +13,8 @@ export const getStructuredPrompt = (
   formatType: FormatType,
   workoutFormat?: WorkoutFormat,
   weightUnit: WeightUnit = "kg",
+  workoutLength?: string,
+  customMinutes?: number,
 ) => {
   const allowedMovements = random
     ? movementIds.map((x) => `- ${x}`).join("\n")
@@ -30,6 +32,9 @@ export const getStructuredPrompt = (
     weightUnit === "lbs"
       ? "- ALWAYS use imperial units (lbs, ft, in, etc.)."
       : "- ALWAYS use metric units (kg, m, etc.).";
+
+  // Generate length-specific instructions
+  const lengthInstructions = getLengthInstructions(workoutLength, customMinutes);
 
   return `
 You are a CrossFit programming generator. You must return your response as a JSON object with the following structure:
@@ -76,6 +81,8 @@ RANDOM vs SPECIFIC FORMAT RULES:
 - When formatType is "specific": Use the exact format requested (can include Intervals, Strength+Metcon)
 
 ${formatInstructions}
+
+${lengthInstructions}
 
 Your task is to design an effective and well-balanced CrossFit workout using only the following exercises:
 
@@ -130,6 +137,8 @@ export const wodGenerationPrompts = (
   formatType: FormatType,
   workoutFormat?: WorkoutFormat,
   weightUnit: WeightUnit = "kg",
+  workoutLength?: string,
+  customMinutes?: number,
 ) => {
   const allowedMovements = random
     ? movementIds.map((x) => `- ${x}`).join("\n")
@@ -148,6 +157,9 @@ export const wodGenerationPrompts = (
     weightUnit === "lbs"
       ? "- ALWAYS use imperial units (lbs, ft, in, etc.)."
       : "- ALWAYS use metric units (kg, m, etc.).";
+
+  // Generate length-specific instructions
+  const lengthInstructions = getLengthInstructions(workoutLength, customMinutes);
 
   return `
     You are a CrossFit programming generator. Your task is to design an effective and well-balanced CrossFit workout using only the following exercises:
@@ -171,6 +183,8 @@ export const wodGenerationPrompts = (
     - Avoid random movement selection—workouts must have a clear structure.
 
     ${formatInstructions}
+
+    ${lengthInstructions}
 
     ### 3. Time Domain & Structure
     - Logical time domains based on intensity:
@@ -357,4 +371,54 @@ const getRandomFormatInstructions = (): string => {
     
     *⚠️ Ensure a variety of workout formats across multiple generated workouts.*
   `;
+};
+
+const getLengthInstructions = (workoutLength?: string, customMinutes?: number): string => {
+  if (!workoutLength) {
+    return "";
+  }
+
+  switch (workoutLength) {
+    case "short":
+      return `
+    ### WORKOUT LENGTH REQUIREMENTS - SHORT (5-12 MINUTES)
+    - **MANDATORY**: Create a workout that will take 5-12 minutes to complete
+    - Focus on high intensity, sprint-style workouts
+    - Use smaller rep counts and shorter distances
+    - AMRAP: 5-8 minutes, EMOM: 5-10 minutes, For Time: 5-12 minute cap
+    - Examples: "Fran" style (fast couplets), short bursts of intensity
+      `;
+    
+    case "medium":
+      return `
+    ### WORKOUT LENGTH REQUIREMENTS - MEDIUM (15-25 MINUTES)
+    - **MANDATORY**: Create a workout that will take 15-25 minutes to complete
+    - Classic CrossFit time domain - balanced intensity and volume
+    - AMRAP: 15-20 minutes, EMOM: 15-20 minutes, For Time: 15-25 minute cap
+    - Examples: "Helen", "Jackie" style workouts
+      `;
+    
+    case "long":
+      return `
+    ### WORKOUT LENGTH REQUIREMENTS - LONG (30-45 MINUTES)
+    - **MANDATORY**: Create a workout that will take 30-45 minutes to complete
+    - Focus on endurance and sustained effort
+    - Higher rep counts, longer distances, multiple parts
+    - AMRAP: 30-40 minutes, EMOM: 30-40 minutes, For Time: 30-45 minute cap
+    - Examples: "Murph", "Cindy" style workouts, multi-part sessions
+      `;
+    
+    case "custom":
+      const minutes = customMinutes || 20;
+      return `
+    ### WORKOUT LENGTH REQUIREMENTS - CUSTOM (${minutes} MINUTES)
+    - **MANDATORY**: Create a workout that will take approximately ${minutes} minutes to complete
+    - Adjust rep counts, rounds, and intensity to fit this exact timeframe
+    - For AMRAP: ${minutes} minutes, For EMOM: ${minutes} minutes, For Time: ${minutes} minute cap
+    - Scale difficulty and volume appropriately for this specific duration
+      `;
+    
+    default:
+      return "";
+  }
 };
