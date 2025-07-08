@@ -1,6 +1,6 @@
 import { useToast } from "@/hooks/use-toast";
 import { ClipboardCopy, Expand } from "lucide-react";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Typewriter } from "./Typewriter";
 import { Button } from "./ui/button";
 import { Dialog, DialogContent } from "./ui/dialog";
@@ -11,13 +11,20 @@ interface GeneratedWodProps {
   wod: string | null;
   timing: WorkoutTiming | null;
   confidence: number;
-  source: 'ai' | 'parsed' | 'default';
+  source: "ai" | "parsed" | "default";
   error: string | null;
 }
 
-const GeneratedWod: React.FunctionComponent<GeneratedWodProps> = ({ wod, timing, confidence, source, error }) => {
+const GeneratedWod: React.FunctionComponent<GeneratedWodProps> = ({
+  wod,
+  timing,
+  confidence,
+  source,
+  error,
+}) => {
   const { toast } = useToast();
   const [isFullScreen, setIsFullScreen] = useState(false);
+  const workoutRef = useRef<HTMLDivElement>(null);
 
   const copyToClipboard = () => {
     toast({
@@ -43,12 +50,22 @@ const GeneratedWod: React.FunctionComponent<GeneratedWodProps> = ({ wod, timing,
     };
   }, [isFullScreen]);
 
+  // Smooth scroll to workout when generated
+  useEffect(() => {
+    if (wod && workoutRef.current) {
+      workoutRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  }, [wod]);
+
   if (wod)
     return (
       <>
-        <div>
+        <div ref={workoutRef}>
           <Typewriter text={wod} />
-          <div className="mt-10 flex gap-4">
+          <div className="mt-10 flex gap-2">
             <Button
               id="gtm-generate-wod"
               variant="outline"
@@ -57,10 +74,7 @@ const GeneratedWod: React.FunctionComponent<GeneratedWodProps> = ({ wod, timing,
               <ClipboardCopy />
               Copy workout to clipboard
             </Button>
-            <Button
-              variant="outline"
-              onClick={toggleFullScreen}
-            >
+            <Button variant="outline" onClick={toggleFullScreen}>
               <Expand />
               Full Screen
             </Button>
@@ -74,18 +88,20 @@ const GeneratedWod: React.FunctionComponent<GeneratedWodProps> = ({ wod, timing,
               {timing && (
                 <div className="w-full max-w-2xl">
                   <Timer
-                    type={timing.type === 'none' ? 'countdown' : timing.type}
+                    type={timing.type === "none" ? "countdown" : timing.type}
                     initialMinutes={timing.duration}
                     intervalMinutes={
-                      timing.intervals?.work === 1 ? 1 : // EMOM case
-                      (timing.intervals?.work || 0) + (timing.intervals?.rest || 0) // Interval case (work + rest)
+                      timing.intervals?.work === 1
+                        ? 1 // EMOM case
+                        : (timing.intervals?.work || 0) +
+                          (timing.intervals?.rest || 0) // Interval case (work + rest)
                     }
-                    workoutText={wod || ''}
+                    workoutText={wod || ""}
                     onFinish={() => {
-                      console.log('Workout timer finished!');
+                      console.log("Workout timer finished!");
                     }}
                   />
-                  
+
                   {/* Timer Quality Indicator */}
                   <div className="mt-4 text-center">
                     <div className="text-sm text-gray-500 dark:text-gray-400">
@@ -99,7 +115,7 @@ const GeneratedWod: React.FunctionComponent<GeneratedWodProps> = ({ wod, timing,
                   </div>
                 </div>
               )}
-              
+
               {/* Error Display */}
               {error && (
                 <div className="w-full max-w-2xl p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
@@ -108,7 +124,7 @@ const GeneratedWod: React.FunctionComponent<GeneratedWodProps> = ({ wod, timing,
                   </div>
                 </div>
               )}
-              
+
               {/* Workout Text Section */}
               <div className="max-w-4xl w-full text-center flex-1 overflow-y-auto">
                 <pre className="text-xl text-left text-wrap leading-relaxed">

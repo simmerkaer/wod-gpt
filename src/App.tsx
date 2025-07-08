@@ -78,15 +78,15 @@ function App() {
             />
           </FancyLoadingSpinner>
         </div>
-      </div>
-      <div className="flex flex-col items-center justify-center mt-8">
-        <GeneratedWod 
-          wod={wod} 
-          timing={timing}
-          confidence={confidence}
-          source={source}
-          error={error}
-        />
+        <div className="flex flex-col items-center justify-center mt-8">
+          <GeneratedWod 
+            wod={wod} 
+            timing={timing}
+            confidence={confidence}
+            source={source}
+            error={error}
+          />
+        </div>
       </div>
       <Toaster />
     </div>
