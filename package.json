@@ -4,7 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "start": "swa start http://localhost:5173 --run \"npm run dev\" --api-location ./api",
+    "start": "npm run build:api && swa start http://localhost:5173 --run \"npm run dev\" --api-location ./api",
+    "build:api": "cd api && npm run build",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
