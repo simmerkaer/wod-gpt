@@ -4,6 +4,7 @@ import {
   MovementId,
   WeightUnit,
   WorkoutFormat,
+  WorkoutIntent,
 } from "../movements/types";
 
 // Structured prompt for JSON output
@@ -15,6 +16,7 @@ export const getStructuredPrompt = (
   weightUnit: WeightUnit = "kg",
   workoutLength?: string,
   customMinutes?: number,
+  workoutIntent?: WorkoutIntent,
 ) => {
   const allowedMovements = random
     ? movementIds.map((x) => `- ${x}`).join("\n")
@@ -35,6 +37,9 @@ export const getStructuredPrompt = (
 
   // Generate length-specific instructions
   const lengthInstructions = getLengthInstructions(workoutLength, customMinutes);
+
+  // Generate intent-specific instructions
+  const intentInstructions = getIntentInstructions(workoutIntent);
 
   return `
 You are a CrossFit programming generator. You must return your response as a JSON object with the following structure:
@@ -83,6 +88,8 @@ RANDOM vs SPECIFIC FORMAT RULES:
 ${formatInstructions}
 
 ${lengthInstructions}
+
+${intentInstructions}
 
 Your task is to design an effective and well-balanced CrossFit workout using only the following exercises:
 
@@ -139,6 +146,7 @@ export const wodGenerationPrompts = (
   weightUnit: WeightUnit = "kg",
   workoutLength?: string,
   customMinutes?: number,
+  workoutIntent?: WorkoutIntent,
 ) => {
   const allowedMovements = random
     ? movementIds.map((x) => `- ${x}`).join("\n")
@@ -160,6 +168,9 @@ export const wodGenerationPrompts = (
 
   // Generate length-specific instructions
   const lengthInstructions = getLengthInstructions(workoutLength, customMinutes);
+
+  // Generate intent-specific instructions
+  const intentInstructions = getIntentInstructions(workoutIntent);
 
   return `
     You are a CrossFit programming generator. Your task is to design an effective and well-balanced CrossFit workout using only the following exercises:
@@ -185,6 +196,8 @@ export const wodGenerationPrompts = (
     ${formatInstructions}
 
     ${lengthInstructions}
+
+    ${intentInstructions}
 
     ### 3. Time Domain & Structure
     - Logical time domains based on intensity:
@@ -416,6 +429,95 @@ const getLengthInstructions = (workoutLength?: string, customMinutes?: number): 
     - Adjust rep counts, rounds, and intensity to fit this exact timeframe
     - For AMRAP: ${minutes} minutes, For EMOM: ${minutes} minutes, For Time: ${minutes} minute cap
     - Scale difficulty and volume appropriately for this specific duration
+      `;
+    
+    default:
+      return "";
+  }
+};
+
+const getIntentInstructions = (workoutIntent?: WorkoutIntent): string => {
+  if (!workoutIntent || workoutIntent === "general_fitness") {
+    return `
+    ### WORKOUT INTENT - GENERAL FITNESS
+    - Create a balanced workout suitable for general conditioning
+    - Mix of strength, cardio, and skill elements
+    - Moderate intensity that builds overall fitness
+    - Standard rep ranges and time domains
+      `;
+  }
+
+  switch (workoutIntent) {
+    case "strength":
+      return `
+    ### WORKOUT INTENT - STRENGTH BUILDING
+    - **MANDATORY**: Emphasize heavy compound movements and strength development
+    - Use lower rep ranges (1-8 reps) with higher weights
+    - Include barbell movements: deadlifts, squats, presses, cleans
+    - Longer rest periods between sets (2-3+ minutes for strength portions)
+    - Focus on progressive overload and strength gains
+    - If using Strength+Metcon format, make strength portion substantial
+    - Rep ranges: 3-5 for heavy strength, 5-8 for strength endurance
+      `;
+    
+    case "endurance":
+      return `
+    ### WORKOUT INTENT - ENDURANCE/CONDITIONING
+    - **MANDATORY**: Focus on aerobic capacity and cardiovascular conditioning
+    - Longer time domains (20+ minutes) with sustained effort
+    - Emphasize cardio movements: running, rowing, biking, double unders
+    - Higher rep ranges with moderate weights
+    - Steady-state efforts or longer intervals with shorter rest
+    - Build aerobic base and metabolic conditioning
+    - Avoid overly heavy weights that limit movement continuity
+      `;
+    
+    case "fat_loss":
+      return `
+    ### WORKOUT INTENT - FAT LOSS/HIIT
+    - **MANDATORY**: Maximize caloric expenditure and metabolic stress
+    - High intensity intervals with minimal rest periods
+    - Compound movements that engage multiple muscle groups
+    - Fast-paced circuits and AMRAP formats preferred
+    - Rep ranges that maintain high heart rate (8-20+ reps)
+    - Include explosive movements: burpees, thrusters, kettlebell swings
+    - Short, intense time domains with maximum effort output
+      `;
+    
+    case "skill_development":
+      return `
+    ### WORKOUT INTENT - SKILL DEVELOPMENT
+    - **MANDATORY**: Focus on technical movements and skill progression
+    - Include gymnastics movements: handstand pushups, muscle ups, rope climbs
+    - Lower volume to allow focus on form and technique
+    - Practice-friendly rep ranges (3-10 reps for technical movements)
+    - Allow adequate rest for skill work quality
+    - Mix skill practice with conditioning that supports skill development
+    - Emphasize movement quality over intensity
+      `;
+    
+    case "recovery":
+      return `
+    ### WORKOUT INTENT - RECOVERY/ACTIVE REST
+    - **MANDATORY**: Create a low-intensity, restorative workout
+    - Use lighter weights and higher rep ranges (15-30+ reps)
+    - Include mobility-friendly movements and longer, slower efforts
+    - Avoid high-impact or explosive movements
+    - Focus on movement quality and blood flow
+    - Longer time domains with conversational pace
+    - Emphasize bodyweight movements and light resistance
+      `;
+    
+    case "competition_prep":
+      return `
+    ### WORKOUT INTENT - COMPETITION PREPARATION
+    - **MANDATORY**: Design sport-specific, high-intensity training
+    - Include advanced movements and competition-style formats
+    - High intensity with competition-level demands
+    - Mix of time domains to prepare for various challenges
+    - Include complex movements: snatches, muscle ups, handstand walks
+    - Simulate competition stress with challenging rep schemes
+    - Focus on mental toughness and performance under pressure
       `;
     
     default:

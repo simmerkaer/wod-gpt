@@ -6,7 +6,7 @@ import {
 } from "@azure/functions";
 import { AzureClientOptions, AzureOpenAI } from "openai";
 import { wodGenerationPrompts, getStructuredPrompt } from "../prompts/wodGeneration";
-import { WorkoutFormat, MovementId, FormatType, WeightUnit } from "../movements/types";
+import { WorkoutFormat, MovementId, FormatType, WeightUnit, WorkoutIntent } from "../movements/types";
 
 export async function generateWod(
   request: HttpRequest,
@@ -46,7 +46,8 @@ export async function generateWod(
       workoutFormat,
       body["weightUnit"] || "kg",
       body["workoutLength"],
-      body["customMinutes"]
+      body["customMinutes"],
+      body["workoutIntent"] || "general_fitness"
     );
 
     return {
@@ -81,7 +82,8 @@ async function generateStructuredWorkout(
   workoutFormat: WorkoutFormat,
   weightUnit: string,
   workoutLength?: string,
-  customMinutes?: number
+  customMinutes?: number,
+  workoutIntent?: WorkoutIntent
 ) {
   // Layer 1: Try OpenAI structured outputs (Primary)
   try {
@@ -94,7 +96,8 @@ async function generateStructuredWorkout(
       workoutFormat,
       weightUnit as WeightUnit,
       workoutLength,
-      customMinutes
+      customMinutes,
+      workoutIntent
     );
 
     const response = await client.chat.completions.create({
@@ -149,7 +152,8 @@ async function generateStructuredWorkout(
       workoutFormat,
       weightUnit as WeightUnit,
       workoutLength,
-      customMinutes
+      customMinutes,
+      workoutIntent
     );
 
     const response = await client.chat.completions.create({

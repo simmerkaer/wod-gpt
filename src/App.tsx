@@ -10,6 +10,7 @@ import { Toaster } from "./components/ui/toaster";
 import { WeightUnit } from "./components/UnitSelector";
 import { WorkoutType } from "./components/WorkoutSelector";
 import { WorkoutLengthOption } from "./components/WorkoutLength";
+import { WorkoutIntent } from "./components/WorkoutIntent";
 import { useMovements } from "./hooks/useExercises";
 import { useGenerateWod } from "./hooks/useWod";
 import { DarkBackground, LightBackground } from "./lib/backgrounds";
@@ -24,6 +25,7 @@ function App() {
   const [workoutLength, setWorkoutLength] =
     useState<WorkoutLengthOption>("medium");
   const [customMinutes, setCustomMinutes] = useState<number>(20);
+  const [workoutIntent, setWorkoutIntent] = useState<WorkoutIntent>("general_fitness");
   const [fetchWod, { wod, timing, confidence, isLoading, error }] =
     useGenerateWod();
   const { theme } = useTheme();
@@ -37,6 +39,7 @@ function App() {
       weightUnit,
       workoutLength,
       customMinutes,
+      workoutIntent,
     );
   };
 
@@ -69,6 +72,11 @@ function App() {
     setCustomMinutes(minutes);
   };
 
+  const handleWorkoutIntentChange = (intent: WorkoutIntent) => {
+    if (!intent) return;
+    setWorkoutIntent(intent);
+  };
+
   return (
     <div className="flex flex-col flex-grow">
       <div className="fixed left-0 top-0 -z-10 h-full w-full">
@@ -88,6 +96,7 @@ function App() {
                 weightUnit={weightUnit}
                 workoutLength={workoutLength}
                 customMinutes={customMinutes}
+                workoutIntent={workoutIntent}
                 selectedMovements={selectedMovements}
                 handleGenerateWod={handleGenerateWod}
                 setWorkoutType={handleWorkoutChange}
@@ -96,6 +105,7 @@ function App() {
                 setWeightUnit={handleWeightUnitChange}
                 setWorkoutLength={handleWorkoutLengthChange}
                 setCustomMinutes={handleCustomMinutesChange}
+                setWorkoutIntent={handleWorkoutIntentChange}
                 toggleMovement={toggleMovement}
               />
             </FancyLoadingSpinner>
@@ -130,6 +140,7 @@ function App() {
                 weightUnit={weightUnit}
                 workoutLength={workoutLength}
                 customMinutes={customMinutes}
+                workoutIntent={workoutIntent}
                 selectedMovements={selectedMovements}
                 handleGenerateWod={handleGenerateWod}
                 setWorkoutType={handleWorkoutChange}
@@ -138,6 +149,7 @@ function App() {
                 setWeightUnit={handleWeightUnitChange}
                 setWorkoutLength={handleWorkoutLengthChange}
                 setCustomMinutes={handleCustomMinutesChange}
+                setWorkoutIntent={handleWorkoutIntentChange}
                 toggleMovement={toggleMovement}
               />
             </FancyLoadingSpinner>

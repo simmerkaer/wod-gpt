@@ -22,6 +22,7 @@ import { Separator } from "./ui/separator";
 import UnitSelector, { WeightUnit } from "./UnitSelector";
 import WorkoutSelector, { WorkoutType } from "./WorkoutSelector";
 import WorkoutLength, { WorkoutLengthOption } from "./WorkoutLength";
+import WorkoutIntentSelector, { WorkoutIntent } from "./WorkoutIntent";
 
 interface MainMenuProps {
   isLoading: boolean;
@@ -31,6 +32,7 @@ interface MainMenuProps {
   weightUnit: WeightUnit;
   workoutLength: WorkoutLengthOption;
   customMinutes: number;
+  workoutIntent: WorkoutIntent;
   selectedMovements: MovementId[];
   toggleMovement: (movement: MovementId) => void;
   setWorkoutType: (workoutType: WorkoutType) => void;
@@ -39,6 +41,7 @@ interface MainMenuProps {
   setWeightUnit: (weightUnit: WeightUnit) => void;
   setWorkoutLength: (workoutLength: WorkoutLengthOption) => void;
   setCustomMinutes: (minutes: number) => void;
+  setWorkoutIntent: (workoutIntent: WorkoutIntent) => void;
   handleGenerateWod: () => void;
 }
 
@@ -50,6 +53,7 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
   weightUnit,
   workoutLength,
   customMinutes,
+  workoutIntent,
   selectedMovements,
   toggleMovement,
   setWorkoutType,
@@ -58,6 +62,7 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
   setWeightUnit,
   setWorkoutLength,
   setCustomMinutes,
+  setWorkoutIntent,
   handleGenerateWod,
 }) => {
   return (
@@ -106,6 +111,21 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
                 />
               }
               onRemoveMovement={toggleMovement}
+            />
+          </div>
+
+          {/* Workout Intent Section */}
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <div className="flex-1 h-px bg-border"></div>
+              <h3 className="text-sm font-medium text-muted-foreground text-center whitespace-nowrap px-2">
+                Workout Intent
+              </h3>
+              <div className="flex-1 h-px bg-border"></div>
+            </div>
+            <WorkoutIntentSelector
+              value={workoutIntent}
+              onValueChange={setWorkoutIntent}
             />
           </div>
 

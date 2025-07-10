@@ -2,6 +2,7 @@ import { FormatType } from "@/components/FormatSelector";
 import { WorkoutFormat } from "@/components/SpecificFormatSelector";
 import { WeightUnit } from "@/components/UnitSelector";
 import { WorkoutLengthOption } from "@/components/WorkoutLength";
+import { WorkoutIntent } from "@/components/WorkoutIntent";
 import { useState } from "react";
 import { 
   WorkoutData, 
@@ -30,6 +31,7 @@ export const useGenerateWod = (): [
     weightUnit: WeightUnit,
     workoutLength: WorkoutLengthOption,
     customMinutes: number,
+    workoutIntent: WorkoutIntent,
   ) => void,
   UseWodResult,
 ] => {
@@ -47,6 +49,7 @@ export const useGenerateWod = (): [
     weightUnit: WeightUnit,
     workoutLength: WorkoutLengthOption,
     customMinutes: number,
+    workoutIntent: WorkoutIntent,
   ) => {
     setIsLoading(true);
     setError(null);
@@ -59,6 +62,7 @@ export const useGenerateWod = (): [
       weightUnit: weightUnit,
       workoutLength: workoutLength,
       customMinutes: customMinutes,
+      workoutIntent: workoutIntent,
     };
 
     try {

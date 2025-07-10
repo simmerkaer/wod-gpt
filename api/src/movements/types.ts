@@ -88,3 +88,12 @@ export type WorkoutFormat =
   | "strength_metcon";
 
 export type WeightUnit = "kg" | "lbs";
+
+export type WorkoutIntent = 
+  | "strength"
+  | "endurance" 
+  | "fat_loss"
+  | "skill_development"
+  | "recovery"
+  | "general_fitness"
+  | "competition_prep";
