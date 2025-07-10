@@ -6,12 +6,139 @@ import {
   WorkoutFormat,
 } from "../movements/types";
 
+// Structured prompt for JSON output
+export const getStructuredPrompt = (
+  random: boolean,
+  providedMovementIds: MovementId[],
+  formatType: FormatType,
+  workoutFormat?: WorkoutFormat,
+  weightUnit: WeightUnit = "kg",
+  workoutLength?: string,
+  customMinutes?: number,
+) => {
+  const allowedMovements = random
+    ? movementIds.map((x) => `- ${x}`).join("\n")
+    : movementIds
+        .filter((x) => providedMovementIds.includes(x))
+        .map((x) => `- ${x}`)
+        .join("\n");
+
+  const formatInstructions =
+    formatType === "specific" && workoutFormat
+      ? getSpecificFormatInstructions(workoutFormat)
+      : getRandomFormatInstructions();
+
+  const unitInstructions =
+    weightUnit === "lbs"
+      ? "- ALWAYS use imperial units (lbs, ft, in, etc.)."
+      : "- ALWAYS use metric units (kg, m, etc.).";
+
+  // Generate length-specific instructions
+  const lengthInstructions = getLengthInstructions(workoutLength, customMinutes);
+
+  return `
+You are a CrossFit programming generator. You must return your response as a JSON object with the following structure:
+
+{
+  "workout": {
+    "text": "the complete workout description",
+    "format": "amrap|emom|for_time|chipper" (when random) OR "amrap|emom|for_time|intervals|chipper|strength_metcon" (when specific),
+    "difficulty": "beginner|intermediate|advanced"
+  },
+  "timing": {
+    "type": "countdown|countup|interval|none",
+    "duration": <number in minutes>,
+    "intervals": {
+      "work": <work period in minutes>,
+      "rest": <rest period in minutes>,
+      "rounds": <number of rounds>
+    },
+    "timeCapMinutes": <optional time cap in minutes>,
+    "description": "human readable timing description"
+  },
+  "metadata": {
+    "movements": ["list", "of", "movements", "used"],
+    "estimatedCalories": <optional estimated calories>,
+    "equipment": ["optional", "equipment", "list"],
+    "scalingOptions": ["optional", "scaling", "suggestions"]
+  }
+}
+
+CRITICAL TIMING RULES:
+- AMRAP: type="countdown", duration=workout time (8-25 minutes), description="X-Minute AMRAP"
+- EMOM: type="interval", intervals={work: 1, rest: 0, rounds: total_minutes}, description="X-Minute EMOM" 
+- For Time: type="countup", duration=0, timeCapMinutes=reasonable_cap, description="For Time (X min cap)"
+- Intervals: type="interval", intervals={work: work_mins, rest: rest_mins, rounds: num_rounds}, description="X Rounds (Y min work, Z min rest)"
+- Chipper: type="countup", duration=0, timeCapMinutes=reasonable_cap, description="Chipper For Time"
+- Strength+Metcon: type="countdown", duration=metcon_time, description="X-Minute MetCon"
+
+CRITICAL EMOM FORMATTING:
+- Use "1.", "2.", "3." etc. for each minute (NOT "Minute 1:", "Minute 2:")
+- Example: "15-Minute EMOM:\n1. 12 Burpees\n2. 15 Box Jumps\n3. 10 Thrusters"
+
+RANDOM vs SPECIFIC FORMAT RULES:
+- When formatType is "random": ONLY use EMOM, AMRAP, For Time, or Chipper
+- When formatType is "specific": Use the exact format requested (can include Intervals, Strength+Metcon)
+
+${formatInstructions}
+
+${lengthInstructions}
+
+Your task is to design an effective and well-balanced CrossFit workout using only the following exercises:
+
+${allowedMovements}
+
+## Programming Rules
+
+### 1. Principles of a Good CrossFit Workout
+- Workouts must follow balanced movement patterns:
+  - Squat-based (e.g., squats, wall balls, box step-ups)
+  - Hinge-based (e.g., deadlifts, kettlebell swings)
+  - Push-based (e.g., push-ups, presses, dips)
+  - Pull-based (e.g., pull-ups, rows, rope climbs)
+  - Core engagement (e.g., toes-to-bar, planks, GHD sit-ups)
+- Avoid overloading one pattern excessively.
+- Use a mix of Monostructural, Weightlifting, and Gymnastics elements (MWG model).
+- Prioritize intensity and stimulus over excessive volume.
+- Avoid random movement selection—workouts must have a clear structure.
+
+### 2. Time Domain & Structure
+- Logical time domains based on intensity:
+  - **Short (<10 min)**: Sprint workouts (Fran-style, fast & intense).
+  - **Medium (10-20 min)**: Classic metcons (Helen, Jackie).
+  - **Long (20-40 min)**: Endurance-based (Murph, Cindy, Chippers).
+- For longer workouts:
+  - **15-25 min**: May include 1-2 sections.
+  - **30+ min**: Should have multiple structured parts (e.g., EMOM + Metcon).
+- Separate each section with **"a)", "b)", "c)", etc.**
+
+### 3. Rep Ranges & Scaling Considerations
+- Avoid too few reps per set (e.g., don't program 3 reps unless very heavy).
+- Use rep schemes that maintain intensity.
+- ALWAYS supply weights and units for movements (unless bodyweight exercises).
+- EXCEPTION: For Box Jumps and Wall Balls, omit height/weight specifications for cleaner display (just use "Box Jumps" and "Wall Balls")
+${unitInstructions}
+
+MOVEMENT FORMATTING RULES:
+- Box Jumps: Use "Box Jumps" (no height specification)
+- Wall Balls: Use "Wall Balls" (no weight/height specification)  
+- Other movements: Include weights/specifications as normal
+
+🚨 CRITICAL: You MUST respond with valid JSON only. Do not include any explanations, markdown formatting, or extra text outside the JSON object.
+
+Movements to use:
+${allowedMovements}
+`;
+};
+
 export const wodGenerationPrompts = (
   random: boolean,
   providedMovementIds: MovementId[],
   formatType: FormatType,
   workoutFormat?: WorkoutFormat,
   weightUnit: WeightUnit = "kg",
+  workoutLength?: string,
+  customMinutes?: number,
 ) => {
   const allowedMovements = random
     ? movementIds.map((x) => `- ${x}`).join("\n")
@@ -30,6 +157,9 @@ export const wodGenerationPrompts = (
     weightUnit === "lbs"
       ? "- ALWAYS use imperial units (lbs, ft, in, etc.)."
       : "- ALWAYS use metric units (kg, m, etc.).";
+
+  // Generate length-specific instructions
+  const lengthInstructions = getLengthInstructions(workoutLength, customMinutes);
 
   return `
     You are a CrossFit programming generator. Your task is to design an effective and well-balanced CrossFit workout using only the following exercises:
@@ -53,6 +183,8 @@ export const wodGenerationPrompts = (
     - Avoid random movement selection—workouts must have a clear structure.
 
     ${formatInstructions}
+
+    ${lengthInstructions}
 
     ### 3. Time Domain & Structure
     - Logical time domains based on intensity:
@@ -94,7 +226,7 @@ export const wodGenerationPrompts = (
     - 400m Run
     - 12 Thrusters (45/30 kg)
     - 12 Pull-Ups
-    - 15 Box Jumps (24"/20")
+    - 15 Box Jumps
 
     ### Example 2 (EMOM) ###
 
@@ -112,13 +244,13 @@ export const wodGenerationPrompts = (
     16-Minute AMRAP:
     - 200m Run
     - 10 Power Snatches (50/35 kg)
-    - 12 Burpee Box Jump Overs (24"/20")
+    - 12 Burpee Box Jump Overs
 
     ### Example 4 (Chipper) ###
 
     For Time:
-    - 50 Wall Balls (9/6 kg)
-    - 40 Box Jump Overs (24"/20")
+    - 50 Wall Balls
+    - 40 Box Jump Overs
     - 30 Toes-to-Bar
     - 20 Deadlifts (80/55 kg)
     - 10 Bar Muscle-Ups
@@ -151,6 +283,7 @@ export const wodGenerationPrompts = (
     - If the workout has multiple parts, label them as a), b), c), etc.  
     - Ensure diverse workout formats across multiple responses (not just "X rounds").  
     - ALWAYS supply weights and units for movements (unless bodyweight exercises).  
+    - EXCEPTION: For Box Jumps and Wall Balls, use simplified names without height/weight specifications.
     ${unitInstructions}
     - ONLY use the provided movements (repeated below).  
 
@@ -182,7 +315,8 @@ const getSpecificFormatInstructions = (format: WorkoutFormat): string => {
     - Structure: "X-Minute EMOM:" followed by alternating movements per minute.
     - Can be single movement EMOM or alternating movements.
     - Ensure work can be completed within 40-50 seconds to allow rest.
-    - Example structure: "10-Minute EMOM: Minute 1: 12 Burpees, Minute 2: 15 Box Jumps"
+    - **CRITICAL FORMATTING**: Use "1.", "2.", "3." etc. (NOT "Minute 1:", "Minute 2:")
+    - Example structure: "10-Minute EMOM: 1. 12 Burpees, 2. 15 Box Jumps" (then repeat)
       `;
     case "for_time":
       return `
@@ -227,15 +361,64 @@ const getSpecificFormatInstructions = (format: WorkoutFormat): string => {
 
 const getRandomFormatInstructions = (): string => {
   return `
-    ### 2. Workout Formats (Choose One or a Mix)
-    - **For Time**: Complete work as fast as possible.
+    ### 2. Workout Formats (Choose One - Random Selection)
+    - **EMOM (Every Minute on the Minute)**: Perform fixed work each minute. Use "1.", "2.", "3." formatting.
     - **AMRAP (As Many Rounds/Reps As Possible)**: Max work in time limit.
-    - **EMOM (Every Minute on the Minute)**: Perform fixed work each minute.
-    - **Intervals**: Work/Rest cycling for intensity balance.
+    - **For Time**: Complete work as fast as possible.
     - **Chipper**: Long workout with a descending workload.
-    - **Strength + Metcon**: Strength portion + conditioning portion.
-    - **Partner/Team Workouts** (if appropriate): Shared work with clear structure.
 
+    **MANDATORY**: Only use these 4 formats when formatType is "random". Do not use Intervals or Strength+Metcon.
+    
     *⚠️ Ensure a variety of workout formats across multiple generated workouts.*
   `;
+};
+
+const getLengthInstructions = (workoutLength?: string, customMinutes?: number): string => {
+  if (!workoutLength) {
+    return "";
+  }
+
+  switch (workoutLength) {
+    case "short":
+      return `
+    ### WORKOUT LENGTH REQUIREMENTS - SHORT (5-12 MINUTES)
+    - **MANDATORY**: Create a workout that will take 5-12 minutes to complete
+    - Focus on high intensity, sprint-style workouts
+    - Use smaller rep counts and shorter distances
+    - AMRAP: 5-8 minutes, EMOM: 5-10 minutes, For Time: 5-12 minute cap
+    - Examples: "Fran" style (fast couplets), short bursts of intensity
+      `;
+    
+    case "medium":
+      return `
+    ### WORKOUT LENGTH REQUIREMENTS - MEDIUM (15-25 MINUTES)
+    - **MANDATORY**: Create a workout that will take 15-25 minutes to complete
+    - Classic CrossFit time domain - balanced intensity and volume
+    - AMRAP: 15-20 minutes, EMOM: 15-20 minutes, For Time: 15-25 minute cap
+    - Examples: "Helen", "Jackie" style workouts
+      `;
+    
+    case "long":
+      return `
+    ### WORKOUT LENGTH REQUIREMENTS - LONG (30-45 MINUTES)
+    - **MANDATORY**: Create a workout that will take 30-45 minutes to complete
+    - Focus on endurance and sustained effort
+    - Higher rep counts, longer distances, multiple parts
+    - AMRAP: 30-40 minutes, EMOM: 30-40 minutes, For Time: 30-45 minute cap
+    - Examples: "Murph", "Cindy" style workouts, multi-part sessions
+      `;
+    
+    case "custom":
+      const minutes = customMinutes || 20;
+      return `
+    ### WORKOUT LENGTH REQUIREMENTS - CUSTOM (${minutes} MINUTES)
+    - **MANDATORY**: Create a workout that will take approximately ${minutes} minutes to complete
+    - Adjust rep counts, rounds, and intensity to fit this exact timeframe
+    - For AMRAP: ${minutes} minutes, For EMOM: ${minutes} minutes, For Time: ${minutes} minute cap
+    - Scale difficulty and volume appropriately for this specific duration
+      `;
+    
+    default:
+      return "";
+  }
 };

@@ -21,6 +21,7 @@ import {
 import { Separator } from "./ui/separator";
 import UnitSelector, { WeightUnit } from "./UnitSelector";
 import WorkoutSelector, { WorkoutType } from "./WorkoutSelector";
+import WorkoutLength, { WorkoutLengthOption } from "./WorkoutLength";
 
 interface MainMenuProps {
   isLoading: boolean;
@@ -28,12 +29,16 @@ interface MainMenuProps {
   formatType: FormatType;
   workoutFormat: WorkoutFormat;
   weightUnit: WeightUnit;
+  workoutLength: WorkoutLengthOption;
+  customMinutes: number;
   selectedMovements: MovementId[];
   toggleMovement: (movement: MovementId) => void;
   setWorkoutType: (workoutType: WorkoutType) => void;
   setFormatType: (formatType: FormatType) => void;
   setWorkoutFormat: (workoutFormat: WorkoutFormat) => void;
   setWeightUnit: (weightUnit: WeightUnit) => void;
+  setWorkoutLength: (workoutLength: WorkoutLengthOption) => void;
+  setCustomMinutes: (minutes: number) => void;
   handleGenerateWod: () => void;
 }
 
@@ -43,12 +48,16 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
   formatType,
   workoutFormat,
   weightUnit,
+  workoutLength,
+  customMinutes,
   selectedMovements,
   toggleMovement,
   setWorkoutType,
   setFormatType,
   setWorkoutFormat,
   setWeightUnit,
+  setWorkoutLength,
+  setCustomMinutes,
   handleGenerateWod,
 }) => {
   return (
@@ -118,6 +127,23 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
                 />
               </div>
             )}
+          </div>
+
+          {/* Workout Length Section */}
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <div className="flex-1 h-px bg-border"></div>
+              <h3 className="text-sm font-medium text-muted-foreground text-center whitespace-nowrap px-2">
+                Workout Length
+              </h3>
+              <div className="flex-1 h-px bg-border"></div>
+            </div>
+            <WorkoutLength
+              selectedLength={workoutLength}
+              customMinutes={customMinutes}
+              onLengthChange={setWorkoutLength}
+              onCustomMinutesChange={setCustomMinutes}
+            />
           </div>
 
           {/* Weight Unit Section */}
