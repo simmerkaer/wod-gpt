@@ -78,18 +78,6 @@ const GeneratedWod: React.FunctionComponent<GeneratedWodProps> = ({
                   console.log('Workout timer finished!');
                 }}
               />
-              
-              {/* Timer Quality Indicator */}
-              <div className="mt-4 text-center">
-                <div className="text-sm text-gray-500 dark:text-gray-400">
-                  {timing.description}
-                  {confidence < 0.8 && (
-                    <span className="ml-2 text-yellow-600 dark:text-yellow-400">
-                      ⚠️ Timer may need adjustment
-                    </span>
-                  )}
-                </div>
-              </div>
             </div>
           )}
           
@@ -135,18 +123,6 @@ const GeneratedWod: React.FunctionComponent<GeneratedWodProps> = ({
                       console.log("Workout timer finished!");
                     }}
                   />
-
-                  {/* Timer Quality Indicator */}
-                  <div className="mt-4 text-center">
-                    <div className="text-sm text-gray-500 dark:text-gray-400">
-                      {timing.description}
-                      {confidence < 0.8 && (
-                        <span className="ml-2 text-yellow-600 dark:text-yellow-400">
-                          ⚠️ Timer may need adjustment
-                        </span>
-                      )}
-                    </div>
-                  </div>
                 </div>
               )}
 

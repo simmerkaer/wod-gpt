@@ -173,8 +173,8 @@ export const Timer: React.FC<TimerProps> = ({
         {formatTime()}
       </div>
 
-      {/* Current Movement */}
-      {type === 'interval' && getCurrentMovement() && (
+      {/* Current Movement - Only show for EMOM workouts */}
+      {type === 'interval' && intervalMinutes === 1 && getCurrentMovement() && (
         <div className="w-full max-w-md text-center">
           <div className="text-lg font-semibold text-gray-800 dark:text-gray-200 p-3 bg-gray-100 dark:bg-gray-800 rounded-lg">
             {getCurrentMovement()}

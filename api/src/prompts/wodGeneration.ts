@@ -104,8 +104,10 @@ ${allowedMovements}
   - Push-based (e.g., push-ups, presses, dips)
   - Pull-based (e.g., pull-ups, rows, rope climbs)
   - Core engagement (e.g., toes-to-bar, planks, GHD sit-ups)
+  - Monostructural/Cardio (e.g., rowing, bike_erg, ski_erg, assault_bike, running)
 - Avoid overloading one pattern excessively.
 - Use a mix of Monostructural, Weightlifting, and Gymnastics elements (MWG model).
+- **For endurance intent**: Prioritize monostructural/cardio machines when available
 - Prioritize intensity and stimulus over excessive volume.
 - Avoid random movement selection—workouts must have a clear structure.
 
@@ -465,10 +467,13 @@ const getIntentInstructions = (workoutIntent?: WorkoutIntent): string => {
     ### WORKOUT INTENT - ENDURANCE/CONDITIONING
     - **MANDATORY**: Focus on aerobic capacity and cardiovascular conditioning
     - Longer time domains (20+ minutes) with sustained effort
-    - Emphasize cardio movements: running, rowing, biking, double unders
-    - Higher rep ranges with moderate weights
+    - **PRIORITIZE machine work**: rowing, bike_erg, ski_erg, assault_bike whenever available
+    - Emphasize cardio movements: running, rowing, biking, double unders, ski_erg, bike_erg, assault_bike
+    - Include machine-based intervals and steady-state efforts (concept2 row, bike erg, ski erg)
+    - Higher rep ranges with moderate weights to support cardio conditioning
     - Steady-state efforts or longer intervals with shorter rest
-    - Build aerobic base and metabolic conditioning
+    - Build aerobic base and metabolic conditioning through machine work
+    - Mix machine work with bodyweight movements for comprehensive conditioning
     - Avoid overly heavy weights that limit movement continuity
       `;
     
