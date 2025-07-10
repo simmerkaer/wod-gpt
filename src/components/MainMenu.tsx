@@ -159,10 +159,10 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
           </div>
 
           {/* Generate Button */}
-          <div className="pt-1">
+          <div className="pt-3">
             <Button
               onClick={handleGenerateWod}
-              className="w-full bg-gradient-to-r from-red-500 to-purple-600 align-middle"
+              className="w-full bg-gradient-to-r from-red-500 to-purple-600 align-middle hover:from-red-600 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all duration-200 text-lg font-semibold"
               disabled={isLoading}
               size="lg"
             >

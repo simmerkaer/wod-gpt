@@ -6,11 +6,13 @@ import ToggableMovement from "./ToggableMovement";
 interface MovementListProps {
   selectedMovements: MovementId[];
   handleToggleMovement: (movement: MovementId) => void;
+  isAtLimit?: boolean;
 }
 
 const MovementList: React.FunctionComponent<MovementListProps> = ({
   selectedMovements,
   handleToggleMovement,
+  isAtLimit = false,
 }) => {
   const movementCategories: {
     category: MovementCatergory;
@@ -58,11 +60,15 @@ const MovementList: React.FunctionComponent<MovementListProps> = ({
         }
       });
     } else {
-      // Select all movements in this category
-      categoryMovements.forEach((movementId) => {
-        if (!selectedMovements.includes(movementId)) {
-          handleToggleMovement(movementId);
-        }
+      // Select movements in this category, but respect the 10 movement limit
+      const availableSlots = 10 - selectedMovements.length;
+      const unselectedMovements = categoryMovements.filter(
+        (movementId) => !selectedMovements.includes(movementId)
+      );
+      
+      const movementsToSelect = unselectedMovements.slice(0, availableSlots);
+      movementsToSelect.forEach((movementId) => {
+        handleToggleMovement(movementId);
       });
     }
   };
@@ -82,6 +88,7 @@ const MovementList: React.FunctionComponent<MovementListProps> = ({
                 onChange={() => handleSelectAllCategory(category.category)}
                 className="w-4 h-4 cursor-pointer"
                 title={`Select all ${category.displayTitle.toLowerCase()} movements`}
+                disabled={isAtLimit && !areAllMovementsSelected(category.category)}
               />
               <span className="text-sm text-gray-500">(select all)</span>
             </div>
@@ -94,6 +101,7 @@ const MovementList: React.FunctionComponent<MovementListProps> = ({
                     movement={movement}
                     selectedMovements={selectedMovements}
                     handleToggleMovement={handleToggleMovement}
+                    isAtLimit={isAtLimit}
                   />
                 ))}
             </div>
