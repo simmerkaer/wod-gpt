@@ -23,6 +23,13 @@ interface WorkoutIntentSelectorProps {
 
 export const WORKOUT_INTENTS = [
   {
+    value: "general_fitness" as WorkoutIntent,
+    label: "General",
+    description: "Balanced conditioning",
+    icon: BarChart3,
+    color: "text-gray-600"
+  },
+  {
     value: "strength" as WorkoutIntent,
     label: "Strength",
     description: "Build muscle & power",
@@ -56,13 +63,6 @@ export const WORKOUT_INTENTS = [
     description: "Active rest & mobility",
     icon: RefreshCw,
     color: "text-green-600"
-  },
-  {
-    value: "general_fitness" as WorkoutIntent,
-    label: "General",
-    description: "Balanced conditioning",
-    icon: BarChart3,
-    color: "text-gray-600"
   },
   {
     value: "competition_prep" as WorkoutIntent,

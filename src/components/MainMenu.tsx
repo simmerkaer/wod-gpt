@@ -114,21 +114,6 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
             />
           </div>
 
-          {/* Workout Intent Section */}
-          <div className="space-y-2">
-            <div className="flex items-center gap-2">
-              <div className="flex-1 h-px bg-border"></div>
-              <h3 className="text-sm font-medium text-muted-foreground text-center whitespace-nowrap px-2">
-                Workout Intent
-              </h3>
-              <div className="flex-1 h-px bg-border"></div>
-            </div>
-            <WorkoutIntentSelector
-              value={workoutIntent}
-              onValueChange={setWorkoutIntent}
-            />
-          </div>
-
           {/* Workout Format Section */}
           <div className="space-y-2">
             <div className="flex items-center gap-2">
@@ -147,6 +132,21 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
                 />
               </div>
             )}
+          </div>
+
+          {/* Workout Intent Section */}
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <div className="flex-1 h-px bg-border"></div>
+              <h3 className="text-sm font-medium text-muted-foreground text-center whitespace-nowrap px-2">
+                Workout Intent
+              </h3>
+              <div className="flex-1 h-px bg-border"></div>
+            </div>
+            <WorkoutIntentSelector
+              value={workoutIntent}
+              onValueChange={setWorkoutIntent}
+            />
           </div>
 
           {/* Workout Length Section */}

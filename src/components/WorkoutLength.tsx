@@ -1,6 +1,12 @@
 import React from "react";
 import { Button } from "./ui/button";
-import { cn } from "@/lib/utils";
+import { ChevronDown, Clock, Minus, Plus } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
 
 export type WorkoutLengthOption = "short" | "medium" | "long" | "custom";
 
@@ -45,49 +51,67 @@ const WorkoutLength: React.FunctionComponent<WorkoutLengthProps> = ({
     onCustomMinutesChange(newMinutes);
   };
 
+  const selectedOption = WORKOUT_LENGTH_OPTIONS.find(option => option.value === selectedLength);
+  const displayLabel = selectedLength === "custom" 
+    ? `Custom (${customMinutes} min)` 
+    : selectedOption?.label || "Select length";
+
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-2 gap-2">
-        {WORKOUT_LENGTH_OPTIONS.map((option) => (
-          <Button
-            key={option.value}
-            variant="ghost"
-            className={cn(
-              "h-auto p-3 flex flex-col items-center text-center",
-              selectedLength === option.value && "bg-primary/10 border-primary",
-            )}
-            onClick={() => onLengthChange(option.value)}
+    <div className="space-y-3">
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button 
+            variant="outline" 
+            className="w-full justify-between"
           >
-            <span className="font-medium text-sm">{option.label}</span>
-            <span className="text-xs text-muted-foreground">
-              {option.description}
-            </span>
+            <div className="flex items-center gap-2">
+              <Clock className="h-4 w-4 text-blue-600" />
+              <span>{displayLabel}</span>
+            </div>
+            <ChevronDown className="h-4 w-4 opacity-50" />
           </Button>
-        ))}
-      </div>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="w-56">
+          {WORKOUT_LENGTH_OPTIONS.map((option) => (
+            <DropdownMenuItem 
+              key={option.value} 
+              onClick={() => onLengthChange(option.value)}
+              className="flex items-center gap-2 cursor-pointer"
+            >
+              <Clock className="h-4 w-4 text-blue-600" />
+              <div className="flex flex-col">
+                <div className="font-medium">{option.label}</div>
+                <div className="text-xs text-muted-foreground">{option.description}</div>
+              </div>
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
 
       {selectedLength === "custom" && (
-        <div className="flex items-center justify-center space-x-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+        <div className="flex items-center justify-center space-x-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
           <Button
             variant="secondary"
             size="sm"
             onClick={() => handleCustomMinutesChange(-5)}
             disabled={customMinutes <= 5}
+            className="h-8 w-8 p-0"
           >
-            -5
+            <Minus className="h-3 w-3" />
           </Button>
           <Button
             variant="secondary"
             size="sm"
             onClick={() => handleCustomMinutesChange(-1)}
             disabled={customMinutes <= 5}
+            className="h-8 w-8 p-0"
           >
             -1
           </Button>
 
-          <div className="flex flex-col items-center">
-            <span className="text-2xl font-bold">{customMinutes}</span>
-            <span className="text-sm text-muted-foreground">minutes</span>
+          <div className="flex flex-col items-center min-w-[60px]">
+            <span className="text-xl font-bold">{customMinutes}</span>
+            <span className="text-xs text-muted-foreground">minutes</span>
           </div>
 
           <Button
@@ -95,6 +119,7 @@ const WorkoutLength: React.FunctionComponent<WorkoutLengthProps> = ({
             size="sm"
             onClick={() => handleCustomMinutesChange(1)}
             disabled={customMinutes >= 60}
+            className="h-8 w-8 p-0"
           >
             +1
           </Button>
@@ -103,8 +128,9 @@ const WorkoutLength: React.FunctionComponent<WorkoutLengthProps> = ({
             size="sm"
             onClick={() => handleCustomMinutesChange(5)}
             disabled={customMinutes >= 60}
+            className="h-8 w-8 p-0"
           >
-            +5
+            <Plus className="h-3 w-3" />
           </Button>
         </div>
       )}
