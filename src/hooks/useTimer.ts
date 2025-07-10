@@ -67,6 +67,11 @@ export const useTimer = (options: UseTimerOptions) => {
     }
   }, [type, initialSeconds]);
 
+  // Reset timer when workout options change (new workout generated)
+  useEffect(() => {
+    reset();
+  }, [reset]);
+
   const toggle = useCallback(() => {
     if (isRunning) {
       pause();

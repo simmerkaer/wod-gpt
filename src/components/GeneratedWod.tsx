@@ -66,6 +66,7 @@ const GeneratedWod: React.FunctionComponent<GeneratedWodProps> = ({
           {timing && (
             <div className="w-full max-w-2xl mb-8">
               <Timer
+                key={`${timing.type}-${timing.duration}-${wod?.slice(0, 50)}`}
                 type={timing.type === 'none' ? 'countdown' : timing.type}
                 initialMinutes={timing.duration}
                 intervalMinutes={
@@ -120,6 +121,7 @@ const GeneratedWod: React.FunctionComponent<GeneratedWodProps> = ({
               {timing && (
                 <div className="w-full max-w-2xl">
                   <Timer
+                    key={`${timing.type}-${timing.duration}-${wod?.slice(0, 50)}`}
                     type={timing.type === "none" ? "countdown" : timing.type}
                     initialMinutes={timing.duration}
                     intervalMinutes={
