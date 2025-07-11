@@ -1,5 +1,4 @@
 import { FormatType } from "@/components/FormatSelector";
-import { WorkoutFormat } from "@/components/SpecificFormatSelector";
 import { WeightUnit } from "@/components/UnitSelector";
 import { WorkoutLengthOption } from "@/components/WorkoutLength";
 import { WorkoutIntent } from "@/components/WorkoutIntent";
@@ -27,7 +26,6 @@ export const useGenerateWod = (): [
     random: boolean,
     exercises: string[],
     formatType: FormatType,
-    workoutFormat: WorkoutFormat | undefined,
     weightUnit: WeightUnit,
     workoutLength: WorkoutLengthOption,
     customMinutes: number,
@@ -45,7 +43,6 @@ export const useGenerateWod = (): [
     random: boolean,
     exercises: string[],
     formatType: FormatType,
-    workoutFormat: WorkoutFormat | undefined,
     weightUnit: WeightUnit,
     workoutLength: WorkoutLengthOption,
     customMinutes: number,
@@ -57,8 +54,8 @@ export const useGenerateWod = (): [
     const requestBody = {
       random: random,
       exercises: exercises,
-      formatType: formatType,
-      workoutFormat: workoutFormat || 'amrap',
+      formatType: formatType === "random" ? "random" : "specific",
+      workoutFormat: formatType === "random" ? 'amrap' : formatType,
       weightUnit: weightUnit,
       workoutLength: workoutLength,
       customMinutes: customMinutes,

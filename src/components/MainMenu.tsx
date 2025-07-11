@@ -5,9 +5,6 @@ import FormatSelector, { FormatType } from "./FormatSelector";
 import GiveFeedback from "./GiveFeedback";
 import SelectedMovements from "./SelectedMovements";
 import SelectMovements from "./SelectMovements";
-import SpecificFormatSelector, {
-  WorkoutFormat,
-} from "./SpecificFormatSelector";
 import { badgeVariants } from "./ui/badge";
 import { Button } from "./ui/button";
 import {
@@ -28,7 +25,6 @@ interface MainMenuProps {
   isLoading: boolean;
   workoutType: WorkoutType;
   formatType: FormatType;
-  workoutFormat: WorkoutFormat;
   weightUnit: WeightUnit;
   workoutLength: WorkoutLengthOption;
   customMinutes: number;
@@ -37,7 +33,6 @@ interface MainMenuProps {
   toggleMovement: (movement: MovementId) => void;
   setWorkoutType: (workoutType: WorkoutType) => void;
   setFormatType: (formatType: FormatType) => void;
-  setWorkoutFormat: (workoutFormat: WorkoutFormat) => void;
   setWeightUnit: (weightUnit: WeightUnit) => void;
   setWorkoutLength: (workoutLength: WorkoutLengthOption) => void;
   setCustomMinutes: (minutes: number) => void;
@@ -49,7 +44,6 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
   isLoading,
   workoutType,
   formatType,
-  workoutFormat,
   weightUnit,
   workoutLength,
   customMinutes,
@@ -58,7 +52,6 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
   toggleMovement,
   setWorkoutType,
   setFormatType,
-  setWorkoutFormat,
   setWeightUnit,
   setWorkoutLength,
   setCustomMinutes,
@@ -124,14 +117,6 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
               <div className="flex-1 h-px bg-border"></div>
             </div>
             <FormatSelector value={formatType} onValueChange={setFormatType} />
-            {formatType === "specific" && (
-              <div className="pl-2">
-                <SpecificFormatSelector
-                  value={workoutFormat}
-                  onValueChange={setWorkoutFormat}
-                />
-              </div>
-            )}
           </div>
 
           {/* Workout Intent Section */}

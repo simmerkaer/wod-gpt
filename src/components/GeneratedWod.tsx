@@ -17,7 +17,6 @@ interface GeneratedWodProps {
 const GeneratedWod: React.FunctionComponent<GeneratedWodProps> = ({
   wod,
   timing,
-  confidence,
   error,
 }) => {
   const { toast } = useToast();

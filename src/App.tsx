@@ -4,7 +4,6 @@ import FancyLoadingSpinner from "./components/FancyLoadingSpinner";
 import { FormatType } from "./components/FormatSelector";
 import GeneratedWod from "./components/GeneratedWod";
 import MainMenu from "./components/MainMenu";
-import { WorkoutFormat } from "./components/SpecificFormatSelector";
 import { ToggleDarkMode } from "./components/ToggleDarkMode";
 import { Toaster } from "./components/ui/toaster";
 import { WeightUnit } from "./components/UnitSelector";
@@ -19,8 +18,7 @@ import { useTheme } from "./ThemeProvider";
 function App() {
   const { selectedMovements, toggleMovement } = useMovements();
   const [workoutType, setWorkoutType] = useState<WorkoutType>("random");
-  const [formatType, setFormatType] = useState<FormatType>("random");
-  const [workoutFormat, setWorkoutFormat] = useState<WorkoutFormat>("amrap");
+  const [formatType, setFormatType] = useState<FormatType>("emom");
   const [weightUnit, setWeightUnit] = useState<WeightUnit>("kg");
   const [workoutLength, setWorkoutLength] =
     useState<WorkoutLengthOption>("medium");
@@ -35,7 +33,6 @@ function App() {
       workoutType === "random",
       selectedMovements,
       formatType,
-      workoutFormat,
       weightUnit,
       workoutLength,
       customMinutes,
@@ -53,10 +50,6 @@ function App() {
     setFormatType(type);
   };
 
-  const handleWorkoutFormatChange = (format: WorkoutFormat) => {
-    if (!format) return;
-    setWorkoutFormat(format);
-  };
 
   const handleWeightUnitChange = (unit: WeightUnit) => {
     if (!unit) return;
@@ -92,7 +85,6 @@ function App() {
                 isLoading={isLoading}
                 workoutType={workoutType}
                 formatType={formatType}
-                workoutFormat={workoutFormat}
                 weightUnit={weightUnit}
                 workoutLength={workoutLength}
                 customMinutes={customMinutes}
@@ -101,7 +93,6 @@ function App() {
                 handleGenerateWod={handleGenerateWod}
                 setWorkoutType={handleWorkoutChange}
                 setFormatType={handleFormatChange}
-                setWorkoutFormat={handleWorkoutFormatChange}
                 setWeightUnit={handleWeightUnitChange}
                 setWorkoutLength={handleWorkoutLengthChange}
                 setCustomMinutes={handleCustomMinutesChange}
@@ -136,7 +127,6 @@ function App() {
                 isLoading={isLoading}
                 workoutType={workoutType}
                 formatType={formatType}
-                workoutFormat={workoutFormat}
                 weightUnit={weightUnit}
                 workoutLength={workoutLength}
                 customMinutes={customMinutes}
@@ -145,7 +135,6 @@ function App() {
                 handleGenerateWod={handleGenerateWod}
                 setWorkoutType={handleWorkoutChange}
                 setFormatType={handleFormatChange}
-                setWorkoutFormat={handleWorkoutFormatChange}
                 setWeightUnit={handleWeightUnitChange}
                 setWorkoutLength={handleWorkoutLengthChange}
                 setCustomMinutes={handleCustomMinutesChange}
