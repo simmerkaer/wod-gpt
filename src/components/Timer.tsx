@@ -99,6 +99,18 @@ export const Timer: React.FC<TimerProps> = ({
   // Add keyboard shortcuts
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
+      // Don't trigger shortcuts if user is typing in an input field
+      const activeElement = document.activeElement;
+      const isTyping = activeElement && (
+        activeElement.tagName.toLowerCase() === 'input' ||
+        activeElement.tagName.toLowerCase() === 'textarea' ||
+        activeElement.getAttribute('contenteditable') === 'true'
+      );
+
+      if (isTyping) {
+        return; // Don't handle shortcuts when user is typing
+      }
+
       if (event.code === 'Space') {
         event.preventDefault();
         timer.toggle();
