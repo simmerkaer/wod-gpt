@@ -80,3 +80,5 @@ export type MovementId =
   | "bear_crawl"
   | "burpee_box_jump_over"
   | "devils_press";
+
+export type MovementUsageMode = "some" | "all";

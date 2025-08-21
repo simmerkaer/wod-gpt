@@ -1,4 +1,4 @@
-import { MovementId } from "@/lib/movementId";
+import { MovementId, MovementUsageMode } from "@/lib/movementId";
 import { Loader2, PlusIcon, ZapIcon } from "lucide-react";
 import * as React from "react";
 import FormatSelector, { FormatType } from "./FormatSelector";
@@ -16,6 +16,7 @@ import {
   CardTitle,
 } from "./ui/card";
 import { Separator } from "./ui/separator";
+import { ToggleGroup, ToggleGroupItem } from "./ui/toggle-group";
 import UnitSelector, { WeightUnit } from "./UnitSelector";
 import WorkoutSelector, { WorkoutType } from "./WorkoutSelector";
 import WorkoutLength, { WorkoutLengthOption } from "./WorkoutLength";
@@ -30,6 +31,7 @@ interface MainMenuProps {
   customMinutes: number;
   workoutIntent: WorkoutIntent;
   selectedMovements: MovementId[];
+  movementUsageMode: MovementUsageMode;
   toggleMovement: (movement: MovementId) => void;
   setWorkoutType: (workoutType: WorkoutType) => void;
   setFormatType: (formatType: FormatType) => void;
@@ -37,6 +39,7 @@ interface MainMenuProps {
   setWorkoutLength: (workoutLength: WorkoutLengthOption) => void;
   setCustomMinutes: (minutes: number) => void;
   setWorkoutIntent: (workoutIntent: WorkoutIntent) => void;
+  setMovementUsageMode: (mode: MovementUsageMode) => void;
   handleGenerateWod: () => void;
 }
 
@@ -49,6 +52,7 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
   customMinutes,
   workoutIntent,
   selectedMovements,
+  movementUsageMode,
   toggleMovement,
   setWorkoutType,
   setFormatType,
@@ -56,6 +60,7 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
   setWorkoutLength,
   setCustomMinutes,
   setWorkoutIntent,
+  setMovementUsageMode,
   handleGenerateWod,
 }) => {
   return (
@@ -105,6 +110,31 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
               }
               onRemoveMovement={toggleMovement}
             />
+            
+            {/* Movement Usage Mode */}
+            {workoutType === "specified" && selectedMovements.length > 0 && (
+              <div className="mt-3">
+                <ToggleGroup 
+                  type="single" 
+                  value={movementUsageMode}
+                  onValueChange={(value: MovementUsageMode) => value && setMovementUsageMode(value)}
+                  className="justify-center gap-2"
+                >
+                  <ToggleGroupItem 
+                    value="some" 
+                    className="flex items-center gap-2 p-2 h-auto data-[state=on]:bg-primary/10 data-[state=on]:border-primary"
+                  >
+                    Use SOME of selected movements
+                  </ToggleGroupItem>
+                  <ToggleGroupItem 
+                    value="all" 
+                    className="flex items-center gap-2 p-2 h-auto data-[state=on]:bg-primary/10 data-[state=on]:border-primary"
+                  >
+                    Use ALL selected movements
+                  </ToggleGroupItem>
+                </ToggleGroup>
+              </div>
+            )}
           </div>
 
           {/* Workout Format Section */}

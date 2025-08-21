@@ -1,4 +1,4 @@
-import { MovementId } from "@/lib/movementId";
+import { MovementId, MovementUsageMode } from "@/lib/movementId";
 import { useState } from "react";
 
 export const useMovements = () => {
@@ -8,6 +8,8 @@ export const useMovements = () => {
     "pullup",
     "deadlift",
   ]);
+  
+  const [movementUsageMode, setMovementUsageMode] = useState<MovementUsageMode>("some");
 
   const toggleMovement = (movement: MovementId) => {
     setSelectedMovements((prevSelected) =>
@@ -20,5 +22,7 @@ export const useMovements = () => {
   return {
     selectedMovements,
     toggleMovement,
+    movementUsageMode,
+    setMovementUsageMode,
   };
 };

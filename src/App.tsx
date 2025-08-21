@@ -16,7 +16,7 @@ import { DarkBackground, LightBackground } from "./lib/backgrounds";
 import { useTheme } from "./ThemeProvider";
 
 function App() {
-  const { selectedMovements, toggleMovement } = useMovements();
+  const { selectedMovements, toggleMovement, movementUsageMode, setMovementUsageMode } = useMovements();
   const [workoutType, setWorkoutType] = useState<WorkoutType>("random");
   const [formatType, setFormatType] = useState<FormatType>("emom");
   const [weightUnit, setWeightUnit] = useState<WeightUnit>("kg");
@@ -37,6 +37,7 @@ function App() {
       workoutLength,
       customMinutes,
       workoutIntent,
+      movementUsageMode,
     );
   };
 
@@ -90,6 +91,7 @@ function App() {
                 customMinutes={customMinutes}
                 workoutIntent={workoutIntent}
                 selectedMovements={selectedMovements}
+                movementUsageMode={movementUsageMode}
                 handleGenerateWod={handleGenerateWod}
                 setWorkoutType={handleWorkoutChange}
                 setFormatType={handleFormatChange}
@@ -97,6 +99,7 @@ function App() {
                 setWorkoutLength={handleWorkoutLengthChange}
                 setCustomMinutes={handleCustomMinutesChange}
                 setWorkoutIntent={handleWorkoutIntentChange}
+                setMovementUsageMode={setMovementUsageMode}
                 toggleMovement={toggleMovement}
               />
             </FancyLoadingSpinner>
@@ -132,6 +135,7 @@ function App() {
                 customMinutes={customMinutes}
                 workoutIntent={workoutIntent}
                 selectedMovements={selectedMovements}
+                movementUsageMode={movementUsageMode}
                 handleGenerateWod={handleGenerateWod}
                 setWorkoutType={handleWorkoutChange}
                 setFormatType={handleFormatChange}
@@ -139,6 +143,7 @@ function App() {
                 setWorkoutLength={handleWorkoutLengthChange}
                 setCustomMinutes={handleCustomMinutesChange}
                 setWorkoutIntent={handleWorkoutIntentChange}
+                setMovementUsageMode={setMovementUsageMode}
                 toggleMovement={toggleMovement}
               />
             </FancyLoadingSpinner>
