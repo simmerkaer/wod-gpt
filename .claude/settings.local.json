@@ -11,7 +11,9 @@
       "Bash(npm run lint)",
       "Bash(npm run build:*)",
       "WebFetch(domain:localhost)",
-      "mcp__playwright__browser_navigate"
+      "mcp__playwright__browser_navigate",
+      "mcp__playwright__browser_snapshot",
+      "mcp__playwright__browser_click"
     ],
     "deny": []
   }

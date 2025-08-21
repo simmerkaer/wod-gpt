@@ -57,6 +57,7 @@ export type MovementId =
   | "bike_erg"
   // Odd Object Movements
   | "sandbag_carry"
+  | "sandbag_clean"
   | "yoke_carry"
   | "sled_push"
   | "sled_drag"
@@ -73,6 +74,7 @@ export type MovementId =
   | "dumbbell_deadlift"
   | "dumbbell_shoulder_press"
   | "dumbbell_push_press"
+  | "dumbbell_bench_press"
   | "dumbbell_overhead_walking_lunge"
   // Other Functional Movements
   | "bear_crawl"

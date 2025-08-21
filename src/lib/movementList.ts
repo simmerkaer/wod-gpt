@@ -127,6 +127,7 @@ const movements: Movement[] = [
 
   // Odd Object Movements
   { id: "sandbag_carry", name: "sandbag carries", category: "odd_object" },
+  { id: "sandbag_clean", name: "sandbag cleans", category: "odd_object" },
   { id: "yoke_carry", name: "yoke carries", category: "odd_object" },
   { id: "sled_push", name: "sled pushes", category: "odd_object" },
   { id: "sled_drag", name: "sled drags", category: "odd_object" },
@@ -150,6 +151,11 @@ const movements: Movement[] = [
   {
     id: "dumbbell_push_press",
     name: "dumbbell push press",
+    category: "dumbbell",
+  },
+  {
+    id: "dumbbell_bench_press",
+    name: "dumbbell bench press",
     category: "dumbbell",
   },
   {
