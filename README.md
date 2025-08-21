@@ -32,6 +32,7 @@ The backend is built with Azure Functions and TypeScript. It includes various de
 
 Install dependencies:
 
+Note: NODE must be v18
 ```sh
 npm install
 ```

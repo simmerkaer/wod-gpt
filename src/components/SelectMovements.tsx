@@ -38,20 +38,13 @@ const SelectMovements: React.FunctionComponent<SelectMovementsProps> = ({
   const [isOpen, setIsOpen] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
-  const isAtLimit = selectedMovements.length >= 10;
-
   const renderContent = () => (
     <>
       <div className="mb-4">
         <div className="flex items-center justify-between mb-2">
           <span className="text-sm text-muted-foreground">
-            Selected: {selectedMovements.length}/10
+            Selected: {selectedMovements.length}
           </span>
-          {isAtLimit && (
-            <span className="text-sm text-orange-600 font-medium">
-              Maximum movements reached
-            </span>
-          )}
         </div>
         <Input
           placeholder="Search"
@@ -64,7 +57,6 @@ const SelectMovements: React.FunctionComponent<SelectMovementsProps> = ({
           <MovementList
             selectedMovements={selectedMovements}
             handleToggleMovement={toggleMovement}
-            isAtLimit={isAtLimit}
           />
         </div>
       ) : (
@@ -79,8 +71,7 @@ const SelectMovements: React.FunctionComponent<SelectMovementsProps> = ({
                 movement={movement}
                 selectedMovements={selectedMovements}
                 handleToggleMovement={toggleMovement}
-                isAtLimit={isAtLimit}
-              />
+                  />
             ))}
         </div>
       )}
