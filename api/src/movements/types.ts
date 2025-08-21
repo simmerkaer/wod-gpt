@@ -91,6 +91,8 @@ export type WorkoutFormat =
 
 export type WeightUnit = "kg" | "lbs";
 
+export type MovementUsageMode = "some" | "all";
+
 export type WorkoutIntent = 
   | "strength"
   | "endurance" 

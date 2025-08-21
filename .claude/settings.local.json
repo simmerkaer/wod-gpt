@@ -13,7 +13,12 @@
       "WebFetch(domain:localhost)",
       "mcp__playwright__browser_navigate",
       "mcp__playwright__browser_snapshot",
-      "mcp__playwright__browser_click"
+      "mcp__playwright__browser_click",
+      "mcp__context7__resolve-library-id",
+      "mcp__context7__get-library-docs",
+      "WebSearch",
+      "WebFetch(domain:learn.microsoft.com)",
+      "Bash(npm run type-check:*)"
     ],
     "deny": []
   }

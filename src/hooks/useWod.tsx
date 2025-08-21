@@ -2,6 +2,7 @@ import { FormatType } from "@/components/FormatSelector";
 import { WeightUnit } from "@/components/UnitSelector";
 import { WorkoutLengthOption } from "@/components/WorkoutLength";
 import { WorkoutIntent } from "@/components/WorkoutIntent";
+import { MovementUsageMode } from "@/lib/movementId";
 import { useState } from "react";
 import { 
   WorkoutData, 
@@ -30,6 +31,7 @@ export const useGenerateWod = (): [
     workoutLength: WorkoutLengthOption,
     customMinutes: number,
     workoutIntent: WorkoutIntent,
+    movementUsageMode: MovementUsageMode,
   ) => void,
   UseWodResult,
 ] => {
@@ -47,6 +49,7 @@ export const useGenerateWod = (): [
     workoutLength: WorkoutLengthOption,
     customMinutes: number,
     workoutIntent: WorkoutIntent,
+    movementUsageMode: MovementUsageMode,
   ) => {
     setIsLoading(true);
     setError(null);
@@ -60,6 +63,7 @@ export const useGenerateWod = (): [
       workoutLength: workoutLength,
       customMinutes: customMinutes,
       workoutIntent: workoutIntent,
+      movementUsageMode: movementUsageMode,
     };
 
     try {

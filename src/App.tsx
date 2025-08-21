@@ -14,9 +14,10 @@ import { useMovements } from "./hooks/useExercises";
 import { useGenerateWod } from "./hooks/useWod";
 import { DarkBackground, LightBackground } from "./lib/backgrounds";
 import { useTheme } from "./ThemeProvider";
+import { AuthProvider } from "./contexts/AuthContext";
 
 function App() {
-  const { selectedMovements, toggleMovement } = useMovements();
+  const { selectedMovements, toggleMovement, movementUsageMode, setMovementUsageMode } = useMovements();
   const [workoutType, setWorkoutType] = useState<WorkoutType>("random");
   const [formatType, setFormatType] = useState<FormatType>("emom");
   const [weightUnit, setWeightUnit] = useState<WeightUnit>("kg");
@@ -37,6 +38,7 @@ function App() {
       workoutLength,
       customMinutes,
       workoutIntent,
+      movementUsageMode,
     );
   };
 
@@ -71,12 +73,13 @@ function App() {
   };
 
   return (
-    <div className="flex flex-col flex-grow">
-      <div className="fixed left-0 top-0 -z-10 h-full w-full">
-        {theme === "dark" ? <DarkBackground /> : <LightBackground />}
-      </div>
-      <ToggleDarkMode />
-      <main className="flex-grow">
+    <AuthProvider>
+      <div className="flex flex-col flex-grow">
+        <div className="fixed left-0 top-0 -z-10 h-full w-full">
+          {theme === "dark" ? <DarkBackground /> : <LightBackground />}
+        </div>
+        <ToggleDarkMode />
+        <main className="flex-grow">
         {/* Mobile Layout: Vertical Stack */}
         <div className="lg:hidden flex flex-col items-center">
           <div className="w-full max-w-lg">
@@ -90,6 +93,7 @@ function App() {
                 customMinutes={customMinutes}
                 workoutIntent={workoutIntent}
                 selectedMovements={selectedMovements}
+                movementUsageMode={movementUsageMode}
                 handleGenerateWod={handleGenerateWod}
                 setWorkoutType={handleWorkoutChange}
                 setFormatType={handleFormatChange}
@@ -97,6 +101,7 @@ function App() {
                 setWorkoutLength={handleWorkoutLengthChange}
                 setCustomMinutes={handleCustomMinutesChange}
                 setWorkoutIntent={handleWorkoutIntentChange}
+                setMovementUsageMode={setMovementUsageMode}
                 toggleMovement={toggleMovement}
               />
             </FancyLoadingSpinner>
@@ -132,6 +137,7 @@ function App() {
                 customMinutes={customMinutes}
                 workoutIntent={workoutIntent}
                 selectedMovements={selectedMovements}
+                movementUsageMode={movementUsageMode}
                 handleGenerateWod={handleGenerateWod}
                 setWorkoutType={handleWorkoutChange}
                 setFormatType={handleFormatChange}
@@ -139,6 +145,7 @@ function App() {
                 setWorkoutLength={handleWorkoutLengthChange}
                 setCustomMinutes={handleCustomMinutesChange}
                 setWorkoutIntent={handleWorkoutIntentChange}
+                setMovementUsageMode={setMovementUsageMode}
                 toggleMovement={toggleMovement}
               />
             </FancyLoadingSpinner>
@@ -165,7 +172,8 @@ function App() {
         </div>
       </main>
       <Toaster />
-    </div>
+      </div>
+    </AuthProvider>
   );
 }
 

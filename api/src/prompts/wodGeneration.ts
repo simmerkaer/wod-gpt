@@ -5,6 +5,7 @@ import {
   WeightUnit,
   WorkoutFormat,
   WorkoutIntent,
+  MovementUsageMode,
 } from "../movements/types";
 
 // Structured prompt for JSON output
@@ -17,6 +18,7 @@ export const getStructuredPrompt = (
   workoutLength?: string,
   customMinutes?: number,
   workoutIntent?: WorkoutIntent,
+  movementUsageMode?: MovementUsageMode,
 ) => {
   const allowedMovements = random
     ? movementIds.map((x) => `- ${x}`).join("\n")
@@ -40,6 +42,9 @@ export const getStructuredPrompt = (
 
   // Generate intent-specific instructions
   const intentInstructions = getIntentInstructions(workoutIntent);
+
+  // Generate movement usage mode instructions
+  const movementUsageInstructions = getMovementUsageInstructions(movementUsageMode, random);
 
   return `
 You are a CrossFit programming generator. You must return your response as a JSON object with the following structure:
@@ -90,6 +95,8 @@ ${formatInstructions}
 ${lengthInstructions}
 
 ${intentInstructions}
+
+${movementUsageInstructions}
 
 Your task is to design an effective and well-balanced CrossFit workout using only the following exercises:
 
@@ -149,6 +156,7 @@ export const wodGenerationPrompts = (
   workoutLength?: string,
   customMinutes?: number,
   workoutIntent?: WorkoutIntent,
+  movementUsageMode?: MovementUsageMode,
 ) => {
   const allowedMovements = random
     ? movementIds.map((x) => `- ${x}`).join("\n")
@@ -173,6 +181,9 @@ export const wodGenerationPrompts = (
 
   // Generate intent-specific instructions
   const intentInstructions = getIntentInstructions(workoutIntent);
+
+  // Generate movement usage mode instructions
+  const movementUsageInstructions = getMovementUsageInstructions(movementUsageMode, random);
 
   return `
     You are a CrossFit programming generator. Your task is to design an effective and well-balanced CrossFit workout using only the following exercises:
@@ -200,6 +211,8 @@ export const wodGenerationPrompts = (
     ${lengthInstructions}
 
     ${intentInstructions}
+
+    ${movementUsageInstructions}
 
     ### 3. Time Domain & Structure
     - Logical time domains based on intensity:
@@ -527,5 +540,31 @@ const getIntentInstructions = (workoutIntent?: WorkoutIntent): string => {
     
     default:
       return "";
+  }
+};
+
+const getMovementUsageInstructions = (movementUsageMode?: MovementUsageMode, random?: boolean): string => {
+  // For random workouts, movement usage mode doesn't apply
+  if (random) {
+    return "";
+  }
+
+  if (movementUsageMode === "all") {
+    return `
+    ### MOVEMENT USAGE REQUIREMENTS - USE ALL SELECTED MOVEMENTS
+    - **MANDATORY**: You MUST use EVERY SINGLE movement from the provided list in your workout
+    - Do not skip or omit any movements - include them all in the workout design
+    - Structure the workout to incorporate all movements in a balanced and logical way
+    - If there are many movements, consider using formats like EMOM, Intervals, or multi-part workouts
+    - Ensure each movement gets appropriate representation in the workout
+      `;
+  } else {
+    return `
+    ### MOVEMENT USAGE - SUBSET SELECTION ALLOWED
+    - You may choose to use SOME or ALL of the provided movements
+    - Select movements that create the best workout for the specified format and intent
+    - Prioritize movement combinations that work well together
+    - Focus on creating an effective and balanced workout rather than using every movement
+      `;
   }
 };
