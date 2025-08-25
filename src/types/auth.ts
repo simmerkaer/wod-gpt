@@ -1,3 +1,5 @@
+import { IdP } from "@/contexts/AuthContext";
+
 export interface ClientPrincipal {
   identityProvider: string;
   userId: string;
@@ -28,7 +30,7 @@ export interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: () => void;
+  login: (idp: IdP) => void;
   logout: () => void;
   refreshUser: () => Promise<void>;
 }

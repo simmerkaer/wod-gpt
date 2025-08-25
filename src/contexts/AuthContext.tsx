@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState, ReactNode } from "react
 import { AuthContextType, AuthResponse, User, ClientPrincipal, Claim } from "../types/auth";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export type IdP = "google" | "github";
 
 export const useAuthContext = () => {
   const context = useContext(AuthContext);
@@ -59,8 +60,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     setIsLoading(false);
   };
 
-  const login = () => {
-    window.location.href = "/.auth/login/google";
+  const login = (idp: IdP) => {
+    window.location.href = `/.auth/login/${idp}`;
   };
 
   const logout = () => {

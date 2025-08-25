@@ -39,7 +39,7 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
-    "@azure/static-web-apps-cli": "2.0.2",
+    "@azure/static-web-apps-cli": "^2.0.6",
     "@eslint/js": "^9.17.0",
     "@types/lodash": "^4.17.15",
     "@types/node": "^22.13.0",
