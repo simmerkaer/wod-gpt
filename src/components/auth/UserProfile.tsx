@@ -1,5 +1,7 @@
 import { User } from "lucide-react";
+import { Link } from "react-router-dom";
 import { useUser } from "../../hooks/useAuth";
+import { Button } from "../ui/button";
 
 export const UserProfile = () => {
   const user = useUser();
@@ -9,9 +11,11 @@ export const UserProfile = () => {
   }
 
   return (
-    <div className="flex items-center gap-2 text-sm">
-      <User size={16} />
-      <span className="hidden sm:inline">{user.name}</span>
-    </div>
+    <Button asChild variant="ghost" size="sm" className="gap-2">
+      <Link to="/profile">
+        <User size={16} />
+        <span className="hidden sm:inline">{user.name}</span>
+      </Link>
+    </Button>
   );
 };
