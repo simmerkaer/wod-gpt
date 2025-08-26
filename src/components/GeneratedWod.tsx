@@ -1,26 +1,33 @@
 import { useToast } from "@/hooks/use-toast";
-import { ClipboardCopy, Expand } from "lucide-react";
+import { ClipboardCopy, Expand, Save, Heart } from "lucide-react";
 import React, { useState, useEffect, useRef } from "react";
 import { Typewriter } from "./Typewriter";
 import { Button } from "./ui/button";
 import { Dialog, DialogContent } from "./ui/dialog";
 import { Timer } from "./Timer";
-import { WorkoutTiming } from "@/types/workout";
+import { WorkoutTiming, WorkoutResponse } from "@/types/workout";
+import { useSaveWorkout } from "../hooks/useSaveWorkout";
+import { useAuth } from "../hooks/useAuth";
 
 interface GeneratedWodProps {
   wod: string | null;
   timing: WorkoutTiming | null;
   confidence: number;
   error: string | null;
+  workoutResponse?: WorkoutResponse | null; // Full structured workout data for saving
 }
 
 const GeneratedWod: React.FunctionComponent<GeneratedWodProps> = ({
   wod,
   timing,
   error,
+  workoutResponse,
 }) => {
   const { toast } = useToast();
+  const { isAuthenticated } = useAuth();
+  const { saveWorkout, isLoading: isSaving } = useSaveWorkout();
   const [isFullScreen, setIsFullScreen] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
   const workoutRef = useRef<HTMLDivElement>(null);
 
   const copyToClipboard = () => {
@@ -33,6 +40,39 @@ const GeneratedWod: React.FunctionComponent<GeneratedWodProps> = ({
   const toggleFullScreen = () => {
     setIsFullScreen(!isFullScreen);
   };
+
+  const handleSaveWorkout = async () => {
+    if (!workoutResponse || !isAuthenticated) {
+      toast({
+        title: "Please sign in to save workouts",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      await saveWorkout(workoutResponse, {
+        completedAt: new Date().toISOString(),
+      });
+      
+      setIsSaved(true);
+      toast({
+        title: "Workout saved! 💾✨",
+        description: "Added to your workout history",
+      });
+    } catch (error) {
+      toast({
+        title: "Failed to save workout",
+        description: error instanceof Error ? error.message : "Please try again",
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Reset saved state when new workout is generated
+  useEffect(() => {
+    setIsSaved(false);
+  }, [wod]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -85,7 +125,7 @@ const GeneratedWod: React.FunctionComponent<GeneratedWodProps> = ({
               <Typewriter text={wod} />
             </div>
           </div>
-          <div className="mt-10 flex justify-center gap-2">
+          <div className="mt-10 flex justify-center gap-2 flex-wrap">
             <Button
               id="gtm-generate-wod"
               variant="outline"
@@ -98,6 +138,16 @@ const GeneratedWod: React.FunctionComponent<GeneratedWodProps> = ({
               <Expand />
               Full Screen
             </Button>
+            {isAuthenticated && workoutResponse && (
+              <Button
+                variant={isSaved ? "default" : "outline"}
+                onClick={handleSaveWorkout}
+                disabled={isSaving || isSaved}
+              >
+                {isSaved ? <Heart className="fill-current" /> : <Save />}
+                {isSaving ? "Saving..." : isSaved ? "Saved!" : "Save Workout"}
+              </Button>
+            )}
           </div>
         </div>
 

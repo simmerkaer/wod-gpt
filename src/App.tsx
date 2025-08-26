@@ -7,6 +7,7 @@ import { useTheme } from "./ThemeProvider";
 import { AuthProvider } from "./contexts/AuthContext";
 import HomePage from "./pages/HomePage";
 import ProfilePage from "./pages/ProfilePage";
+import WorkoutHistoryPage from "./pages/WorkoutHistoryPage";
 
 function App() {
   const { theme } = useTheme();
@@ -22,6 +23,7 @@ function App() {
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/history" element={<WorkoutHistoryPage />} />
           </Routes>
         </main>
         <Toaster />

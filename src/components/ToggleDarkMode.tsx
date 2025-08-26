@@ -1,4 +1,4 @@
-import { Moon, Sun, User } from "lucide-react";
+import { Moon, Sun, User, History } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useTheme } from "@/ThemeProvider";
 import { Switch } from "./ui/switch";
@@ -18,12 +18,20 @@ export function ToggleDarkMode() {
       </div>
       <div className="flex items-center space-x-2">
         {isAuthenticated && (
-          <Button asChild variant="ghost" size="sm">
-            <Link to="/profile">
-              <User className="h-4 w-4" />
-              <span className="sr-only">Profile</span>
-            </Link>
-          </Button>
+          <>
+            <Button asChild variant="ghost" size="sm" className="hidden sm:flex">
+              <Link to="/history">
+                <History className="h-4 w-4" />
+                <span className="sr-only">Workout History</span>
+              </Link>
+            </Button>
+            <Button asChild variant="ghost" size="sm">
+              <Link to="/profile">
+                <User className="h-4 w-4" />
+                <span className="sr-only">Profile</span>
+              </Link>
+            </Button>
+          </>
         )}
         <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90" />
         <Switch

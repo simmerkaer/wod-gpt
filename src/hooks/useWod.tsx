@@ -20,6 +20,7 @@ interface UseWodResult {
   source: 'ai' | 'parsed' | 'default';
   isLoading: boolean;
   error: string | null;
+  workoutResponse: WorkoutResponse | null;
 }
 
 export const useGenerateWod = (): [
@@ -41,6 +42,7 @@ export const useGenerateWod = (): [
   const [source, setSource] = useState<'ai' | 'parsed' | 'default'>('ai');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [workoutResponse, setWorkoutResponse] = useState<WorkoutResponse | null>(null);
   const fetchWod = async (
     random: boolean,
     exercises: string[],
@@ -87,6 +89,7 @@ export const useGenerateWod = (): [
         setTiming(data.timing);
         setConfidence(data.system.confidence);
         setSource(data.system.source);
+        setWorkoutResponse(data);
         
         console.log('✅ Received structured workout response:', {
           format: data.workout.format,
@@ -113,6 +116,7 @@ export const useGenerateWod = (): [
         });
         setConfidence(0.6); // Lower confidence for parsed timing
         setSource('parsed');
+        setWorkoutResponse(null); // Legacy format doesn't have full structure
         
         console.log('⚠️ Received legacy workout response, parsed timing:', parsedTiming);
       }
@@ -136,6 +140,7 @@ export const useGenerateWod = (): [
       setTiming(defaultResponse.timing);
       setConfidence(defaultResponse.system.confidence);
       setSource(defaultResponse.system.source);
+      setWorkoutResponse(defaultResponse);
       
     } finally {
       setIsLoading(false);
@@ -150,7 +155,8 @@ export const useGenerateWod = (): [
       confidence,
       source,
       isLoading,
-      error
+      error,
+      workoutResponse
     }
   ];
 };

@@ -19,7 +19,7 @@ export default function HomePage() {
     useState<WorkoutLengthOption>("medium");
   const [customMinutes, setCustomMinutes] = useState<number>(20);
   const [workoutIntent, setWorkoutIntent] = useState<WorkoutIntent>("general_fitness");
-  const [fetchWod, { wod, timing, confidence, isLoading, error }] =
+  const [fetchWod, { wod, timing, confidence, isLoading, error, workoutResponse }] =
     useGenerateWod();
 
   const handleGenerateWod = () => {
@@ -101,6 +101,7 @@ export default function HomePage() {
             timing={timing}
             confidence={confidence}
             error={error}
+            workoutResponse={workoutResponse}
           />
         </section>
       </div>
@@ -152,6 +153,7 @@ export default function HomePage() {
               timing={timing}
               confidence={confidence}
               error={error}
+              workoutResponse={workoutResponse}
             />
           )}
         </section>
