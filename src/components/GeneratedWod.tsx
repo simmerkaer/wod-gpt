@@ -23,7 +23,6 @@ const GeneratedWod: React.FunctionComponent<GeneratedWodProps> = ({
   wod,
   timing,
   error,
-  workoutResponse,
   savedWorkoutId,
   isFavorite,
   toggleFavorite,

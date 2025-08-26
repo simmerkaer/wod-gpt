@@ -26,8 +26,7 @@ import {
   Zap,
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import { SavedWorkout } from "../types/workoutHistory";
-import { formatWorkoutDate } from "../types/workoutHistory";
+import { SavedWorkout, formatWorkoutDate } from "../types/workoutHistory";
 
 // Helper function to calculate workout statistics
 function calculateWorkoutStats(workouts: SavedWorkout[]) {
@@ -114,13 +113,14 @@ function calculateWorkoutStats(workouts: SavedWorkout[]) {
     });
 
     const uniqueDates = Array.from(dates).sort(
-      (a, b) => new Date(b).getTime() - new Date(a).getTime(),
+      (a, b) =>
+        new Date(b as string).getTime() - new Date(a as string).getTime(),
     );
 
     // Calculate current streak
     let currentDate = today;
     for (const dateStr of uniqueDates) {
-      const workoutDate = new Date(dateStr);
+      const workoutDate = new Date(dateStr as string);
       const daysDiff = Math.floor(
         (currentDate.getTime() - workoutDate.getTime()) / (1000 * 60 * 60 * 24),
       );
@@ -137,14 +137,15 @@ function calculateWorkoutStats(workouts: SavedWorkout[]) {
 
     // Calculate longest streak
     const allDates = Array.from(dates).sort(
-      (a, b) => new Date(a).getTime() - new Date(b).getTime(),
+      (a, b) =>
+        new Date(a as string).getTime() - new Date(b as string).getTime(),
     );
     for (let i = 0; i < allDates.length; i++) {
       if (i === 0) {
         tempStreak = 1;
       } else {
-        const prevDate = new Date(allDates[i - 1]);
-        const currDate = new Date(allDates[i]);
+        const prevDate = new Date(allDates[i - 1] as string);
+        const currDate = new Date(allDates[i] as string);
         const daysDiff = Math.floor(
           (currDate.getTime() - prevDate.getTime()) / (1000 * 60 * 60 * 24),
         );
@@ -291,10 +292,7 @@ function calculateWorkoutStats(workouts: SavedWorkout[]) {
 
 export default function ProfilePage() {
   const { user, isAuthenticated, isLoading } = useAuth();
-  const { workouts, isLoading: workoutsLoading } = useWorkoutHistory(
-    undefined,
-    true,
-  ); // Get all workouts for statistics
+  const { workouts, isLoading: workoutsLoading } = useWorkoutHistory(); // Get all workouts for statistics
 
   const workoutStats = calculateWorkoutStats(workouts);
 
@@ -506,18 +504,19 @@ export default function ProfilePage() {
                     </div>
                   )}
 
-                  {workoutStats.longestStreak > 0 && (
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="text-sm flex items-center gap-2">
-                        <Flame className="h-4 w-4 text-orange-500" />
-                        Longest Streak
-                      </span>
-                      <span className="text-sm font-medium">
-                        {workoutStats.longestStreak}{" "}
-                        {workoutStats.longestStreak === 1 ? "day" : "days"}
-                      </span>
-                    </div>
-                  )}
+                  {workoutStats.longestStreak &&
+                    workoutStats.longestStreak > 0 && (
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-sm flex items-center gap-2">
+                          <Flame className="h-4 w-4 text-orange-500" />
+                          Longest Streak
+                        </span>
+                        <span className="text-sm font-medium">
+                          {workoutStats.longestStreak}{" "}
+                          {workoutStats.longestStreak === 1 ? "day" : "days"}
+                        </span>
+                      </div>
+                    )}
 
                   {workoutStats.mostActiveMonth && (
                     <div className="flex items-center justify-between gap-2">
@@ -543,47 +542,48 @@ export default function ProfilePage() {
                 </div>
 
                 {/* Milestone Badges */}
-                {workoutStats.earnedBadges.length > 0 && (
-                  <>
-                    <Separator />
-                    <div className="space-y-3">
-                      <h3 className="text-sm font-medium text-muted-foreground mb-2 sm:mb-3">
-                        Achievements
-                      </h3>
-                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                        {workoutStats.earnedBadges.map((badge) => {
-                          const IconComponent =
-                            badge.icon === "star"
-                              ? Star
-                              : badge.icon === "zap"
-                                ? Zap
-                                : badge.icon === "award"
-                                  ? Award
-                                  : badge.icon === "trophy"
-                                    ? Trophy
-                                    : badge.icon === "flame"
-                                      ? Flame
-                                      : Dumbbell;
+                {workoutStats.earnedBadges &&
+                  workoutStats.earnedBadges.length > 0 && (
+                    <>
+                      <Separator />
+                      <div className="space-y-3">
+                        <h3 className="text-sm font-medium text-muted-foreground mb-2 sm:mb-3">
+                          Achievements
+                        </h3>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                          {workoutStats.earnedBadges?.map((badge) => {
+                            const IconComponent =
+                              badge.icon === "star"
+                                ? Star
+                                : badge.icon === "zap"
+                                  ? Zap
+                                  : badge.icon === "award"
+                                    ? Award
+                                    : badge.icon === "trophy"
+                                      ? Trophy
+                                      : badge.icon === "flame"
+                                        ? Flame
+                                        : Dumbbell;
 
-                          return (
-                            <div
-                              key={badge.name}
-                              className="flex flex-col items-center p-2 bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg text-center"
-                            >
-                              <IconComponent className="h-6 w-6 text-yellow-600 dark:text-yellow-400 mb-1" />
-                              <span className="text-xs font-medium text-yellow-800 dark:text-yellow-200">
-                                {badge.name}
-                              </span>
-                              <span className="text-xs text-yellow-600 dark:text-yellow-400 mt-1">
-                                {badge.threshold}+ workouts
-                              </span>
-                            </div>
-                          );
-                        })}
+                            return (
+                              <div
+                                key={badge.name}
+                                className="flex flex-col items-center p-2 bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg text-center"
+                              >
+                                <IconComponent className="h-6 w-6 text-yellow-600 dark:text-yellow-400 mb-1" />
+                                <span className="text-xs font-medium text-yellow-800 dark:text-yellow-200">
+                                  {badge.name}
+                                </span>
+                                <span className="text-xs text-yellow-600 dark:text-yellow-400 mt-1">
+                                  {badge.threshold}+ workouts
+                                </span>
+                              </div>
+                            );
+                          })}
+                        </div>
                       </div>
-                    </div>
-                  </>
-                )}
+                    </>
+                  )}
 
                 {/* Progress to Next Goal */}
                 {workoutStats.progressToNext && (
