@@ -6,15 +6,17 @@ export const LoginButton = () => {
   const { login, isLoading } = useAuth();
 
   return (
-    <Button
-      onClick={() => login("github")}
-      disabled={isLoading}
-      variant="outline"
-      size="sm"
-      className="gap-2"
-    >
-      <LogIn size={16} />
-      Sign In With Github
-    </Button>
+    <div className="flex gap-2">
+      <Button
+        onClick={() => login("google")}
+        disabled={isLoading}
+        variant="outline"
+        size="sm"
+        className="gap-2"
+      >
+        <LogIn size={16} />
+        Sign In With Google
+      </Button>
+    </div>
   );
 };
