@@ -1,6 +1,7 @@
 import { MovementId, MovementUsageMode } from "@/lib/movementId";
-import { Loader2, PlusIcon, ZapIcon } from "lucide-react";
+import { Loader2, PlusIcon, ZapIcon, User } from "lucide-react";
 import * as React from "react";
+import { Link } from "react-router-dom";
 import FormatSelector, { FormatType } from "./FormatSelector";
 import GiveFeedback from "./GiveFeedback";
 import SelectedMovements from "./SelectedMovements";
@@ -21,6 +22,7 @@ import UnitSelector, { WeightUnit } from "./UnitSelector";
 import WorkoutSelector, { WorkoutType } from "./WorkoutSelector";
 import WorkoutLength, { WorkoutLengthOption } from "./WorkoutLength";
 import WorkoutIntentSelector, { WorkoutIntent } from "./WorkoutIntent";
+import { useAuth } from "../hooks/useAuth";
 
 interface MainMenuProps {
   isLoading: boolean;
@@ -63,6 +65,7 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
   setMovementUsageMode,
   handleGenerateWod,
 }) => {
+  const { isAuthenticated } = useAuth();
   return (
     <Card className="flex-grow rounded-[10px]">
       <CardHeader className="pb-4">
@@ -194,7 +197,7 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
           </div>
 
           {/* Generate Button */}
-          <div className="pt-3">
+          <div className="pt-3 space-y-2">
             <Button
               onClick={handleGenerateWod}
               className="w-full bg-gradient-to-r from-red-500 to-purple-600 align-middle hover:from-red-600 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all duration-200 text-lg font-semibold"
@@ -210,6 +213,16 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
                 </>
               )}
             </Button>
+            
+            {/* View Profile Button - only show if authenticated */}
+            {isAuthenticated && (
+              <Button asChild variant="outline" size="sm" className="w-full">
+                <Link to="/profile">
+                  <User className="h-4 w-4 mr-2" />
+                  View Profile
+                </Link>
+              </Button>
+            )}
           </div>
         </div>
       </CardContent>

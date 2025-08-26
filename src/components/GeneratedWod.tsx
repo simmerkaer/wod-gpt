@@ -1,12 +1,11 @@
 import { useToast } from "@/hooks/use-toast";
-import { ClipboardCopy, Expand, Save, Heart } from "lucide-react";
+import { ClipboardCopy, Expand, Heart } from "lucide-react";
 import React, { useState, useEffect, useRef } from "react";
 import { Typewriter } from "./Typewriter";
 import { Button } from "./ui/button";
 import { Dialog, DialogContent } from "./ui/dialog";
 import { Timer } from "./Timer";
 import { WorkoutTiming, WorkoutResponse } from "@/types/workout";
-import { useSaveWorkout } from "../hooks/useSaveWorkout";
 import { useAuth } from "../hooks/useAuth";
 
 interface GeneratedWodProps {
@@ -14,7 +13,10 @@ interface GeneratedWodProps {
   timing: WorkoutTiming | null;
   confidence: number;
   error: string | null;
-  workoutResponse?: WorkoutResponse | null; // Full structured workout data for saving
+  workoutResponse?: WorkoutResponse | null;
+  savedWorkoutId: string | null;
+  isFavorite: boolean;
+  toggleFavorite: () => Promise<void>;
 }
 
 const GeneratedWod: React.FunctionComponent<GeneratedWodProps> = ({
@@ -22,12 +24,14 @@ const GeneratedWod: React.FunctionComponent<GeneratedWodProps> = ({
   timing,
   error,
   workoutResponse,
+  savedWorkoutId,
+  isFavorite,
+  toggleFavorite,
 }) => {
   const { toast } = useToast();
   const { isAuthenticated } = useAuth();
-  const { saveWorkout, isLoading: isSaving } = useSaveWorkout();
   const [isFullScreen, setIsFullScreen] = useState(false);
-  const [isSaved, setIsSaved] = useState(false);
+  const [isTogglingFavorite, setIsTogglingFavorite] = useState(false);
   const workoutRef = useRef<HTMLDivElement>(null);
 
   const copyToClipboard = () => {
@@ -41,38 +45,33 @@ const GeneratedWod: React.FunctionComponent<GeneratedWodProps> = ({
     setIsFullScreen(!isFullScreen);
   };
 
-  const handleSaveWorkout = async () => {
-    if (!workoutResponse || !isAuthenticated) {
+  const handleToggleFavorite = async () => {
+    if (!savedWorkoutId || !isAuthenticated) {
       toast({
-        title: "Please sign in to save workouts",
+        title: "Please sign in to favorite workouts",
         variant: "destructive",
       });
       return;
     }
 
+    setIsTogglingFavorite(true);
     try {
-      await saveWorkout(workoutResponse, {
-        completedAt: new Date().toISOString(),
-      });
-      
-      setIsSaved(true);
+      await toggleFavorite();
       toast({
-        title: "Workout saved! 💾✨",
-        description: "Added to your workout history",
+        title: isFavorite ? "Removed from favorites 💔" : "Added to favorites ❤️",
       });
     } catch (error) {
       toast({
-        title: "Failed to save workout",
+        title: "Failed to update favorite",
         description: error instanceof Error ? error.message : "Please try again",
         variant: "destructive",
       });
+    } finally {
+      setIsTogglingFavorite(false);
     }
   };
 
-  // Reset saved state when new workout is generated
-  useEffect(() => {
-    setIsSaved(false);
-  }, [wod]);
+  // Note: Favorite state is now managed in useGenerateWod hook
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -138,14 +137,20 @@ const GeneratedWod: React.FunctionComponent<GeneratedWodProps> = ({
               <Expand />
               Full Screen
             </Button>
-            {isAuthenticated && workoutResponse && (
+            {isAuthenticated && savedWorkoutId && (
               <Button
-                variant={isSaved ? "default" : "outline"}
-                onClick={handleSaveWorkout}
-                disabled={isSaving || isSaved}
+                variant={isFavorite ? "default" : "outline"}
+                onClick={handleToggleFavorite}
+                disabled={isTogglingFavorite}
+                className={isFavorite ? "bg-red-500 hover:bg-red-600" : ""}
               >
-                {isSaved ? <Heart className="fill-current" /> : <Save />}
-                {isSaving ? "Saving..." : isSaved ? "Saved!" : "Save Workout"}
+                <Heart className={isFavorite ? "fill-current" : ""} />
+                {isTogglingFavorite 
+                  ? "Updating..." 
+                  : isFavorite 
+                    ? "Favorited!" 
+                    : "Add to Favorites"
+                }
               </Button>
             )}
           </div>

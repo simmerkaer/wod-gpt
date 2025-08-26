@@ -1,7 +1,5 @@
-import { User } from "lucide-react";
-import { Link } from "react-router-dom";
 import { useUser } from "../../hooks/useAuth";
-import { Button } from "../ui/button";
+import { Badge } from "../ui/badge";
 
 export const UserProfile = () => {
   const user = useUser();
@@ -10,12 +8,5 @@ export const UserProfile = () => {
     return null;
   }
 
-  return (
-    <Button asChild variant="ghost" size="sm" className="gap-2">
-      <Link to="/profile">
-        <User size={16} />
-        <span className="hidden sm:inline">{user.name}</span>
-      </Link>
-    </Button>
-  );
+  return <Badge variant={"outline"}>{user.name}</Badge>;
 };

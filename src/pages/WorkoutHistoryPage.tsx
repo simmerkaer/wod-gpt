@@ -2,26 +2,36 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useWorkoutHistory } from "../hooks/useWorkoutHistory";
 import { useAuth } from "../hooks/useAuth";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
 import { Button } from "../components/ui/button";
 import { Separator } from "../components/ui/separator";
 import { Switch } from "../components/ui/switch";
-import { 
-  ArrowLeft, 
-  Calendar, 
-  Clock, 
-  Heart, 
+import {
+  ArrowLeft,
+  Calendar,
+  Clock,
+  Heart,
   MoreVertical,
   Star,
   Trash2,
   StickyNote,
   LogIn,
   Dumbbell,
-  Filter
+  Filter,
 } from "lucide-react";
 import { SavedWorkout } from "../types/workoutHistory";
-import { formatWorkoutDate, formatWorkoutDateTime, getWorkoutPreview } from "../types/workoutHistory";
+import {
+  formatWorkoutDate,
+  formatWorkoutDateTime,
+  getWorkoutPreview,
+} from "../types/workoutHistory";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -38,17 +48,22 @@ interface WorkoutCardProps {
   onAddNote: (id: string, notes: string) => void;
 }
 
-function WorkoutCard({ workout, onToggleFavorite, onDelete, onAddNote }: WorkoutCardProps) {
+function WorkoutCard({
+  workout,
+  onToggleFavorite,
+  onDelete,
+  onAddNote,
+}: WorkoutCardProps) {
   const [showFullWorkout, setShowFullWorkout] = useState(false);
   const [editingNotes, setEditingNotes] = useState(false);
-  const [notesText, setNotesText] = useState(workout.notes || '');
+  const [notesText, setNotesText] = useState(workout.notes || "");
 
   const handleToggleFavorite = () => {
     onToggleFavorite(workout.id, !workout.favorite);
   };
 
   const handleDelete = () => {
-    if (confirm('Are you sure you want to delete this workout?')) {
+    if (confirm("Are you sure you want to delete this workout?")) {
       onDelete(workout.id);
     }
   };
@@ -60,10 +75,14 @@ function WorkoutCard({ workout, onToggleFavorite, onDelete, onAddNote }: Workout
 
   const formatDifficulty = (difficulty: string) => {
     switch (difficulty) {
-      case 'beginner': return { text: 'Beginner', color: 'bg-green-100 text-green-800' };
-      case 'intermediate': return { text: 'Intermediate', color: 'bg-yellow-100 text-yellow-800' };
-      case 'advanced': return { text: 'Advanced', color: 'bg-red-100 text-red-800' };
-      default: return { text: difficulty, color: 'bg-gray-100 text-gray-800' };
+      case "beginner":
+        return { text: "Beginner", color: "bg-green-100 text-green-800" };
+      case "intermediate":
+        return { text: "Intermediate", color: "bg-yellow-100 text-yellow-800" };
+      case "advanced":
+        return { text: "Advanced", color: "bg-red-100 text-red-800" };
+      default:
+        return { text: difficulty, color: "bg-gray-100 text-gray-800" };
     }
   };
 
@@ -76,7 +95,7 @@ function WorkoutCard({ workout, onToggleFavorite, onDelete, onAddNote }: Workout
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap mb-2">
               <Badge variant="secondary" className="capitalize">
-                {workout.workout.workout.format.replace('_', ' ')}
+                {workout.workout.workout.format.replace("_", " ")}
               </Badge>
               <Badge className={difficultyStyle.color} variant="secondary">
                 {difficultyStyle.text}
@@ -97,11 +116,13 @@ function WorkoutCard({ workout, onToggleFavorite, onDelete, onAddNote }: Workout
                 <span className="flex items-center gap-1">
                   <Clock className="h-3 w-3" />
                   {workout.workout.timing.duration}min
-                  {workout.actualDuration && workout.actualDuration !== workout.workout.timing.duration && (
-                    <span className="text-muted-foreground">
-                      (actual: {workout.actualDuration}min)
-                    </span>
-                  )}
+                  {workout.actualDuration &&
+                    workout.actualDuration !==
+                      workout.workout.timing.duration && (
+                      <span className="text-muted-foreground">
+                        (actual: {workout.actualDuration}min)
+                      </span>
+                    )}
                 </span>
               )}
             </CardDescription>
@@ -114,12 +135,16 @@ function WorkoutCard({ workout, onToggleFavorite, onDelete, onAddNote }: Workout
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem onClick={handleToggleFavorite}>
-                <Heart className={`h-4 w-4 mr-2 ${workout.favorite ? 'fill-current text-red-500' : ''}`} />
-                {workout.favorite ? 'Remove from favorites' : 'Add to favorites'}
+                <Heart
+                  className={`h-4 w-4 mr-2 ${workout.favorite ? "fill-current text-red-500" : ""}`}
+                />
+                {workout.favorite
+                  ? "Remove from favorites"
+                  : "Add to favorites"}
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setEditingNotes(true)}>
                 <StickyNote className="h-4 w-4 mr-2" />
-                {workout.notes ? 'Edit notes' : 'Add notes'}
+                {workout.notes ? "Edit notes" : "Add notes"}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={handleDelete} className="text-red-600">
@@ -134,19 +159,18 @@ function WorkoutCard({ workout, onToggleFavorite, onDelete, onAddNote }: Workout
         <div className="space-y-3">
           {/* Workout Preview/Full Text */}
           <div className="bg-muted/50 p-3 rounded text-sm font-mono whitespace-pre-wrap">
-            {showFullWorkout 
+            {showFullWorkout
               ? workout.workout.workout.text
-              : getWorkoutPreview(workout.workout.workout.text, 200)
-            }
+              : getWorkoutPreview(workout.workout.workout.text, 200)}
           </div>
-          
+
           {workout.workout.workout.text.length > 200 && (
-            <Button 
-              variant="ghost" 
-              size="sm" 
+            <Button
+              variant="ghost"
+              size="sm"
               onClick={() => setShowFullWorkout(!showFullWorkout)}
             >
-              {showFullWorkout ? 'Show less' : 'Show more'}
+              {showFullWorkout ? "Show less" : "Show more"}
             </Button>
           )}
 
@@ -173,12 +197,12 @@ function WorkoutCard({ workout, onToggleFavorite, onDelete, onAddNote }: Workout
                       <Button size="sm" onClick={handleSaveNotes}>
                         Save
                       </Button>
-                      <Button 
-                        size="sm" 
-                        variant="ghost" 
+                      <Button
+                        size="sm"
+                        variant="ghost"
                         onClick={() => {
                           setEditingNotes(false);
-                          setNotesText(workout.notes || '');
+                          setNotesText(workout.notes || "");
                         }}
                       >
                         Cancel
@@ -200,9 +224,7 @@ function WorkoutCard({ workout, onToggleFavorite, onDelete, onAddNote }: Workout
               <Separator />
               <div className="flex items-center gap-2">
                 <Star className="h-4 w-4 text-yellow-500 fill-current" />
-                <span className="text-sm">
-                  {workout.rating}/5 stars
-                </span>
+                <span className="text-sm">{workout.rating}/5 stars</span>
               </div>
             </>
           )}
@@ -215,17 +237,28 @@ function WorkoutCard({ workout, onToggleFavorite, onDelete, onAddNote }: Workout
 export default function WorkoutHistoryPage() {
   const { isAuthenticated, isLoading: authLoading } = useAuth();
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
-  
-  // Get all workouts without filtering
-  const { workouts: allWorkouts, isLoading, error, hasMore, totalCount, loadMore, refresh, updateWorkout, deleteWorkout } = useWorkoutHistory();
+
+  // Get all workouts
+  const {
+    workouts: allWorkouts,
+    isLoading,
+    error,
+    totalCount,
+    refresh,
+    updateWorkout,
+    deleteWorkout,
+  } = useWorkoutHistory();
   const { toast } = useToast();
 
   // Apply client-side filtering
-  const workouts = showFavoritesOnly 
-    ? allWorkouts.filter(workout => workout.favorite === true)
+  const workouts = showFavoritesOnly
+    ? allWorkouts.filter((workout) => workout.favorite === true)
     : allWorkouts;
 
-  const favoriteCount = allWorkouts.filter(workout => workout.favorite === true).length;
+  const favoriteCount = allWorkouts.filter(
+    (workout) => workout.favorite === true,
+  ).length;
+  const displayTotalCount = showFavoritesOnly ? favoriteCount : totalCount;
 
   const handleToggleFavorite = async (id: string, favorite: boolean) => {
     try {
@@ -236,7 +269,8 @@ export default function WorkoutHistoryPage() {
     } catch (error) {
       toast({
         title: "Failed to update favorite",
-        description: error instanceof Error ? error.message : "Please try again",
+        description:
+          error instanceof Error ? error.message : "Please try again",
         variant: "destructive",
       });
     }
@@ -251,7 +285,8 @@ export default function WorkoutHistoryPage() {
     } catch (error) {
       toast({
         title: "Failed to delete workout",
-        description: error instanceof Error ? error.message : "Please try again",
+        description:
+          error instanceof Error ? error.message : "Please try again",
         variant: "destructive",
       });
     }
@@ -266,7 +301,8 @@ export default function WorkoutHistoryPage() {
     } catch (error) {
       toast({
         title: "Failed to save notes",
-        description: error instanceof Error ? error.message : "Please try again",
+        description:
+          error instanceof Error ? error.message : "Please try again",
         variant: "destructive",
       });
     }
@@ -289,11 +325,11 @@ export default function WorkoutHistoryPage() {
           <Button asChild variant="ghost" size="sm">
             <Link to="/">
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Home
+              Back to workout generation
             </Link>
           </Button>
         </div>
-        
+
         <div className="flex items-center justify-center min-h-[50vh]">
           <Card className="w-full max-w-md mx-auto">
             <CardHeader className="text-center">
@@ -317,9 +353,9 @@ export default function WorkoutHistoryPage() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Button asChild variant="ghost" size="sm">
-              <Link to="/">
+              <Link to="/profile">
                 <ArrowLeft className="h-4 w-4 mr-2" />
-                <span className="hidden sm:inline">Back to Home</span>
+                <span className="hidden sm:inline">Back to profile</span>
                 <span className="sm:hidden">Back</span>
               </Link>
             </Button>
@@ -351,9 +387,9 @@ export default function WorkoutHistoryPage() {
             <CardContent className="p-4">
               <div className="text-red-700 dark:text-red-300 text-center">
                 ⚠️ {error}
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
+                <Button
+                  variant="ghost"
+                  size="sm"
                   onClick={refresh}
                   className="ml-2 text-red-700 dark:text-red-300"
                 >
@@ -364,19 +400,23 @@ export default function WorkoutHistoryPage() {
           </Card>
         )}
 
-        {totalCount > 0 && (
+        {displayTotalCount > 0 && (
           <div className="text-center text-sm text-muted-foreground">
             {showFavoritesOnly ? (
-              <>Showing {workouts.length} of {favoriteCount} favorite workouts</>
+              <>Showing {workouts.length} favorite workouts</>
             ) : (
-              <>Showing {workouts.length} of {totalCount} workouts ({favoriteCount} favorites)</>
+              <>
+                Showing {workouts.length} workouts ({favoriteCount} favorites)
+              </>
             )}
           </div>
         )}
 
         {isLoading && workouts.length === 0 ? (
           <div className="flex items-center justify-center py-12">
-            <div className="animate-pulse text-muted-foreground">Loading your workout history...</div>
+            <div className="animate-pulse text-muted-foreground">
+              Loading your workout history...
+            </div>
           </div>
         ) : workouts.length === 0 ? (
           <Card className="text-center py-12">
@@ -386,17 +426,16 @@ export default function WorkoutHistoryPage() {
                   <Heart className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
                   <CardTitle className="mb-2">No favorite workouts</CardTitle>
                   <CardDescription className="mb-4">
-                    {allWorkouts.length > 0 
+                    {allWorkouts.length > 0
                       ? "You haven't favorited any workouts yet. Add some favorites by clicking the heart icon on your saved workouts!"
-                      : "Start generating and saving workouts, then mark your favorites!"
-                    }
+                      : "Start generating and saving workouts, then mark your favorites!"}
                   </CardDescription>
                   {allWorkouts.length === 0 ? (
                     <Button asChild>
                       <Link to="/">Generate Your First Workout</Link>
                     </Button>
                   ) : (
-                    <Button 
+                    <Button
                       variant="outline"
                       onClick={() => setShowFavoritesOnly(false)}
                     >
@@ -409,7 +448,8 @@ export default function WorkoutHistoryPage() {
                   <Dumbbell className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
                   <CardTitle className="mb-2">No workouts saved yet</CardTitle>
                   <CardDescription className="mb-4">
-                    Start generating and saving workouts to build your fitness history!
+                    Start generating and saving workouts to build your fitness
+                    history!
                   </CardDescription>
                   <Button asChild>
                     <Link to="/">Generate Your First Workout</Link>
@@ -429,18 +469,6 @@ export default function WorkoutHistoryPage() {
                 onAddNote={handleAddNote}
               />
             ))}
-
-            {hasMore && (
-              <div className="flex justify-center pt-4">
-                <Button 
-                  onClick={loadMore} 
-                  disabled={isLoading}
-                  variant="outline"
-                >
-                  {isLoading ? "Loading..." : "Load More"}
-                </Button>
-              </div>
-            )}
           </div>
         )}
       </div>

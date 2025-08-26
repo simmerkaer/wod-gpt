@@ -12,9 +12,7 @@ interface UseWorkoutHistoryResult {
   workouts: SavedWorkout[];
   isLoading: boolean;
   error: string | null;
-  hasMore: boolean;
   totalCount: number;
-  loadMore: () => void;
   refresh: () => void;
   updateWorkout: (id: string, updates: Omit<UpdateWorkoutRequest, 'id'>) => Promise<void>;
   deleteWorkout: (id: string) => Promise<void>;
@@ -25,11 +23,9 @@ export const useWorkoutHistory = (filters?: WorkoutHistoryFilters): UseWorkoutHi
   const [workouts, setWorkouts] = useState<SavedWorkout[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [hasMore, setHasMore] = useState(false);
   const [totalCount, setTotalCount] = useState(0);
-  const [offset, setOffset] = useState(0);
 
-  const fetchWorkouts = useCallback(async (reset: boolean = false) => {
+  const fetchWorkouts = useCallback(async () => {
     if (!isAuthenticated) {
       setWorkouts([]);
       setError(null);
@@ -40,11 +36,11 @@ export const useWorkoutHistory = (filters?: WorkoutHistoryFilters): UseWorkoutHi
     setError(null);
 
     try {
-      const currentOffset = reset ? 0 : offset;
       const searchParams = new URLSearchParams();
       
-      searchParams.append('limit', (filters?.limit || WORKOUTS_PER_PAGE).toString());
-      searchParams.append('offset', currentOffset.toString());
+      // Fetch all workouts
+      searchParams.append('limit', '1000'); // Large number to get all workouts
+      searchParams.append('offset', '0');
 
       if (filters?.favorite) {
         searchParams.append('favorite', 'true');
@@ -74,15 +70,7 @@ export const useWorkoutHistory = (filters?: WorkoutHistoryFilters): UseWorkoutHi
 
       const data: WorkoutHistoryResponse = await response.json();
       
-      if (reset) {
-        setWorkouts(data.workouts);
-        setOffset(data.workouts.length);
-      } else {
-        setWorkouts(prev => [...prev, ...data.workouts]);
-        setOffset(prev => prev + data.workouts.length);
-      }
-      
-      setHasMore(data.hasMore);
+      setWorkouts(data.workouts);
       setTotalCount(data.totalCount);
 
     } catch (err) {
@@ -91,17 +79,10 @@ export const useWorkoutHistory = (filters?: WorkoutHistoryFilters): UseWorkoutHi
     } finally {
       setIsLoading(false);
     }
-  }, [isAuthenticated, filters, offset]);
-
-  const loadMore = useCallback(() => {
-    if (!isLoading && hasMore) {
-      fetchWorkouts(false);
-    }
-  }, [isLoading, hasMore, fetchWorkouts]);
+  }, [isAuthenticated, filters]);
 
   const refresh = useCallback(() => {
-    setOffset(0);
-    fetchWorkouts(true);
+    fetchWorkouts();
   }, [fetchWorkouts]);
 
   const updateWorkout = useCallback(async (id: string, updates: Omit<UpdateWorkoutRequest, 'id'>) => {
@@ -170,8 +151,7 @@ export const useWorkoutHistory = (filters?: WorkoutHistoryFilters): UseWorkoutHi
   // Load initial data when authentication status changes or filters change
   useEffect(() => {
     if (isAuthenticated) {
-      setOffset(0);
-      fetchWorkouts(true);
+      fetchWorkouts();
     }
   }, [isAuthenticated, filters]);
 
@@ -180,9 +160,7 @@ export const useWorkoutHistory = (filters?: WorkoutHistoryFilters): UseWorkoutHi
     if (!isAuthenticated) {
       setWorkouts([]);
       setError(null);
-      setHasMore(false);
       setTotalCount(0);
-      setOffset(0);
     }
   }, [isAuthenticated]);
 
@@ -190,9 +168,7 @@ export const useWorkoutHistory = (filters?: WorkoutHistoryFilters): UseWorkoutHi
     workouts,
     isLoading,
     error,
-    hasMore,
     totalCount,
-    loadMore,
     refresh,
     updateWorkout,
     deleteWorkout,

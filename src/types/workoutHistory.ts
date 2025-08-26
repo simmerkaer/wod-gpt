@@ -53,7 +53,7 @@ export interface WorkoutHistoryError {
 }
 
 // Constants
-export const WORKOUTS_PER_PAGE = 20;
+export const WORKOUTS_PER_PAGE = 10;
 export const MAX_NOTES_LENGTH = 500;
 export const MAX_SEARCH_LENGTH = 100;
 

@@ -8,10 +8,14 @@ import {
   WorkoutData, 
   WorkoutTiming,
   isStructuredWorkout,
-  isLegacyWorkout
+  isLegacyWorkout,
+  WorkoutResponse
 } from "@/types/workout";
 import { parseWorkoutTiming } from "@/utils/workoutParser";
 import { createDefaultWorkoutResponse } from "@/utils/workoutValidation";
+import { useSaveWorkout } from "./useSaveWorkout";
+import { useAuth } from "./useAuth";
+import { useWorkoutHistory } from "./useWorkoutHistory";
 
 interface UseWodResult {
   wod: string | null;
@@ -21,6 +25,9 @@ interface UseWodResult {
   isLoading: boolean;
   error: string | null;
   workoutResponse: WorkoutResponse | null;
+  savedWorkoutId: string | null;
+  isFavorite: boolean;
+  toggleFavorite: () => Promise<void>;
 }
 
 export const useGenerateWod = (): [
@@ -43,6 +50,28 @@ export const useGenerateWod = (): [
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [workoutResponse, setWorkoutResponse] = useState<WorkoutResponse | null>(null);
+  const [savedWorkoutId, setSavedWorkoutId] = useState<string | null>(null);
+  const [isFavorite, setIsFavorite] = useState<boolean>(false);
+  
+  const { isAuthenticated } = useAuth();
+  const { saveWorkout } = useSaveWorkout();
+  const { updateWorkout } = useWorkoutHistory();
+
+  // Toggle favorite status for the current workout
+  const toggleFavorite = async () => {
+    if (!savedWorkoutId || !isAuthenticated) {
+      throw new Error('Workout must be saved and user must be authenticated to toggle favorite');
+    }
+    
+    try {
+      const newFavoriteStatus = !isFavorite;
+      await updateWorkout(savedWorkoutId, { favorite: newFavoriteStatus });
+      setIsFavorite(newFavoriteStatus);
+    } catch (error) {
+      console.error('Error toggling favorite:', error);
+      throw error;
+    }
+  };
   const fetchWod = async (
     random: boolean,
     exercises: string[],
@@ -55,6 +84,9 @@ export const useGenerateWod = (): [
   ) => {
     setIsLoading(true);
     setError(null);
+    // Reset workout state when generating new workout
+    setSavedWorkoutId(null);
+    setIsFavorite(false);
     
     const requestBody = {
       random: random,
@@ -66,6 +98,23 @@ export const useGenerateWod = (): [
       customMinutes: customMinutes,
       workoutIntent: workoutIntent,
       movementUsageMode: movementUsageMode,
+    };
+
+    // Auto-save workout if user is authenticated
+    const autoSaveWorkout = async (workoutData: WorkoutResponse) => {
+      if (isAuthenticated && workoutData) {
+        try {
+          console.log('🔄 Auto-saving workout for authenticated user...');
+          const workoutId = await saveWorkout(workoutData, {
+            completedAt: new Date().toISOString(),
+          });
+          setSavedWorkoutId(workoutId);
+          console.log('✅ Workout auto-saved with ID:', workoutId);
+        } catch (error) {
+          console.error('❌ Failed to auto-save workout:', error);
+          // Don't fail the whole generation if auto-save fails
+        }
+      }
     };
 
     try {
@@ -97,6 +146,9 @@ export const useGenerateWod = (): [
           source: data.system.source,
           confidence: data.system.confidence
         });
+        
+        // Auto-save the workout
+        await autoSaveWorkout(data);
       }
       // Handle legacy response (old format) - backward compatibility
       else if (isLegacyWorkout(data)) {
@@ -142,6 +194,9 @@ export const useGenerateWod = (): [
       setSource(defaultResponse.system.source);
       setWorkoutResponse(defaultResponse);
       
+      // Auto-save the default workout
+      await autoSaveWorkout(defaultResponse);
+      
     } finally {
       setIsLoading(false);
     }
@@ -156,7 +211,10 @@ export const useGenerateWod = (): [
       source,
       isLoading,
       error,
-      workoutResponse
+      workoutResponse,
+      savedWorkoutId,
+      isFavorite,
+      toggleFavorite
     }
   ];
 };

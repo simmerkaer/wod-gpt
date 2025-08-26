@@ -108,8 +108,8 @@ export async function getWorkoutHistory(request: HttpRequest, context: Invocatio
 
     const response: WorkoutHistoryResponse = {
       workouts: filteredWorkouts.slice(0, limit), // Re-apply limit after filtering
-      totalCount: filteredWorkouts.length,
-      hasMore: filteredWorkouts.length > limit
+      totalCount: result.totalCount, // Use original total count from blob storage
+      hasMore: offset + limit < result.totalCount // Based on original total count
     };
 
     context.log(`Retrieved ${response.workouts.length} workouts for user ${userId}`);

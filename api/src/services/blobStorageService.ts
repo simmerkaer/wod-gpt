@@ -94,7 +94,6 @@ export class BlobStorageService {
 
     const workouts: SavedWorkout[] = [];
     const now = new Date();
-    let totalCount = 0;
 
     try {
       // Search through recent months
@@ -111,28 +110,28 @@ export class BlobStorageService {
           const collection: UserWorkoutCollection = JSON.parse(content);
           
           workouts.push(...collection.workouts);
-          totalCount += collection.workouts.length;
 
         } catch (error) {
           // File doesn't exist for this month, continue
           continue;
         }
 
-        // Break early if we have enough workouts
-        if (workouts.length >= offset + limit) {
-          break;
-        }
+        // Continue collecting all workouts to get accurate total count
+        // We'll apply pagination after sorting
       }
 
       // Sort by savedAt descending (most recent first)
       workouts.sort((a, b) => new Date(b.savedAt).getTime() - new Date(a.savedAt).getTime());
+
+      // Calculate actual total count after collecting all workouts
+      const actualTotalCount = workouts.length;
 
       // Apply pagination
       const paginatedWorkouts = workouts.slice(offset, offset + limit);
 
       return {
         workouts: paginatedWorkouts,
-        totalCount
+        totalCount: actualTotalCount
       };
 
     } catch (error) {
