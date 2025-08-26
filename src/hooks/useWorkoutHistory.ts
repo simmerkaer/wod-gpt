@@ -3,8 +3,7 @@ import {
   SavedWorkout, 
   WorkoutHistoryFilters, 
   WorkoutHistoryResponse,
-  UpdateWorkoutRequest,
-  WORKOUTS_PER_PAGE 
+  UpdateWorkoutRequest
 } from '../types/workoutHistory';
 import { useAuth } from './useAuth';
 

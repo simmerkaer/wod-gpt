@@ -12,13 +12,11 @@ import { Separator } from "../components/ui/separator";
 import { Button } from "../components/ui/button";
 import {
   User,
-  Shield,
   Calendar,
   LogIn,
   ArrowLeft,
   Dumbbell,
   Heart,
-  Clock,
   TrendingUp,
   Target,
   Flame,
