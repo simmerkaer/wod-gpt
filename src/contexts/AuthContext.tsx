@@ -1,5 +1,17 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import { AuthContextType, AuthResponse, User, ClientPrincipal, Claim } from "../types/auth";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  ReactNode,
+} from "react";
+import {
+  AuthContextType,
+  AuthResponse,
+  User,
+  ClientPrincipal,
+  Claim,
+} from "../types/auth";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export type IdP = "google" | "github";
@@ -21,10 +33,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [isLoading, setIsLoading] = useState(true);
 
   const transformClientPrincipal = (clientPrincipal: ClientPrincipal): User => {
-    const claimsRecord = clientPrincipal.claims.reduce((acc: Record<string, string>, claim: Claim) => {
-      acc[claim.typ] = claim.val;
-      return acc;
-    }, {});
+    const claims = clientPrincipal.claims || [];
+    const claimsRecord = claims.reduce(
+      (acc: Record<string, string>, claim: Claim) => {
+        acc[claim.typ] = claim.val;
+        return acc;
+      },
+      {},
+    );
 
     return {
       id: clientPrincipal.userId,
