@@ -29,7 +29,7 @@ export async function updateWorkout(request: HttpRequest, context: InvocationCon
     let userId: string;
     try {
       const userInfo = JSON.parse(Buffer.from(userPrincipal, 'base64').toString());
-      userId = userInfo.userId || userInfo.userDetails;
+      userId = userInfo.userDetails || userInfo.userId;
       
       if (!userId) {
         throw new Error('User ID not found in authentication data');
