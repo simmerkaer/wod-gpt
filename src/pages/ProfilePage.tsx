@@ -13,7 +13,6 @@ import { Button } from "../components/ui/button";
 import {
   User,
   Calendar,
-  LogIn,
   ArrowLeft,
   Dumbbell,
   Heart,
@@ -27,6 +26,7 @@ import {
   History,
   ChevronRight,
 } from "lucide-react";
+import { GoogleIcon } from "../components/icons/GoogleIcon";
 import { Link } from "react-router-dom";
 import { SavedWorkout } from "../types/workoutHistory";
 import { formatWorkoutDate, formatYearMonth } from "@/utils/DateHelpers";
@@ -290,7 +290,7 @@ export default function ProfilePage() {
         <Card className="w-full max-w-md mx-auto">
           <CardHeader className="text-center">
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-muted">
-              <LogIn className="h-6 w-6" />
+              <GoogleIcon className="h-6 w-6" aria-hidden />
             </div>
             <CardTitle>Sign In Required</CardTitle>
             <CardDescription>

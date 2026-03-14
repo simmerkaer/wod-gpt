@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useTheme } from "@/ThemeProvider";
 import { Switch } from "./ui/switch";
 import { Button } from "./ui/button";
-import { AuthButton, LoginButton, LogoutButton } from "./auth";
+import { LoginButton, LogoutButton } from "./auth";
 import { useAuth, useUser } from "../hooks/useAuth";
 import {
   Sheet,
@@ -129,28 +129,36 @@ export function ToggleDarkMode() {
                 <p className="text-sm font-medium text-muted-foreground">
                   Weight Units
                 </p>
-                <UnitSelector value={weightUnit} onValueChange={setWeightUnit} />
+                <UnitSelector
+                  value={weightUnit}
+                  onValueChange={setWeightUnit}
+                  compact
+                />
               </div>
               <Separator className="my-2" />
               <ThemeToggleRow />
             </nav>
           </SheetContent>
         </Sheet>
-        <Button asChild variant="outline" size="sm" className="h-9 shrink-0">
-          <Link
-            to="/profile"
-            className="inline-flex items-center gap-1.5 px-2"
-          >
-            <User className="h-4 w-4" />
-            Profile
-          </Link>
-        </Button>
+        {isAuthenticated && (
+          <div className="flex min-w-0 flex-1 justify-end">
+            <Button asChild variant="outline" size="sm" className="h-9 shrink-0">
+              <Link
+                to="/profile"
+                className="inline-flex items-center gap-1.5 px-2"
+              >
+                <User className="h-4 w-4 shrink-0" />
+                Profile
+              </Link>
+            </Button>
+          </div>
+        )}
       </div>
 
       {/* Desktop / tablet: full header row */}
       <div className="mb-2 hidden items-center justify-between md:flex">
         <div className="flex items-center space-x-2">
-          <AuthButton />
+          {isAuthenticated && <LogoutButton />}
         </div>
         <div className="flex items-center space-x-2">
           {isAuthenticated && (

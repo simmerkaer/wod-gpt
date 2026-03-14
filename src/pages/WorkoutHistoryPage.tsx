@@ -22,10 +22,10 @@ import {
   Star,
   Trash2,
   StickyNote,
-  LogIn,
   Dumbbell,
   Filter,
 } from "lucide-react";
+import { GoogleIcon } from "../components/icons/GoogleIcon";
 import { SavedWorkout, getWorkoutPreview } from "../types/workoutHistory";
 import {
   formatWorkoutDate,
@@ -333,7 +333,7 @@ export default function WorkoutHistoryPage() {
           <Card className="w-full max-w-md mx-auto">
             <CardHeader className="text-center">
               <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-muted">
-                <LogIn className="h-6 w-6" />
+                <GoogleIcon className="h-6 w-6" aria-hidden />
               </div>
               <CardTitle>Sign In Required</CardTitle>
               <CardDescription>

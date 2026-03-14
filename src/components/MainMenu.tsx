@@ -1,8 +1,10 @@
 import { MovementId, MovementUsageMode } from "@/lib/movementId";
-import { Loader2, PlusIcon, ZapIcon, Flame } from "lucide-react";
+import { Flame, Loader2, PlusIcon, ZapIcon } from "lucide-react";
 import * as React from "react";
+import { useAuth } from "../hooks/useAuth";
 import FormatSelector, { FormatType } from "./FormatSelector";
 import GiveFeedback from "./GiveFeedback";
+import { GoogleIcon } from "./icons/GoogleIcon";
 import SelectedMovements from "./SelectedMovements";
 import SelectMovements from "./SelectMovements";
 import { badgeVariants } from "./ui/badge";
@@ -18,10 +20,9 @@ import {
 import { Separator } from "./ui/separator";
 import { ToggleGroup, ToggleGroupItem } from "./ui/toggle-group";
 import UnitSelector, { WeightUnit } from "./UnitSelector";
-import WorkoutSelector, { WorkoutType } from "./WorkoutSelector";
-import WorkoutLength, { WorkoutLengthOption } from "./WorkoutLength";
 import WorkoutIntentSelector, { WorkoutIntent } from "./WorkoutIntent";
-import { useAuth } from "../hooks/useAuth";
+import WorkoutLength, { WorkoutLengthOption } from "./WorkoutLength";
+import WorkoutSelector, { WorkoutType } from "./WorkoutSelector";
 
 interface MainMenuProps {
   isLoading: boolean;
@@ -69,7 +70,7 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
   streak = null,
   streakLoading = false,
 }) => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, login, isLoading: authLoading } = useAuth();
   return (
     <Card className="flex-grow rounded-[10px]">
       <CardHeader className="pb-4">
@@ -79,6 +80,29 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
           </p>
         </CardTitle>
         <CardDescription>Free AI driven crossfit workouts</CardDescription>
+        {!isAuthenticated && (
+          <div
+            className="mt-3 rounded-lg border border-primary/20 bg-muted/50 px-3 py-2.5 text-left text-sm dark:bg-muted/30"
+            role="region"
+            aria-label="Sign in benefits"
+          >
+            <p className="text-muted-foreground leading-snug">
+              <strong className="text-foreground">Create an account</strong> to
+              save workouts, view history, use favorites, and track your streak.
+            </p>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="mt-2 w-full gap-2 sm:w-auto"
+              onClick={() => login("google")}
+              disabled={authLoading}
+            >
+              <GoogleIcon className="h-4 w-4 shrink-0" aria-hidden />
+              Sign in with Google
+            </Button>
+          </div>
+        )}
         {isAuthenticated && (streakLoading || streak !== null) && (
           <div
             className="mt-3 flex items-center justify-center gap-2 rounded-lg border border-orange-200 bg-orange-50 px-3 py-2 text-sm dark:border-orange-900/50 dark:bg-orange-950/40"
@@ -88,14 +112,20 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
               <span className="text-muted-foreground">Loading streak…</span>
             ) : streak !== null && streak > 0 ? (
               <>
-                <Flame className="h-5 w-5 shrink-0 text-orange-500" aria-hidden />
+                <Flame
+                  className="h-5 w-5 shrink-0 text-orange-500"
+                  aria-hidden
+                />
                 <span className="font-semibold text-orange-800 dark:text-orange-200">
                   {streak} day{streak !== 1 ? "s" : ""} streak
                 </span>
               </>
             ) : (
               <>
-                <Flame className="h-5 w-5 shrink-0 text-muted-foreground opacity-60" aria-hidden />
+                <Flame
+                  className="h-5 w-5 shrink-0 text-muted-foreground opacity-60"
+                  aria-hidden
+                />
                 <span className="text-muted-foreground">
                   Save a workout today to start a streak
                 </span>
@@ -141,24 +171,26 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
               }
               onRemoveMovement={toggleMovement}
             />
-            
+
             {/* Movement Usage Mode */}
             {workoutType === "specified" && selectedMovements.length > 0 && (
               <div className="mt-3">
-                <ToggleGroup 
-                  type="single" 
+                <ToggleGroup
+                  type="single"
                   value={movementUsageMode}
-                  onValueChange={(value: MovementUsageMode) => value && setMovementUsageMode(value)}
+                  onValueChange={(value: MovementUsageMode) =>
+                    value && setMovementUsageMode(value)
+                  }
                   className="justify-center gap-2"
                 >
-                  <ToggleGroupItem 
-                    value="some" 
+                  <ToggleGroupItem
+                    value="some"
                     className="flex items-center gap-2 p-2 h-auto data-[state=on]:bg-primary/10 data-[state=on]:border-primary"
                   >
                     Use SOME of selected movements
                   </ToggleGroupItem>
-                  <ToggleGroupItem 
-                    value="all" 
+                  <ToggleGroupItem
+                    value="all"
                     className="flex items-center gap-2 p-2 h-auto data-[state=on]:bg-primary/10 data-[state=on]:border-primary"
                   >
                     Use ALL selected movements

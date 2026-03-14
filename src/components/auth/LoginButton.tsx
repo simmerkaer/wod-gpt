@@ -1,5 +1,5 @@
-import { LogIn } from "lucide-react";
 import { Button } from "../ui/button";
+import { GoogleIcon } from "../icons/GoogleIcon";
 import { useAuth } from "../../hooks/useAuth";
 
 export const LoginButton = () => {
@@ -14,7 +14,7 @@ export const LoginButton = () => {
         size="sm"
         className="gap-2"
       >
-        <LogIn size={16} />
+        <GoogleIcon className="h-4 w-4 shrink-0" aria-hidden />
         Sign In With Google
       </Button>
     </div>
