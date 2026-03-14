@@ -28,25 +28,6 @@ The backend is built with Azure Functions and TypeScript. It includes various de
 - Azure Communication Services for email
 - OpenAI integration
 
-### Workout history blob migration
-
-Workout history is stored as **one JSON blob per user**: `users/{userId}/workouts.json`. Older deployments used monthly paths: `users/{userId}/{year}/{month}/workouts.json`.
-
-From the **`api/`** directory, with `AZURE_STORAGE_CONNECTION_STRING` set:
-
-```sh
-# Preview (no writes)
-npm run migrate-workouts -- --dry-run
-
-# Merge legacy monthly blobs into single blob per user (idempotent)
-npm run migrate-workouts
-
-# After verifying data, remove old monthly blobs
-npm run migrate-workouts -- --delete-legacy
-```
-
-Deploy the API that uses the single-blob layout, then run the migration as soon as you can so history appears again for users who only had monthly files.
-
 ### Getting Started
 
 Install dependencies:
@@ -56,8 +37,27 @@ Note: NODE must be v18
 npm install
 ```
 
-Start the SWA CLI server:
+Start the SWA CLI server (frontend + API + auth emulation):
 
 ```sh
 npm run start
 ```
+
+### Local login (Google auth)
+
+Azure Static Web Apps serves `/.auth/*` (login, callback, `/.auth/me`). **Vite on port 5173 does not**—so opening only `http://localhost:5173` and clicking login sends you to `/.auth/login/google` on 5173, which shows a blank page.
+
+- **Use the SWA URL in the browser:** **`http://localhost:4280`** (default SWA CLI port). SWA proxies to Vite and handles auth the same way as production.
+- **Google Cloud Console → OAuth redirect URI (local):**  
+  `http://localhost:4280/.auth/login/google/callback`
+- Run **`npm run start`** from the repo root (not `npm run dev` alone) when you need login locally.
+
+**`GOOGLE_CLIENT_ID not found in env`** happens because the SWA CLI does **not** read Azure Portal settings locally. It needs the same secrets in your environment when `swa start` runs:
+
+1. Copy **`.env.local.example`** to **`.env.local`** in the repo root (`.env.local` is gitignored).
+2. Set **`GOOGLE_CLIENT_ID`** and **`GOOGLE_CLIENT_SECRET`** to the same values as in Azure Portal → your Static Web App → **Configuration** (the names must match `staticwebapp.config.json`: `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET`).
+3. Run **`npm install`** once (installs `dotenv-cli`), then **`npm run start`** again.
+
+Or set them in the shell before `npm run start` (PowerShell: `$env:GOOGLE_CLIENT_ID="..."; $env:GOOGLE_CLIENT_SECRET="..."`).
+
+If you change SWA’s port, use that host/port in the browser and in Google’s redirect URI.
