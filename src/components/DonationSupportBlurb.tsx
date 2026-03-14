@@ -1,8 +1,9 @@
-import { KoFiDonateDialog } from "@/components/KoFiDonateDialog";
 import { Heart } from "lucide-react";
 
+const KOFI_URL = "https://ko-fi.com/wodgpt";
+
 /**
- * Short note on running costs; "donation" opens Ko-fi embed in a dialog (mobile-friendly).
+ * Short note on running costs; "donation" links to Ko-fi.
  */
 export function DonationSupportBlurb() {
   return (
@@ -10,14 +11,14 @@ export function DonationSupportBlurb() {
       I spend around{" "}
       <strong className="font-medium text-foreground">$50/month</strong> on
       hosting and AI to keep this site running. Any{" "}
-      <KoFiDonateDialog>
-        <button
-          type="button"
-          className="font-medium text-primary underline underline-offset-2 hover:text-primary/90 focus:outline-none focus-visible:rounded focus-visible:ring-2 focus-visible:ring-ring"
-        >
-          donation
-        </button>
-      </KoFiDonateDialog>{" "}
+      <a
+        href={KOFI_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="font-medium text-primary underline underline-offset-2 hover:text-primary/90 focus:outline-none focus-visible:rounded focus-visible:ring-2 focus-visible:ring-ring"
+      >
+        donation
+      </a>{" "}
       is welcome - thank you for helping keep WOD-GPT free{" "}
       <Heart
         className="inline-block size-3.5 align-[-0.125em] text-red-500"

@@ -1,5 +1,4 @@
 import { useFeedback } from "@/hooks/useFeedback";
-import { KoFiDonateDialog } from "@/components/KoFiDonateDialog";
 import * as React from "react";
 import { useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
@@ -37,8 +36,14 @@ const GiveFeedback: React.FunctionComponent<GiveFeedbackProps> = () => {
   );
 
   const donateButton = (
-    <Button variant="outline" className="text-xs border-2 shadow-none">
-      Donate
+    <Button variant="outline" className="text-xs border-2 shadow-none" asChild>
+      <a
+        href="https://ko-fi.com/wodgpt"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Donate
+      </a>
     </Button>
   );
 
@@ -50,7 +55,7 @@ const GiveFeedback: React.FunctionComponent<GiveFeedbackProps> = () => {
       className="mx-auto w-full max-w-md justify-center sm:w-fit"
       aria-label="Donate or send feedback"
     >
-      <KoFiDonateDialog>{donateButton}</KoFiDonateDialog>
+      {donateButton}
       {isDesktop ? (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
           <DialogTrigger asChild>{feedbackButton}</DialogTrigger>
