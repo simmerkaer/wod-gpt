@@ -28,6 +28,25 @@ The backend is built with Azure Functions and TypeScript. It includes various de
 - Azure Communication Services for email
 - OpenAI integration
 
+### Workout history blob migration
+
+Workout history is stored as **one JSON blob per user**: `users/{userId}/workouts.json`. Older deployments used monthly paths: `users/{userId}/{year}/{month}/workouts.json`.
+
+From the **`api/`** directory, with `AZURE_STORAGE_CONNECTION_STRING` set:
+
+```sh
+# Preview (no writes)
+npm run migrate-workouts -- --dry-run
+
+# Merge legacy monthly blobs into single blob per user (idempotent)
+npm run migrate-workouts
+
+# After verifying data, remove old monthly blobs
+npm run migrate-workouts -- --delete-legacy
+```
+
+Deploy the API that uses the single-blob layout, then run the migration as soon as you can so history appears again for users who only had monthly files.
+
 ### Getting Started
 
 Install dependencies:

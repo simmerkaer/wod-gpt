@@ -20,6 +20,7 @@ WOD-GPT is an AI-powered CrossFit workout generator built with React/TypeScript 
 - `npm run watch` - Watch mode TypeScript compilation
 - `npm run start` - Start Azure Functions locally (requires build first)
 - `npm run clean` - Remove dist directory
+- `npm run migrate-workouts` - Merge legacy monthly workout blobs into one per user (see README)
 
 ### Full Stack Development
 Use `npm run start` from root directory - this starts SWA CLI which runs both frontend dev server and API together.

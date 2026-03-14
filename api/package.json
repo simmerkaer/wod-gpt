@@ -8,7 +8,8 @@
     "clean": "rimraf dist",
     "prestart": "npm run clean && npm run build",
     "start": "func start",
-    "test": "echo \"No tests yet...\""
+    "test": "echo \"No tests yet...\"",
+    "migrate-workouts": "npm run build && node dist/scripts/migrateWorkoutBlobs.js"
   },
   "dependencies": {
     "@azure/communication-email": "^1.0.0",

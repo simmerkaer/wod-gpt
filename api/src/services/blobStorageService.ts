@@ -1,10 +1,10 @@
 import { BlobServiceClient, ContainerClient, BlockBlobClient } from '@azure/storage-blob';
-import { 
-  SavedWorkout, 
-  UserWorkoutCollection, 
-  BLOB_CONTAINER_NAME, 
-  getBlobPath,
-  MAX_WORKOUTS_PER_FILE 
+import {
+  SavedWorkout,
+  UserWorkoutCollection,
+  BLOB_CONTAINER_NAME,
+  getUserWorkoutBlobPath,
+  MAX_WORKOUTS_WARN,
 } from '../types/workoutHistory';
 
 export class BlobStorageService {
@@ -13,7 +13,7 @@ export class BlobStorageService {
 
   constructor() {
     const connectionString = process.env.AZURE_STORAGE_CONNECTION_STRING;
-    
+
     if (!connectionString) {
       throw new Error('Azure Storage connection string is not configured');
     }
@@ -35,226 +35,6 @@ export class BlobStorageService {
     return this.containerClient.getBlockBlobClient(blobPath);
   }
 
-  async saveWorkout(userId: string, workout: SavedWorkout): Promise<void> {
-    await this.ensureContainerExists();
-
-    const now = new Date();
-    const blobPath = getBlobPath(userId, now);
-    const blobClient = this.getBlobClient(blobPath);
-
-    try {
-      // Get existing workouts for this month
-      let collection: UserWorkoutCollection;
-      
-      try {
-        const downloadResponse = await blobClient.download();
-        const content = await this.streamToString(downloadResponse.readableStreamBody!);
-        collection = JSON.parse(content);
-      } catch (error) {
-        // File doesn't exist, create new collection
-        collection = {
-          workouts: [],
-          lastUpdated: now.toISOString()
-        };
-      }
-
-      // Add new workout
-      collection.workouts.unshift(workout); // Add to beginning for chronological order
-      collection.lastUpdated = now.toISOString();
-
-      // If too many workouts, create archive (optional - implement later)
-      if (collection.workouts.length > MAX_WORKOUTS_PER_FILE) {
-        console.warn(`User ${userId} has ${collection.workouts.length} workouts in ${blobPath}`);
-      }
-
-      // Save updated collection
-      const content = JSON.stringify(collection, null, 2);
-      await blobClient.upload(content, content.length, {
-        blobHTTPHeaders: { blobContentType: 'application/json' },
-        metadata: {
-          userId,
-          lastUpdated: now.toISOString(),
-          workoutCount: collection.workouts.length.toString()
-        }
-      });
-
-    } catch (error) {
-      console.error('Failed to save workout:', error);
-      throw new Error('Failed to save workout to storage');
-    }
-  }
-
-  async getWorkoutHistory(
-    userId: string, 
-    limit: number = 20, 
-    offset: number = 0,
-    monthsToSearch: number = 12
-  ): Promise<{ workouts: SavedWorkout[]; totalCount: number }> {
-    await this.ensureContainerExists();
-
-    const workouts: SavedWorkout[] = [];
-    const now = new Date();
-
-    try {
-      // Search through recent months
-      for (let monthOffset = 0; monthOffset < monthsToSearch; monthOffset++) {
-        const searchDate = new Date(now);
-        searchDate.setMonth(searchDate.getMonth() - monthOffset);
-        
-        const blobPath = getBlobPath(userId, searchDate);
-        const blobClient = this.getBlobClient(blobPath);
-
-        try {
-          const downloadResponse = await blobClient.download();
-          const content = await this.streamToString(downloadResponse.readableStreamBody!);
-          const collection: UserWorkoutCollection = JSON.parse(content);
-          
-          workouts.push(...collection.workouts);
-
-        } catch (error) {
-          // File doesn't exist for this month, continue
-          continue;
-        }
-
-        // Continue collecting all workouts to get accurate total count
-        // We'll apply pagination after sorting
-      }
-
-      // Sort by savedAt descending (most recent first)
-      workouts.sort((a, b) => new Date(b.savedAt).getTime() - new Date(a.savedAt).getTime());
-
-      // Calculate actual total count after collecting all workouts
-      const actualTotalCount = workouts.length;
-
-      // Apply pagination
-      const paginatedWorkouts = workouts.slice(offset, offset + limit);
-
-      return {
-        workouts: paginatedWorkouts,
-        totalCount: actualTotalCount
-      };
-
-    } catch (error) {
-      console.error('Failed to get workout history:', error);
-      throw new Error('Failed to retrieve workout history');
-    }
-  }
-
-  async updateWorkout(userId: string, workoutId: string, updates: Partial<SavedWorkout>): Promise<boolean> {
-    await this.ensureContainerExists();
-
-    const now = new Date();
-    let found = false;
-
-    try {
-      // Search through recent months to find the workout
-      for (let monthOffset = 0; monthOffset < 12; monthOffset++) {
-        const searchDate = new Date(now);
-        searchDate.setMonth(searchDate.getMonth() - monthOffset);
-        
-        const blobPath = getBlobPath(userId, searchDate);
-        const blobClient = this.getBlobClient(blobPath);
-
-        try {
-          const downloadResponse = await blobClient.download();
-          const content = await this.streamToString(downloadResponse.readableStreamBody!);
-          const collection: UserWorkoutCollection = JSON.parse(content);
-          
-          // Find and update the workout
-          const workoutIndex = collection.workouts.findIndex(w => w.id === workoutId);
-          
-          if (workoutIndex !== -1) {
-            collection.workouts[workoutIndex] = {
-              ...collection.workouts[workoutIndex],
-              ...updates
-            };
-            collection.lastUpdated = now.toISOString();
-
-            // Save updated collection
-            const updatedContent = JSON.stringify(collection, null, 2);
-            await blobClient.upload(updatedContent, updatedContent.length, {
-              blobHTTPHeaders: { blobContentType: 'application/json' },
-              metadata: {
-                userId,
-                lastUpdated: now.toISOString(),
-                workoutCount: collection.workouts.length.toString()
-              }
-            });
-
-            found = true;
-            break;
-          }
-
-        } catch (error) {
-          // File doesn't exist for this month, continue
-          continue;
-        }
-      }
-
-      return found;
-
-    } catch (error) {
-      console.error('Failed to update workout:', error);
-      throw new Error('Failed to update workout');
-    }
-  }
-
-  async deleteWorkout(userId: string, workoutId: string): Promise<boolean> {
-    await this.ensureContainerExists();
-
-    const now = new Date();
-    let found = false;
-
-    try {
-      // Search through recent months to find the workout
-      for (let monthOffset = 0; monthOffset < 12; monthOffset++) {
-        const searchDate = new Date(now);
-        searchDate.setMonth(searchDate.getMonth() - monthOffset);
-        
-        const blobPath = getBlobPath(userId, searchDate);
-        const blobClient = this.getBlobClient(blobPath);
-
-        try {
-          const downloadResponse = await blobClient.download();
-          const content = await this.streamToString(downloadResponse.readableStreamBody!);
-          const collection: UserWorkoutCollection = JSON.parse(content);
-          
-          // Find and remove the workout
-          const initialLength = collection.workouts.length;
-          collection.workouts = collection.workouts.filter(w => w.id !== workoutId);
-          
-          if (collection.workouts.length < initialLength) {
-            collection.lastUpdated = now.toISOString();
-
-            // Save updated collection
-            const updatedContent = JSON.stringify(collection, null, 2);
-            await blobClient.upload(updatedContent, updatedContent.length, {
-              blobHTTPHeaders: { blobContentType: 'application/json' },
-              metadata: {
-                userId,
-                lastUpdated: now.toISOString(),
-                workoutCount: collection.workouts.length.toString()
-              }
-            });
-
-            found = true;
-            break;
-          }
-
-        } catch (error) {
-          // File doesn't exist for this month, continue
-          continue;
-        }
-      }
-
-      return found;
-
-    } catch (error) {
-      console.error('Failed to delete workout:', error);
-      throw new Error('Failed to delete workout');
-    }
-  }
-
   private async streamToString(readableStream: NodeJS.ReadableStream): Promise<string> {
     return new Promise((resolve, reject) => {
       const chunks: Buffer[] = [];
@@ -266,5 +46,156 @@ export class BlobStorageService {
       });
       readableStream.on('error', reject);
     });
+  }
+
+  private async loadCollection(blobClient: BlockBlobClient): Promise<UserWorkoutCollection | null> {
+    try {
+      const downloadResponse = await blobClient.download();
+      const content = await this.streamToString(downloadResponse.readableStreamBody!);
+      return JSON.parse(content) as UserWorkoutCollection;
+    } catch {
+      return null;
+    }
+  }
+
+  private async saveCollection(
+    userId: string,
+    blobClient: BlockBlobClient,
+    collection: UserWorkoutCollection,
+  ): Promise<void> {
+    const now = new Date().toISOString();
+    collection.lastUpdated = now;
+    const content = JSON.stringify(collection, null, 2);
+    await blobClient.upload(content, content.length, {
+      blobHTTPHeaders: { blobContentType: 'application/json' },
+      metadata: {
+        userId,
+        lastUpdated: now,
+        workoutCount: collection.workouts.length.toString(),
+      },
+    });
+  }
+
+  async saveWorkout(userId: string, workout: SavedWorkout): Promise<void> {
+    await this.ensureContainerExists();
+
+    const blobPath = getUserWorkoutBlobPath(userId);
+    const blobClient = this.getBlobClient(blobPath);
+    const now = new Date();
+
+    try {
+      let collection =
+        (await this.loadCollection(blobClient)) ?? {
+          workouts: [],
+          lastUpdated: now.toISOString(),
+        };
+
+      if (!Array.isArray(collection.workouts)) {
+        collection.workouts = [];
+      }
+
+      collection.workouts.unshift(workout);
+      collection.lastUpdated = now.toISOString();
+
+      if (collection.workouts.length > MAX_WORKOUTS_WARN) {
+        console.warn(
+          `User ${userId} has ${collection.workouts.length} workouts in ${blobPath}`,
+        );
+      }
+
+      await this.saveCollection(userId, blobClient, collection);
+    } catch (error) {
+      console.error('Failed to save workout:', error);
+      throw new Error('Failed to save workout to storage');
+    }
+  }
+
+  async getWorkoutHistory(
+    userId: string,
+    limit: number = 20,
+    offset: number = 0,
+    _monthsToSearch?: number,
+  ): Promise<{ workouts: SavedWorkout[]; totalCount: number }> {
+    await this.ensureContainerExists();
+
+    const blobClient = this.getBlobClient(getUserWorkoutBlobPath(userId));
+
+    try {
+      const collection = await this.loadCollection(blobClient);
+      const workouts = collection?.workouts ?? [];
+
+      workouts.sort(
+        (a, b) => new Date(b.savedAt).getTime() - new Date(a.savedAt).getTime(),
+      );
+
+      const totalCount = workouts.length;
+      const paginatedWorkouts = workouts.slice(offset, offset + limit);
+
+      return {
+        workouts: paginatedWorkouts,
+        totalCount,
+      };
+    } catch (error) {
+      console.error('Failed to get workout history:', error);
+      throw new Error('Failed to retrieve workout history');
+    }
+  }
+
+  async updateWorkout(
+    userId: string,
+    workoutId: string,
+    updates: Partial<SavedWorkout>,
+  ): Promise<boolean> {
+    await this.ensureContainerExists();
+
+    const blobClient = this.getBlobClient(getUserWorkoutBlobPath(userId));
+
+    try {
+      const collection = await this.loadCollection(blobClient);
+      if (!collection?.workouts?.length) {
+        return false;
+      }
+
+      const workoutIndex = collection.workouts.findIndex((w) => w.id === workoutId);
+      if (workoutIndex === -1) {
+        return false;
+      }
+
+      collection.workouts[workoutIndex] = {
+        ...collection.workouts[workoutIndex],
+        ...updates,
+      };
+
+      await this.saveCollection(userId, blobClient, collection);
+      return true;
+    } catch (error) {
+      console.error('Failed to update workout:', error);
+      throw new Error('Failed to update workout');
+    }
+  }
+
+  async deleteWorkout(userId: string, workoutId: string): Promise<boolean> {
+    await this.ensureContainerExists();
+
+    const blobClient = this.getBlobClient(getUserWorkoutBlobPath(userId));
+
+    try {
+      const collection = await this.loadCollection(blobClient);
+      if (!collection?.workouts?.length) {
+        return false;
+      }
+
+      const initialLength = collection.workouts.length;
+      collection.workouts = collection.workouts.filter((w) => w.id !== workoutId);
+      if (collection.workouts.length === initialLength) {
+        return false;
+      }
+
+      await this.saveCollection(userId, blobClient, collection);
+      return true;
+    } catch (error) {
+      console.error('Failed to delete workout:', error);
+      throw new Error('Failed to delete workout');
+    }
   }
 }

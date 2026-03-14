@@ -50,49 +50,68 @@ export interface UserWorkoutCollection {
 }
 
 // Constants
-export const BLOB_CONTAINER_NAME = 'workout-history';
-export const MAX_WORKOUTS_PER_FILE = 50; // Limit per month file
+export const BLOB_CONTAINER_NAME = "workout-history";
+/** Soft warning when a user's single blob grows large */
+export const MAX_WORKOUTS_WARN = 500;
 export const MAX_NOTES_LENGTH = 500;
 
-// Utility functions
-export function getBlobPath(userId: string, date: Date): string {
+/** Single blob per user (current format) */
+export function getUserWorkoutBlobPath(userId: string): string {
+  return `users/${userId}/workouts.json`;
+}
+
+/**
+ * Legacy per-month path (pre-migration). Used by migrate script only.
+ */
+export function getLegacyMonthlyBlobPath(userId: string, date: Date): string {
   const year = date.getFullYear();
-  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const month = (date.getMonth() + 1).toString().padStart(2, "0");
   return `users/${userId}/${year}/${month}/workouts.json`;
 }
 
-export function validateSaveWorkoutRequest(request: SaveWorkoutRequest): string[] {
+/** Match users/{userId}/YYYY/MM/workouts.json */
+export const LEGACY_MONTHLY_BLOB_REGEX =
+  /^users\/([^/]+)\/(\d{4})\/(\d{2})\/workouts\.json$/;
+
+export function validateSaveWorkoutRequest(
+  request: SaveWorkoutRequest,
+): string[] {
   const errors: string[] = [];
-  
+
   if (!request.workout) {
-    errors.push('Workout data is required');
+    errors.push("Workout data is required");
   }
-  
+
   if (request.notes && request.notes.length > MAX_NOTES_LENGTH) {
     errors.push(`Notes cannot exceed ${MAX_NOTES_LENGTH} characters`);
   }
-  
-  if (request.actualDuration && (request.actualDuration < 0 || request.actualDuration > 600)) {
-    errors.push('Actual duration must be between 0 and 600 minutes');
+
+  if (
+    request.actualDuration &&
+    (request.actualDuration < 0 || request.actualDuration > 600)
+  ) {
+    errors.push("Actual duration must be between 0 and 600 minutes");
   }
-  
+
   return errors;
 }
 
-export function validateUpdateWorkoutRequest(request: UpdateWorkoutRequest): string[] {
+export function validateUpdateWorkoutRequest(
+  request: UpdateWorkoutRequest,
+): string[] {
   const errors: string[] = [];
-  
+
   if (!request.id) {
-    errors.push('Workout ID is required');
+    errors.push("Workout ID is required");
   }
-  
+
   if (request.notes && request.notes.length > MAX_NOTES_LENGTH) {
     errors.push(`Notes cannot exceed ${MAX_NOTES_LENGTH} characters`);
   }
-  
+
   if (request.rating && (request.rating < 1 || request.rating > 5)) {
-    errors.push('Rating must be between 1 and 5');
+    errors.push("Rating must be between 1 and 5");
   }
-  
+
   return errors;
 }
