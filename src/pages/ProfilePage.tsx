@@ -24,10 +24,13 @@ import {
   Trophy,
   Star,
   Zap,
+  History,
+  ChevronRight,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { SavedWorkout } from "../types/workoutHistory";
 import { formatWorkoutDate, formatYearMonth } from "@/utils/DateHelpers";
+import { computeCurrentWorkoutStreak } from "@/utils/workoutStreak";
 
 // Helper function to calculate workout statistics
 function calculateWorkoutStats(workouts: SavedWorkout[]) {
@@ -98,43 +101,17 @@ function calculateWorkoutStats(workouts: SavedWorkout[]) {
         }, workouts[0].completedAt || workouts[0].savedAt)
       : null;
 
-  // Calculate current streak and longest streak
-  let workoutStreak = 0;
+  const workoutStreak = computeCurrentWorkoutStreak(workouts);
+
   let longestStreak = 0;
   let tempStreak = 0;
 
   if (sortedByDate.length > 0) {
-    const today = new Date();
-    const dates = new Set();
-
-    // Get unique workout dates
+    const dates = new Set<string>();
     sortedByDate.forEach((workout) => {
       const workoutDate = new Date(workout.completedAt || workout.savedAt);
       dates.add(workoutDate.toDateString());
     });
-
-    const uniqueDates = Array.from(dates).sort(
-      (a, b) =>
-        new Date(b as string).getTime() - new Date(a as string).getTime(),
-    );
-
-    // Calculate current streak
-    let currentDate = today;
-    for (const dateStr of uniqueDates) {
-      const workoutDate = new Date(dateStr as string);
-      const daysDiff = Math.floor(
-        (currentDate.getTime() - workoutDate.getTime()) / (1000 * 60 * 60 * 24),
-      );
-
-      if (daysDiff <= workoutStreak + 1) {
-        if (daysDiff === workoutStreak || daysDiff === workoutStreak + 1) {
-          workoutStreak++;
-          currentDate = workoutDate;
-        }
-      } else {
-        break;
-      }
-    }
 
     // Calculate longest streak
     const allDates = Array.from(dates).sort(
@@ -340,10 +317,7 @@ export default function ProfilePage() {
           </Button>
         </div>
         <div className="text-center px-2">
-          <h1 className="text-2xl sm:text-3xl font-bold">User Profile</h1>
-          <p className="text-muted-foreground mt-1 sm:mt-2 text-sm sm:text-base">
-            Manage your account information
-          </p>
+          <h1 className="text-2xl sm:text-3xl font-bold">Profile</h1>
         </div>
 
         <Card className="mx-2 sm:mx-0">
@@ -362,12 +336,35 @@ export default function ProfilePage() {
                   </CardDescription>
                 </div>
               </div>
-              <Button asChild size="sm" className="w-full sm:w-auto">
-                <Link to="/">
-                  <Dumbbell className="h-4 w-4 mr-2" />
-                  Generate Workout
-                </Link>
-              </Button>
+              <div className="flex w-full flex-row flex-nowrap items-center justify-center gap-2">
+                <Button asChild size="sm" className="min-w-0 flex-1 sm:flex-initial">
+                  <Link
+                    to="/"
+                    className="inline-flex min-w-0 items-center justify-center gap-1 sm:gap-2"
+                  >
+                    <Dumbbell className="h-4 w-4 shrink-0" />
+                    <span className="truncate sm:whitespace-normal">
+                      Generate Workout
+                    </span>
+                  </Link>
+                </Button>
+                <Button
+                  asChild
+                  variant="outline"
+                  size="sm"
+                  className="min-w-0 flex-1 sm:flex-initial"
+                >
+                  <Link
+                    to="/history"
+                    className="inline-flex min-w-0 items-center justify-center gap-1 sm:gap-2"
+                  >
+                    <History className="h-4 w-4 shrink-0" />
+                    <span className="truncate sm:whitespace-normal">
+                      Workout history
+                    </span>
+                  </Link>
+                </Button>
+              </div>
             </div>
           </CardHeader>
         </Card>
@@ -402,12 +399,35 @@ export default function ProfilePage() {
                 <p className="text-muted-foreground mb-4">
                   No workouts saved yet
                 </p>
-                <Button asChild size="sm">
-                  <Link to="/">Start Your Fitness Journey</Link>
-                </Button>
+                <div className="flex flex-col sm:flex-row gap-2 justify-center">
+                  <Button asChild size="sm">
+                    <Link to="/">Start Your Fitness Journey</Link>
+                  </Button>
+                  <Button asChild variant="outline" size="sm">
+                    <Link to="/history">
+                      <History className="h-4 w-4 mr-2" />
+                      Open workout history
+                    </Link>
+                  </Button>
+                </div>
               </div>
             ) : (
               <>
+                <Button
+                  asChild
+                  variant="secondary"
+                  className="w-full justify-between h-11 font-medium"
+                >
+                  <Link to="/history">
+                    <span className="flex items-center">
+                      <History className="h-4 w-4 mr-2" />
+                      View all {workoutStats.totalWorkouts} saved workout
+                      {workoutStats.totalWorkouts !== 1 ? "s" : ""}
+                    </span>
+                    <ChevronRight className="h-4 w-4" />
+                  </Link>
+                </Button>
+
                 {/* Key Statistics Grid */}
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                   <div className="text-center">
@@ -625,12 +645,15 @@ export default function ProfilePage() {
                   <>
                     <Separator />
                     <div className="space-y-3">
-                      <div className="flex items-center justify-between">
+                      <div className="flex items-center justify-between gap-2">
                         <h3 className="text-sm font-medium text-muted-foreground">
                           Recent Workouts
                         </h3>
-                        <Button asChild variant="ghost" size="sm">
-                          <Link to="/history">View All</Link>
+                        <Button asChild variant="outline" size="sm">
+                          <Link to="/history">
+                            History
+                            <ChevronRight className="h-3 w-3 ml-1" />
+                          </Link>
                         </Button>
                       </div>
                       <div className="space-y-2">

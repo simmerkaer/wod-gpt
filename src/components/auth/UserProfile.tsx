@@ -1,5 +1,4 @@
 import { useUser } from "../../hooks/useAuth";
-import { Badge } from "../ui/badge";
 
 export const UserProfile = () => {
   const user = useUser();
@@ -8,5 +7,12 @@ export const UserProfile = () => {
     return null;
   }
 
-  return <Badge variant={"outline"}>{user.name}</Badge>;
+  return (
+    <div className="min-w-0 text-left">
+      <p className="truncate text-sm font-medium text-foreground">{user.name}</p>
+      {user.email && (
+        <p className="truncate text-xs text-muted-foreground">{user.email}</p>
+      )}
+    </div>
+  );
 };

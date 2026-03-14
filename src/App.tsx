@@ -5,6 +5,7 @@ import { Toaster } from "./components/ui/toaster";
 import { DarkBackground, LightBackground } from "./lib/backgrounds";
 import { useTheme } from "./ThemeProvider";
 import { AuthProvider } from "./contexts/AuthContext";
+import { WeightUnitProvider } from "./contexts/WeightUnitContext";
 import HomePage from "./pages/HomePage";
 import ProfilePage from "./pages/ProfilePage";
 import WorkoutHistoryPage from "./pages/WorkoutHistoryPage";
@@ -14,6 +15,7 @@ function App() {
 
   return (
     <AuthProvider>
+      <WeightUnitProvider>
       <div className="flex flex-col flex-grow">
         <div className="fixed left-0 top-0 -z-10 h-full w-full">
           {theme === "dark" ? <DarkBackground /> : <LightBackground />}
@@ -28,6 +30,7 @@ function App() {
         </main>
         <Toaster />
       </div>
+      </WeightUnitProvider>
     </AuthProvider>
   );
 }

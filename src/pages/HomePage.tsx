@@ -1,20 +1,30 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import FancyLoadingSpinner from "../components/FancyLoadingSpinner";
 import { FormatType } from "../components/FormatSelector";
 import GeneratedWod from "../components/GeneratedWod";
 import MainMenu from "../components/MainMenu";
-import { WeightUnit } from "../components/UnitSelector";
 import { WorkoutType } from "../components/WorkoutSelector";
 import { WorkoutLengthOption } from "../components/WorkoutLength";
 import { WorkoutIntent } from "../components/WorkoutIntent";
 import { useMovements } from "../hooks/useExercises";
 import { useGenerateWod } from "../hooks/useWod";
+import { useAuth } from "../hooks/useAuth";
+import { useWorkoutHistory } from "../hooks/useWorkoutHistory";
+import { computeCurrentWorkoutStreak } from "@/utils/workoutStreak";
+import { useWeightUnit } from "@/contexts/WeightUnitContext";
+import type { WeightUnit } from "../components/UnitSelector";
 
 export default function HomePage() {
+  const { isAuthenticated } = useAuth();
+  const { workouts, isLoading: historyLoading } = useWorkoutHistory();
+  const streak = useMemo(
+    () => (isAuthenticated ? computeCurrentWorkoutStreak(workouts) : null),
+    [isAuthenticated, workouts],
+  );
   const { selectedMovements, toggleMovement, movementUsageMode, setMovementUsageMode } = useMovements();
   const [workoutType, setWorkoutType] = useState<WorkoutType>("random");
   const [formatType, setFormatType] = useState<FormatType>("emom");
-  const [weightUnit, setWeightUnit] = useState<WeightUnit>("kg");
+  const { weightUnit, setWeightUnit } = useWeightUnit();
   const [workoutLength, setWorkoutLength] =
     useState<WorkoutLengthOption>("medium");
   const [customMinutes, setCustomMinutes] = useState<number>(20);
@@ -89,6 +99,8 @@ export default function HomePage() {
               setWorkoutIntent={handleWorkoutIntentChange}
               setMovementUsageMode={setMovementUsageMode}
               toggleMovement={toggleMovement}
+              streak={isAuthenticated ? streak : null}
+              streakLoading={isAuthenticated && historyLoading}
             />
           </FancyLoadingSpinner>
         </div>
@@ -137,6 +149,8 @@ export default function HomePage() {
               setWorkoutIntent={handleWorkoutIntentChange}
               setMovementUsageMode={setMovementUsageMode}
               toggleMovement={toggleMovement}
+              streak={isAuthenticated ? streak : null}
+              streakLoading={isAuthenticated && historyLoading}
             />
           </FancyLoadingSpinner>
         </div>

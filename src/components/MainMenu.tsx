@@ -1,7 +1,6 @@
 import { MovementId, MovementUsageMode } from "@/lib/movementId";
-import { Loader2, PlusIcon, ZapIcon, User } from "lucide-react";
+import { Loader2, PlusIcon, ZapIcon, Flame } from "lucide-react";
 import * as React from "react";
-import { Link } from "react-router-dom";
 import FormatSelector, { FormatType } from "./FormatSelector";
 import GiveFeedback from "./GiveFeedback";
 import SelectedMovements from "./SelectedMovements";
@@ -43,6 +42,9 @@ interface MainMenuProps {
   setWorkoutIntent: (workoutIntent: WorkoutIntent) => void;
   setMovementUsageMode: (mode: MovementUsageMode) => void;
   handleGenerateWod: () => void;
+  /** When logged in; null while history loading */
+  streak?: number | null;
+  streakLoading?: boolean;
 }
 
 const MainMenu: React.FunctionComponent<MainMenuProps> = ({
@@ -64,6 +66,8 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
   setWorkoutIntent,
   setMovementUsageMode,
   handleGenerateWod,
+  streak = null,
+  streakLoading = false,
 }) => {
   const { isAuthenticated } = useAuth();
   return (
@@ -75,6 +79,30 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
           </p>
         </CardTitle>
         <CardDescription>Free AI driven crossfit workouts</CardDescription>
+        {isAuthenticated && (streakLoading || streak !== null) && (
+          <div
+            className="mt-3 flex items-center justify-center gap-2 rounded-lg border border-orange-200 bg-orange-50 px-3 py-2 text-sm dark:border-orange-900/50 dark:bg-orange-950/40"
+            aria-live="polite"
+          >
+            {streakLoading ? (
+              <span className="text-muted-foreground">Loading streak…</span>
+            ) : streak !== null && streak > 0 ? (
+              <>
+                <Flame className="h-5 w-5 shrink-0 text-orange-500" aria-hidden />
+                <span className="font-semibold text-orange-800 dark:text-orange-200">
+                  {streak} day{streak !== 1 ? "s" : ""} streak
+                </span>
+              </>
+            ) : (
+              <>
+                <Flame className="h-5 w-5 shrink-0 text-muted-foreground opacity-60" aria-hidden />
+                <span className="text-muted-foreground">
+                  Save a workout today to start a streak
+                </span>
+              </>
+            )}
+          </div>
+        )}
       </CardHeader>
       <CardContent className="pb-2">
         <div className="flex-grow flex flex-col gap-4">
@@ -184,8 +212,8 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
             />
           </div>
 
-          {/* Weight Unit Section */}
-          <div className="space-y-2">
+          {/* Weight Unit Section — desktop only; mobile uses nav menu */}
+          <div className="hidden space-y-2 md:block">
             <div className="flex items-center gap-2">
               <div className="flex-1 h-px bg-border"></div>
               <h3 className="text-sm font-medium text-muted-foreground text-center whitespace-nowrap px-2">
@@ -213,16 +241,6 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
                 </>
               )}
             </Button>
-            
-            {/* View Profile Button - only show if authenticated */}
-            {isAuthenticated && (
-              <Button asChild variant="outline" size="sm" className="w-full">
-                <Link to="/profile">
-                  <User className="h-4 w-4 mr-2" />
-                  View Profile
-                </Link>
-              </Button>
-            )}
           </div>
         </div>
       </CardContent>

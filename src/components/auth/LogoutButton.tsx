@@ -1,8 +1,13 @@
 import { LogOut } from "lucide-react";
 import { Button } from "../ui/button";
 import { useAuth } from "../../hooks/useAuth";
+import { cn } from "@/lib/utils";
 
-export const LogoutButton = () => {
+interface LogoutButtonProps {
+  className?: string;
+}
+
+export const LogoutButton = ({ className }: LogoutButtonProps) => {
   const { logout, isLoading } = useAuth();
 
   return (
@@ -11,7 +16,7 @@ export const LogoutButton = () => {
       disabled={isLoading}
       variant="ghost"
       size="sm"
-      className="gap-2"
+      className={cn("gap-2", className)}
     >
       <LogOut size={16} />
       Sign Out
