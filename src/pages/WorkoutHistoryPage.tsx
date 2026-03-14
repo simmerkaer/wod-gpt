@@ -26,12 +26,11 @@ import {
   Dumbbell,
   Filter,
 } from "lucide-react";
-import { SavedWorkout } from "../types/workoutHistory";
+import { SavedWorkout, getWorkoutPreview } from "../types/workoutHistory";
 import {
   formatWorkoutDate,
   formatWorkoutDateTime,
-  getWorkoutPreview,
-} from "../types/workoutHistory";
+} from "@/utils/DateHelpers";
 import {
   DropdownMenu,
   DropdownMenuContent,

@@ -57,15 +57,6 @@ export const WORKOUTS_PER_PAGE = 10;
 export const MAX_NOTES_LENGTH = 500;
 export const MAX_SEARCH_LENGTH = 100;
 
-// Helper functions
-export function formatWorkoutDate(date: string): string {
-  return new Date(date).toLocaleDateString();
-}
-
-export function formatWorkoutDateTime(date: string): string {
-  return new Date(date).toLocaleString();
-}
-
 export function getDurationDifference(planned: number, actual?: number): number | null {
   if (!actual) return null;
   return actual - planned;

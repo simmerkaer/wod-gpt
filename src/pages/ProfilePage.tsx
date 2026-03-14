@@ -26,7 +26,8 @@ import {
   Zap,
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import { SavedWorkout, formatWorkoutDate } from "../types/workoutHistory";
+import { SavedWorkout } from "../types/workoutHistory";
+import { formatWorkoutDate, formatYearMonth } from "@/utils/DateHelpers";
 
 // Helper function to calculate workout statistics
 function calculateWorkoutStats(workouts: SavedWorkout[]) {
@@ -526,12 +527,7 @@ export default function ProfilePage() {
                       </span>
                       <div className="text-right">
                         <span className="text-sm font-medium block">
-                          {new Date(
-                            workoutStats.mostActiveMonth[0] + "-01",
-                          ).toLocaleDateString("en-US", {
-                            month: "long",
-                            year: "numeric",
-                          })}
+                          {formatYearMonth(workoutStats.mostActiveMonth[0])}
                         </span>
                         <span className="text-xs text-muted-foreground">
                           {workoutStats.mostActiveMonth[1]} workouts
