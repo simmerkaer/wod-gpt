@@ -5,7 +5,34 @@ import {
   BLOB_CONTAINER_NAME,
   getUserWorkoutBlobPath,
   MAX_WORKOUTS_WARN,
+  SINGLE_USER_WORKOUT_BLOB_REGEX,
+  ADMIN_GENERATIONS_BLOB_PATH,
 } from '../types/workoutHistory';
+
+export interface AdminUserRow {
+  /** Storage key (often email or GitHub username). */
+  userId: string;
+  workoutCount: number;
+  favoriteCount: number;
+  /** Latest generation/save time among saved workouts (system.generated or savedAt). */
+  lastWorkoutAt?: string;
+}
+
+export interface AdminDashboardStats {
+  userCount: number;
+  totalSavedWorkouts: number;
+  totalFavorites: number;
+  totalGenerations: number;
+  generationsToday: number;
+  statsComputedAt: string;
+  users: AdminUserRow[];
+}
+
+export interface GenerationStatsBlob {
+  total: number;
+  daily: Record<string, number>;
+  lastUpdated: string;
+}
 
 export class BlobStorageService {
   private blobServiceClient: BlobServiceClient;
@@ -66,14 +93,138 @@ export class BlobStorageService {
     const now = new Date().toISOString();
     collection.lastUpdated = now;
     const content = JSON.stringify(collection, null, 2);
+    const favoriteCount = collection.workouts.filter((w) => w.favorite === true).length;
     await blobClient.upload(content, content.length, {
       blobHTTPHeaders: { blobContentType: 'application/json' },
       metadata: {
         userId,
         lastUpdated: now,
         workoutCount: collection.workouts.length.toString(),
+        favoriteCount: favoriteCount.toString(),
       },
     });
+  }
+
+  /** Max ISO timestamp: per workout use AI generation time if stored, else savedAt. */
+  private lastWorkoutGeneratedAt(workouts: SavedWorkout[]): string | undefined {
+    let best = 0;
+    let bestIso: string | undefined;
+    for (const w of workouts) {
+      const generated =
+        w.workout &&
+        typeof w.workout === 'object' &&
+        w.workout.system &&
+        typeof w.workout.system.generated === 'string'
+          ? w.workout.system.generated
+          : null;
+      const savedAt = w.savedAt;
+      const tGen = generated ? new Date(generated).getTime() : NaN;
+      const tSaved = savedAt ? new Date(savedAt).getTime() : NaN;
+      const iso = !Number.isNaN(tGen) ? generated! : !Number.isNaN(tSaved) ? savedAt : null;
+      const t = !Number.isNaN(tGen) ? tGen : tSaved;
+      if (!Number.isNaN(t) && t >= best) {
+        best = t;
+        bestIso = iso ?? undefined;
+      }
+    }
+    return bestIso;
+  }
+
+  /**
+   * Admin: list users/{id}/workouts.json blobs, aggregate counts; scan JSON for favorites (incl. legacy blobs).
+   */
+  async getAdminDashboardStats(): Promise<AdminDashboardStats> {
+    await this.ensureContainerExists();
+    const statsComputedAt = new Date().toISOString();
+    let userCount = 0;
+    let totalSavedWorkouts = 0;
+    let totalFavorites = 0;
+    const users: AdminUserRow[] = [];
+    const userIdFromPath = /^users\/([^/]+)\/workouts\.json$/;
+
+    for await (const item of this.containerClient.listBlobsFlat({ prefix: 'users/' })) {
+      if (!item.name || !SINGLE_USER_WORKOUT_BLOB_REGEX.test(item.name)) continue;
+      const m = item.name.match(userIdFromPath);
+      const userId = m ? decodeURIComponent(m[1]) : item.name;
+      userCount += 1;
+      const client = this.getBlobClient(item.name);
+      const col = await this.loadCollection(client);
+      const workouts = col?.workouts ?? [];
+      const workoutCount = workouts.length;
+      const favoriteCount = workouts.filter((w) => w.favorite === true).length;
+      totalSavedWorkouts += workoutCount;
+      totalFavorites += favoriteCount;
+      users.push({
+        userId,
+        workoutCount,
+        favoriteCount,
+        lastWorkoutAt: this.lastWorkoutGeneratedAt(workouts),
+      });
+    }
+
+    users.sort((a, b) => b.workoutCount - a.workoutCount || a.userId.localeCompare(b.userId));
+
+    const gen = await this.getGenerationStats();
+    const today = new Date().toISOString().slice(0, 10);
+    return {
+      userCount,
+      totalSavedWorkouts,
+      totalFavorites,
+      totalGenerations: gen.total,
+      generationsToday: gen.daily[today] ?? 0,
+      statsComputedAt,
+      users,
+    };
+  }
+
+  async getGenerationStats(): Promise<GenerationStatsBlob> {
+    await this.ensureContainerExists();
+    const client = this.getBlobClient(ADMIN_GENERATIONS_BLOB_PATH);
+    try {
+      const downloadResponse = await client.download();
+      const content = await this.streamToString(downloadResponse.readableStreamBody!);
+      const parsed = JSON.parse(content) as GenerationStatsBlob;
+      return {
+        total: typeof parsed.total === 'number' ? parsed.total : 0,
+        daily: typeof parsed.daily === 'object' && parsed.daily ? parsed.daily : {},
+        lastUpdated: parsed.lastUpdated || '',
+      };
+    } catch {
+      return { total: 0, daily: {}, lastUpdated: '' };
+    }
+  }
+
+  /** Increment generation counter (best-effort; concurrent requests may occasionally lose an increment). */
+  async incrementGenerationCount(): Promise<void> {
+    try {
+      await this.ensureContainerExists();
+      const client = this.getBlobClient(ADMIN_GENERATIONS_BLOB_PATH);
+      const now = new Date().toISOString();
+      const day = now.slice(0, 10);
+      let total = 0;
+      const daily: Record<string, number> = {};
+      try {
+        const downloadResponse = await client.download();
+        const content = await this.streamToString(downloadResponse.readableStreamBody!);
+        const parsed = JSON.parse(content) as GenerationStatsBlob;
+        total = parsed.total || 0;
+        Object.assign(daily, parsed.daily || {});
+      } catch {
+        /* first write */
+      }
+      total += 1;
+      daily[day] = (daily[day] || 0) + 1;
+      const body = JSON.stringify({
+        total,
+        daily,
+        lastUpdated: now,
+      } as GenerationStatsBlob);
+      await client.upload(body, Buffer.byteLength(body), {
+        blobHTTPHeaders: { blobContentType: 'application/json' },
+      });
+    } catch (e) {
+      console.error('incrementGenerationCount failed', e);
+    }
   }
 
   async saveWorkout(userId: string, workout: SavedWorkout): Promise<void> {

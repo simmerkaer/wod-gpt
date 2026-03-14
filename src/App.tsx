@@ -9,6 +9,7 @@ import { WeightUnitProvider } from "./contexts/WeightUnitContext";
 import HomePage from "./pages/HomePage";
 import ProfilePage from "./pages/ProfilePage";
 import WorkoutHistoryPage from "./pages/WorkoutHistoryPage";
+import AdminDashboardPage from "./pages/AdminDashboardPage";
 
 function App() {
   const { theme } = useTheme();
@@ -26,6 +27,7 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/history" element={<WorkoutHistoryPage />} />
+            <Route path="/admin" element={<AdminDashboardPage />} />
           </Routes>
         </main>
         <Toaster />

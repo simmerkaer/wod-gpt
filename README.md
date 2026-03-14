@@ -61,3 +61,9 @@ Azure Static Web Apps serves `/.auth/*` (login, callback, `/.auth/me`). **Vite o
 Or set them in the shell before `npm run start` (PowerShell: `$env:GOOGLE_CLIENT_ID="..."; $env:GOOGLE_CLIENT_SECRET="..."`).
 
 If you change SWA’s port, use that host/port in the browser and in Google’s redirect URI.
+
+### Admin dashboard (owner-only)
+
+- **API:** Set **`ADMIN_EMAILS`** (comma-separated) on the Function App / `local.settings.json`—e.g. `simmerkaer@gmail.com` or your GitHub username if the principal has no email claim.
+- **Frontend:** Set **`VITE_ADMIN_EMAILS`** to the same list in `.env.local` and in Azure Static Web Apps **Configuration** (build-time), so the Admin nav link appears only for you.
+- **Route:** `/admin` (after sign-in). **`GET /api/owner/stats`** returns aggregates (not `/api/admin/*` — reserved by Azure Functions). Non-allowlisted users get 403.

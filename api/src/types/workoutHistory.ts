@@ -73,6 +73,12 @@ export function getLegacyMonthlyBlobPath(userId: string, date: Date): string {
 export const LEGACY_MONTHLY_BLOB_REGEX =
   /^users\/([^/]+)\/(\d{4})\/(\d{2})\/workouts\.json$/;
 
+/** Single blob per user: users/{userId}/workouts.json (not legacy monthly) */
+export const SINGLE_USER_WORKOUT_BLOB_REGEX =
+  /^users\/[^/]+\/workouts\.json$/;
+
+export const ADMIN_GENERATIONS_BLOB_PATH = 'admin-stats/generations.json';
+
 export function validateSaveWorkoutRequest(
   request: SaveWorkoutRequest,
 ): string[] {

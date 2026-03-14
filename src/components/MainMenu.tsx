@@ -90,17 +90,19 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
               <strong className="text-foreground">Create an account</strong> to
               save workouts, view history, use favorites, and track your streak.
             </p>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              className="mt-2 w-full gap-2 sm:w-auto"
-              onClick={() => login("google")}
-              disabled={authLoading}
-            >
-              <GoogleIcon className="h-4 w-4 shrink-0" aria-hidden />
-              Sign in with Google
-            </Button>
+            <div className="mt-2 md:flex md:justify-center">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="w-full gap-2 md:w-auto"
+                onClick={() => login("google")}
+                disabled={authLoading}
+              >
+                <GoogleIcon className="h-4 w-4 shrink-0" aria-hidden />
+                Sign in with Google
+              </Button>
+            </div>
           </div>
         )}
         {isAuthenticated && (streakLoading || streak !== null) && (

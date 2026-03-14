@@ -5,6 +5,7 @@ import {
   InvocationContext,
 } from "@azure/functions";
 import { AzureClientOptions, AzureOpenAI } from "openai";
+import { BlobStorageService } from "../services/blobStorageService";
 import { wodGenerationPrompts, getStructuredPrompt } from "../prompts/wodGeneration";
 import { WorkoutFormat, MovementId, FormatType, WeightUnit, WorkoutIntent, MovementUsageMode } from "../movements/types";
 
@@ -51,6 +52,11 @@ export async function generateWod(
       body["movementUsageMode"] || "some"
     );
 
+    try {
+      void new BlobStorageService().incrementGenerationCount().catch(() => {});
+    } catch {
+      /* no storage: still return workout */
+    }
     return {
       status: 200,
       jsonBody: workoutResult,
@@ -65,7 +71,11 @@ export async function generateWod(
       workoutFormat,
       "Error generating workout - please try again"
     );
-    
+    try {
+      void new BlobStorageService().incrementGenerationCount().catch(() => {});
+    } catch {
+      /* no storage */
+    }
     return {
       status: 200,
       jsonBody: defaultWorkout,

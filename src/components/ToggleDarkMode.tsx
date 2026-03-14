@@ -1,4 +1,5 @@
-import { Moon, Sun, User, History, Menu } from "lucide-react";
+import { Moon, Sun, User, History, Menu, LayoutDashboard } from "lucide-react";
+import { isAdminUser } from "@/lib/admin";
 import { Link } from "react-router-dom";
 import { useTheme } from "@/ThemeProvider";
 import { Switch } from "./ui/switch";
@@ -52,6 +53,7 @@ export function ToggleDarkMode() {
   const { isAuthenticated } = useAuth();
   const user = useUser();
   const profileName = profileLabel(user);
+  const showAdmin = isAuthenticated && isAdminUser(user);
   const { weightUnit, setWeightUnit } = useWeightUnit();
 
   return (
@@ -122,6 +124,20 @@ export function ToggleDarkMode() {
                       </Link>
                     </Button>
                   </SheetClose>
+                  {showAdmin && (
+                    <SheetClose asChild>
+                      <Button
+                        variant="ghost"
+                        className="h-11 w-full justify-start gap-2 font-normal"
+                        asChild
+                      >
+                        <Link to="/admin">
+                          <LayoutDashboard className="h-4 w-4 shrink-0" />
+                          Admin
+                        </Link>
+                      </Button>
+                    </SheetClose>
+                  )}
                   <Separator className="my-2" />
                 </>
               )}
@@ -181,6 +197,14 @@ export function ToggleDarkMode() {
                   <span className="sr-only">Workout History</span>
                 </Link>
               </Button>
+              {showAdmin && (
+                <Button asChild variant="ghost" size="sm" title="Admin">
+                  <Link to="/admin">
+                    <LayoutDashboard className="h-4 w-4" />
+                    <span className="sr-only">Admin</span>
+                  </Link>
+                </Button>
+              )}
             </>
           )}
           <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90" />
