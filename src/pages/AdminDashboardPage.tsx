@@ -116,6 +116,23 @@ export default function AdminDashboardPage() {
     if (admin && isAuthenticated) void load();
   }, [admin, isAuthenticated, load]);
 
+  const userRows = stats?.users ?? [];
+
+  const applySortColumn = useCallback((key: UserSortKey) => {
+    setSort((s) =>
+      s.key === key
+        ? { key, dir: s.dir === "asc" ? "desc" : "asc" }
+        : { key, dir: "asc" },
+    );
+  }, []);
+
+  const sortedUserRows = useMemo(() => {
+    if (userRows.length === 0) return userRows;
+    return [...userRows].sort((a, b) =>
+      compareUserRows(a, b, sort.key, sort.dir),
+    );
+  }, [userRows, sort.key, sort.dir]);
+
   if (isLoading) {
     return (
       <div className="mx-auto max-w-3xl px-4 py-8 text-muted-foreground">
@@ -162,23 +179,6 @@ export default function AdminDashboardPage() {
       </div>
     );
   }
-
-  const userRows = stats?.users ?? [];
-
-  const applySortColumn = useCallback((key: UserSortKey) => {
-    setSort((s) =>
-      s.key === key
-        ? { key, dir: s.dir === "asc" ? "desc" : "asc" }
-        : { key, dir: "asc" },
-    );
-  }, []);
-
-  const sortedUserRows = useMemo(() => {
-    if (userRows.length === 0) return userRows;
-    return [...userRows].sort((a, b) =>
-      compareUserRows(a, b, sort.key, sort.dir),
-    );
-  }, [userRows, sort.key, sort.dir]);
 
   const SortHeader = ({
     column,
