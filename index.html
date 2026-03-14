@@ -22,6 +22,31 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="dns-prefetch" href="https://www.googletagmanager.com">
     <link rel="preconnect" href="https://storage.ko-fi.com" crossorigin />
+    <!-- Before React/CSS bundle: Ko-fi draw() runs early; hide mobile + hide mobi duplicate on desktop -->
+    <style>
+      @media (max-width: 767px) {
+        #root {
+          padding-bottom: max(0.75rem, env(safe-area-inset-bottom, 0px)) !important;
+        }
+        .floatingchat-container-wrap,
+        .floatingchat-container-wrap-mobi,
+        .floating-chat-kofi-popup-iframe,
+        .floating-chat-kofi-popup-iframe-mobi {
+          display: none !important;
+          visibility: hidden !important;
+          pointer-events: none !important;
+          width: 0 !important;
+          height: 0 !important;
+          opacity: 0 !important;
+        }
+      }
+      @media (min-width: 768px) {
+        .floatingchat-container-wrap-mobi,
+        .floating-chat-kofi-popup-iframe-mobi {
+          display: none !important;
+        }
+      }
+    </style>
     
     <!-- SEO Meta Tags -->
     <title>Free CrossFit Workout Generator | WOD GPT - AI Powered Training Plans</title>
@@ -84,7 +109,7 @@
   </head>
   <body>
     <div id="root"></div>
-    <!-- Ko-fi floating support widget (all routes) -->
+    <!-- Ko-fi floating widget: hidden on narrow viewports via App.css (desktop only) -->
     <script src="https://storage.ko-fi.com/cdn/scripts/overlay-widget.js"></script>
     <script>
       kofiWidgetOverlay.draw("wodgpt", {
