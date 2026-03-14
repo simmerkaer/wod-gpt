@@ -1,6 +1,7 @@
 import { useToast } from "@/hooks/use-toast";
-import { ClipboardCopy, Expand, Heart, LogIn } from "lucide-react";
+import { ClipboardCopy, Expand, Heart } from "lucide-react";
 import React, { useState, useEffect, useRef } from "react";
+import { GoogleIcon } from "./icons/GoogleIcon";
 import { Typewriter } from "./Typewriter";
 import { Button } from "./ui/button";
 import { Dialog, DialogContent } from "./ui/dialog";
