@@ -1,4 +1,8 @@
 {
+  "navigationFallback": {
+    "rewrite": "/index.html",
+    "exclude": ["/assets/*", "/api/*", "/*.css", "/*.js", "/*.ico", "/*.png", "/*.svg", "/*.webp", "/*.json", "/*.woff2"]
+  },
   "auth": {
     "identityProviders": {
       "google": {
