@@ -1,22 +1,26 @@
+import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
 import { GoogleIcon } from "../icons/GoogleIcon";
 import { useAuth } from "../../hooks/useAuth";
 
-export const LoginButton = () => {
+export function LoginButton({ fullWidth = false }: { fullWidth?: boolean }) {
   const { login, isLoading } = useAuth();
 
   return (
-    <div className="flex gap-2">
+    <div className={cn("flex gap-2", fullWidth && "w-full px-4")}>
       <Button
         onClick={() => login("google")}
         disabled={isLoading}
         variant="outline"
-        size="sm"
-        className="gap-2"
+        size={fullWidth ? "default" : "sm"}
+        className={cn(
+          "gap-2",
+          fullWidth && "h-11 w-full justify-start px-4 font-normal",
+        )}
       >
         <GoogleIcon className="h-4 w-4 shrink-0" aria-hidden />
         Sign In With Google
       </Button>
     </div>
   );
-};
+}

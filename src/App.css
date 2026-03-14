@@ -6,3 +6,19 @@
   display: flex;
   justify-content: center;
 }
+
+/*
+ * Ko-fi floating-chat sits fixed bottom-right. On mobile, reserve space so
+ * primary actions (Generate WOD, feedback, etc.) stay above the widget when scrolled.
+ */
+@media (max-width: 767px) {
+  #root {
+    /* ~5.5rem widget + margin + home indicator */
+    padding-bottom: calc(1rem + 5.75rem + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+/* Keep Ko-fi chip above iOS home indicator (widget is outside #root) */
+.floatingchat-container-wrap {
+  bottom: max(0.75rem, env(safe-area-inset-bottom, 0px)) !important;
+}

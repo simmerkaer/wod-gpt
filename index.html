@@ -21,6 +21,7 @@
     <!-- Performance optimizations -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="dns-prefetch" href="https://www.googletagmanager.com">
+    <link rel="preconnect" href="https://storage.ko-fi.com" crossorigin />
     
     <!-- SEO Meta Tags -->
     <title>Free CrossFit Workout Generator | WOD GPT - AI Powered Training Plans</title>
@@ -83,6 +84,16 @@
   </head>
   <body>
     <div id="root"></div>
+    <!-- Ko-fi floating support widget (all routes) -->
+    <script src="https://storage.ko-fi.com/cdn/scripts/overlay-widget.js"></script>
+    <script>
+      kofiWidgetOverlay.draw("wodgpt", {
+        type: "floating-chat",
+        "floating-chat.donateButton.text": "Support me",
+        "floating-chat.donateButton.background-color": "#794bc4",
+        "floating-chat.donateButton.text-color": "#fff",
+      });
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

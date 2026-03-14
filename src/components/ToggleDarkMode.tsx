@@ -94,7 +94,7 @@ export function ToggleDarkMode() {
                     <LogoutButton className="h-11 w-full justify-start px-4" />
                   </>
                 ) : (
-                  <LoginButton />
+                  <LoginButton fullWidth />
                 )}
               </div>
               <Separator className="my-2" />

@@ -3,6 +3,7 @@ import { Flame, Loader2, PlusIcon, ZapIcon } from "lucide-react";
 import * as React from "react";
 import { useAuth } from "../hooks/useAuth";
 import FormatSelector, { FormatType } from "./FormatSelector";
+import { DonationSupportBlurb } from "./DonationSupportBlurb";
 import GiveFeedback from "./GiveFeedback";
 import { GoogleIcon } from "./icons/GoogleIcon";
 import SelectedMovements from "./SelectedMovements";
@@ -279,8 +280,9 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
         </div>
       </CardContent>
       <CardFooter>
-        <div className="flex-grow flex flex-col gap-2">
+        <div className="flex-grow flex flex-col gap-3">
           <Separator className="my-2" />
+          <DonationSupportBlurb />
           <GiveFeedback />
         </div>
       </CardFooter>
