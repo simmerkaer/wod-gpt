@@ -42,7 +42,7 @@ const GiveFeedback: React.FunctionComponent<GiveFeedbackProps> = () => {
         target="_blank"
         rel="noopener noreferrer"
       >
-        Donate
+        Buy me a coffee
       </a>
     </Button>
   );
@@ -72,7 +72,9 @@ const GiveFeedback: React.FunctionComponent<GiveFeedbackProps> = () => {
           <DrawerTrigger asChild>{feedbackButton}</DrawerTrigger>
           <DrawerContent>
             <DrawerHeader>
-              <DrawerTitle className="text-center">Provide feedback</DrawerTitle>
+              <DrawerTitle className="text-center">
+                Provide feedback
+              </DrawerTitle>
               <DrawerDescription>{description}</DrawerDescription>
             </DrawerHeader>
             <FeedbackForm isLoading={isLoading} giveFeedback={giveFeedback} />
