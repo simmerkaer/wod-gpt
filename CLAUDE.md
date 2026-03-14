@@ -6,6 +6,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 WOD-GPT is an AI-powered CrossFit workout generator built with React/TypeScript frontend and Azure Functions backend. It generates custom workouts based on user preferences including movement selection, workout format, and weight units.
 
+## Responsive design & new features (mobile first)
+
+- **Mobile first**: When designing or implementing UI, start from small screens and enhance for larger breakpoints (`sm:` / `md:` / `lg:`). Default styles should suit phones; add layout/visibility for tablet and desktop explicitly.
+- **Every new feature** must be considered for **both mobile and desktop**: same flows should work on narrow and wide viewports unless intentionally scoped (then document why). Avoid desktop-only controls without a mobile equivalent (e.g. sheet/menu, stacked layout, or shared settings).
+- Before finishing a feature, sanity-check: touch targets, overflow/scrolling, nav (hamburger vs header), and whether state (e.g. preferences) is reachable on mobile.
+
 ## Development Commands
 
 ### Frontend (Root Directory)
