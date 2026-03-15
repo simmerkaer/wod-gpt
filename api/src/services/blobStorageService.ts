@@ -227,6 +227,17 @@ export class BlobStorageService {
     }
   }
 
+  /** Returns true if the user has a workout blob (e.g. has saved at least one workout or had one auto-saved). */
+  async userWorkoutBlobExists(userId: string): Promise<boolean> {
+    try {
+      await this.ensureContainerExists();
+      const blobClient = this.getBlobClient(getUserWorkoutBlobPath(userId));
+      return await blobClient.exists();
+    } catch {
+      return false;
+    }
+  }
+
   async saveWorkout(userId: string, workout: SavedWorkout): Promise<void> {
     await this.ensureContainerExists();
 

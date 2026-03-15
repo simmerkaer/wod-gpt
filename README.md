@@ -68,3 +68,7 @@ If you change SWA’s port, use that host/port in the browser and in Google’s 
 - **Frontend allowlist:** Set **`VITE_ADMIN_EMAILS`** in **`.env.local`** locally. In **production**, GitHub Actions must see it at **build** time: add repo secret **`VITE_ADMIN_EMAILS`** (same comma-separated value). The SWA workflow passes it into the deploy step; Azure Portal alone does not inject it into the Vite build.
 - **SPA routes / 404 on `/admin`:** [`staticwebapp.config.json`](staticwebapp.config.json) includes **`navigationFallback`** → `/index.html` so direct visits and refreshes on `/admin`, `/profile`, `/history` load the app (not 404).
 - **Route:** `/admin` (after sign-in). **`GET /api/owner/stats`** returns aggregates (not `/api/admin/*` — reserved by Azure Functions). Non-allowlisted users get 403.
+
+### API environment (Function App / local.settings.json)
+
+- **`EMAIL_CONNECTION_STRING`:** Used for feedback and new-user notification emails (Azure Communication Services). New-user emails (first WOD generation) are sent to the same address as feedback.
