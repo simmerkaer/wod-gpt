@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { useWorkoutHistory } from "../hooks/useWorkoutHistory";
 import { useAuth } from "../hooks/useAuth";
 import {
@@ -235,7 +235,20 @@ function WorkoutCard({
 
 export default function WorkoutHistoryPage() {
   const { isAuthenticated, isLoading: authLoading } = useAuth();
-  const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const showFavoritesOnly = searchParams.get("favorite") === "true";
+
+  const setShowFavoritesOnly = (checked: boolean) => {
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        if (checked) next.set("favorite", "true");
+        else next.delete("favorite");
+        return next;
+      },
+      { replace: true }
+    );
+  };
 
   // Get all workouts
   const {

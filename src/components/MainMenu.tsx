@@ -1,6 +1,7 @@
 import { MovementId, MovementUsageMode } from "@/lib/movementId";
 import { Flame, Loader2, PlusIcon, ZapIcon } from "lucide-react";
 import * as React from "react";
+import { Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import FormatSelector, { FormatType } from "./FormatSelector";
 import { DonationSupportBlurb } from "./DonationSupportBlurb";
@@ -107,8 +108,9 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
           </div>
         )}
         {isAuthenticated && (streakLoading || streak !== null) && (
-          <div
-            className="mt-3 flex items-center justify-center gap-2 rounded-lg border border-orange-200 bg-orange-50 px-3 py-2 text-sm dark:border-orange-900/50 dark:bg-orange-950/40"
+          <Link
+            to="/profile"
+            className="mt-3 flex items-center justify-center gap-2 rounded-lg border border-orange-200 bg-orange-50 px-3 py-2 text-sm dark:border-orange-900/50 dark:bg-orange-950/40 hover:bg-orange-100 dark:hover:bg-orange-950/60 transition-colors cursor-pointer no-underline"
             aria-live="polite"
           >
             {streakLoading ? (
@@ -134,7 +136,7 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
                 </span>
               </>
             )}
-          </div>
+          </Link>
         )}
       </CardHeader>
       <CardContent className="pb-2">

@@ -430,15 +430,21 @@ export default function ProfilePage() {
 
                 {/* Key Statistics Grid */}
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                  <div className="text-center">
+                  <Link
+                    to="/history"
+                    className="text-center rounded-lg py-2 -m-2 no-underline text-foreground hover:bg-muted/50 transition-colors cursor-pointer"
+                  >
                     <div className="text-2xl font-bold text-primary">
                       {workoutStats.totalWorkouts}
                     </div>
                     <div className="text-xs text-muted-foreground">
                       Total Workouts
                     </div>
-                  </div>
-                  <div className="text-center">
+                  </Link>
+                  <Link
+                    to="/history?favorite=true"
+                    className="text-center rounded-lg py-2 -m-2 no-underline text-foreground hover:bg-muted/50 transition-colors cursor-pointer"
+                  >
                     <div className="text-2xl font-bold text-red-500 flex items-center justify-center gap-1">
                       <Heart className="h-4 w-4 fill-current" />
                       {workoutStats.favoriteWorkouts}
@@ -446,7 +452,7 @@ export default function ProfilePage() {
                     <div className="text-xs text-muted-foreground">
                       Favorites
                     </div>
-                  </div>
+                  </Link>
                   <div className="text-center">
                     <div className="text-2xl font-bold text-green-500 flex items-center justify-center gap-1">
                       <Flame className="h-4 w-4" />
