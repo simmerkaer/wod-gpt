@@ -79,6 +79,11 @@ export const SINGLE_USER_WORKOUT_BLOB_REGEX =
 
 export const ADMIN_GENERATIONS_BLOB_PATH = 'admin-stats/generations.json';
 
+/** Blob path to record that we have already sent the "new user" email for this userId. */
+export function getUserNotifiedBlobPath(userId: string): string {
+  return `admin/user-notified/${userId}`;
+}
+
 export function validateSaveWorkoutRequest(
   request: SaveWorkoutRequest,
 ): string[] {

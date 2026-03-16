@@ -113,8 +113,13 @@ async function notifyIfNewUser(
   const exists = await blobService.userWorkoutBlobExists(userId);
   if (exists) return;
 
+  const alreadyNotified = await blobService.userNotifiedBlobExists(userId);
+  if (alreadyNotified) return;
+
   const connectionString = process.env.EMAIL_CONNECTION_STRING;
   if (!connectionString) return;
+
+  await blobService.markUserNotified(userId);
 
   const dateUtc = new Date().toISOString();
   const claimEmail =
