@@ -6,7 +6,6 @@ import { useAuth } from "../hooks/useAuth";
 import FormatSelector, { FormatType } from "./FormatSelector";
 import { DonationSupportBlurb } from "./DonationSupportBlurb";
 import GiveFeedback from "./GiveFeedback";
-import { GoogleIcon } from "./icons/GoogleIcon";
 import SelectedMovements from "./SelectedMovements";
 import SelectMovements from "./SelectMovements";
 import { badgeVariants } from "./ui/badge";
@@ -77,8 +76,7 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
   anonRemaining = null,
   anonLimit,
 }) => {
-  const { isAuthenticated, login, isLoading: authLoading, authProvider } = useAuth();
-  const isAuth0 = authProvider === "auth0";
+  const { isAuthenticated, login, isLoading: authLoading } = useAuth();
   return (
     <Card className="flex-grow rounded-[10px]">
       <CardHeader className="pb-4">
@@ -122,12 +120,8 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
                 onClick={() => login()}
                 disabled={authLoading}
               >
-                {isAuth0 ? (
-                  <LogIn className="h-4 w-4 shrink-0" aria-hidden />
-                ) : (
-                  <GoogleIcon className="h-4 w-4 shrink-0" aria-hidden />
-                )}
-                {isAuth0 ? "Sign in or create account" : "Sign in with Google"}
+                <LogIn className="h-4 w-4 shrink-0" aria-hidden />
+                Sign in or create account
               </Button>
             </div>
           </div>

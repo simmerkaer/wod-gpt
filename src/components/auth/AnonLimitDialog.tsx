@@ -9,7 +9,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { GoogleIcon } from "@/components/icons/GoogleIcon";
 import { ANON_DAILY_LIMIT } from "@/lib/anonLimit";
 
 interface AnonLimitDialogProps {
@@ -21,8 +20,7 @@ export const AnonLimitDialog = ({
   open,
   onOpenChange,
 }: AnonLimitDialogProps) => {
-  const { login, isLoading, authProvider } = useAuth();
-  const isAuth0 = authProvider === "auth0";
+  const { login, isLoading } = useAuth();
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -66,12 +64,8 @@ export const AnonLimitDialog = ({
             onClick={() => login()}
             disabled={isLoading}
           >
-            {isAuth0 ? (
-              <LogIn className="h-4 w-4 shrink-0" aria-hidden />
-            ) : (
-              <GoogleIcon className="h-4 w-4 shrink-0" aria-hidden />
-            )}
-            {isAuth0 ? "Sign in or create account" : "Sign in with Google"}
+            <LogIn className="h-4 w-4 shrink-0" aria-hidden />
+            Sign in or create account
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -40,7 +40,7 @@ export const useGenerateWod = (): [
     customMinutes: number,
     workoutIntent: WorkoutIntent,
     movementUsageMode: MovementUsageMode,
-  ) => void,
+  ) => Promise<boolean>,
   UseWodResult,
 ] => {
   const [wod, setWod] = useState<string | null>(null);
@@ -81,7 +81,7 @@ export const useGenerateWod = (): [
     customMinutes: number,
     workoutIntent: WorkoutIntent,
     movementUsageMode: MovementUsageMode,
-  ) => {
+  ): Promise<boolean> => {
     setIsLoading(true);
     setError(null);
     // Reset workout state when generating new workout
@@ -117,6 +117,7 @@ export const useGenerateWod = (): [
       }
     };
 
+    let success = false;
     try {
       const response = await fetch("/api/generateWod", {
         method: "POST",
@@ -149,6 +150,7 @@ export const useGenerateWod = (): [
         
         // Auto-save the workout
         await autoSaveWorkout(data);
+        success = true;
       }
       // Handle legacy response (old format) - backward compatibility
       else if (isLegacyWorkout(data)) {
@@ -171,6 +173,7 @@ export const useGenerateWod = (): [
         setWorkoutResponse(null); // Legacy format doesn't have full structure
         
         console.log('⚠️ Received legacy workout response, parsed timing:', parsedTiming);
+        success = true;
       }
       // Handle unexpected response format
       else {
@@ -200,6 +203,7 @@ export const useGenerateWod = (): [
     } finally {
       setIsLoading(false);
     }
+    return success;
   };
 
   return [

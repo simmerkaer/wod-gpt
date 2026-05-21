@@ -41,13 +41,12 @@ export default function HomePage() {
   } = useAnonGenerationLimit();
   const [showLimitDialog, setShowLimitDialog] = useState(false);
 
-  const handleGenerateWod = () => {
+  const handleGenerateWod = async () => {
     if (anonLimitReached) {
       setShowLimitDialog(true);
       return;
     }
-    recordGeneration();
-    fetchWod(
+    const success = await fetchWod(
       workoutType === "random",
       selectedMovements,
       formatType,
@@ -57,6 +56,9 @@ export default function HomePage() {
       workoutIntent,
       movementUsageMode,
     );
+    if (success) {
+      recordGeneration();
+    }
   };
 
   const handleWorkoutChange = (type: WorkoutType) => {
