@@ -48,6 +48,9 @@ interface MainMenuProps {
   /** When logged in; null while history loading */
   streak?: number | null;
   streakLoading?: boolean;
+  /** Remaining anonymous generations today; null when authenticated */
+  anonRemaining?: number | null;
+  anonLimit?: number;
 }
 
 const MainMenu: React.FunctionComponent<MainMenuProps> = ({
@@ -71,6 +74,8 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
   handleGenerateWod,
   streak = null,
   streakLoading = false,
+  anonRemaining = null,
+  anonLimit,
 }) => {
   const { isAuthenticated, login, isLoading: authLoading, authProvider } = useAuth();
   const isAuth0 = authProvider === "auth0";
@@ -93,6 +98,21 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
               <strong className="text-foreground">Create an account</strong> to
               save workouts, view history, use favorites, and track your streak.
             </p>
+            {anonRemaining !== null && anonLimit !== undefined && (
+              <p
+                className="mt-1.5 text-xs font-medium text-muted-foreground"
+                aria-live="polite"
+              >
+                {anonRemaining > 0 ? (
+                  <>
+                    {anonRemaining} of {anonLimit} free workout
+                    {anonLimit === 1 ? "" : "s"} left today
+                  </>
+                ) : (
+                  <>Daily free limit reached — sign in for unlimited</>
+                )}
+              </p>
+            )}
             <div className="mt-2 md:flex md:justify-center">
               <Button
                 type="button"

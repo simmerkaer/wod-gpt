@@ -10,6 +10,8 @@ import { useMovements } from "../hooks/useExercises";
 import { useGenerateWod } from "../hooks/useWod";
 import { useAuth } from "../hooks/useAuth";
 import { useWorkoutHistory } from "../hooks/useWorkoutHistory";
+import { useAnonGenerationLimit } from "../hooks/useAnonGenerationLimit";
+import { AnonLimitDialog } from "../components/auth/AnonLimitDialog";
 import { computeCurrentWorkoutStreak } from "@/utils/workoutStreak";
 import { useWeightUnit } from "@/contexts/WeightUnitContext";
 import type { WeightUnit } from "../components/UnitSelector";
@@ -31,8 +33,20 @@ export default function HomePage() {
   const [workoutIntent, setWorkoutIntent] = useState<WorkoutIntent>("general_fitness");
   const [fetchWod, { wod, timing, confidence, isLoading, error, workoutResponse, savedWorkoutId, isFavorite, toggleFavorite }] =
     useGenerateWod();
+  const {
+    remaining: anonRemaining,
+    limit: anonLimit,
+    limitReached: anonLimitReached,
+    recordGeneration,
+  } = useAnonGenerationLimit();
+  const [showLimitDialog, setShowLimitDialog] = useState(false);
 
   const handleGenerateWod = () => {
+    if (anonLimitReached) {
+      setShowLimitDialog(true);
+      return;
+    }
+    recordGeneration();
     fetchWod(
       workoutType === "random",
       selectedMovements,
@@ -76,6 +90,10 @@ export default function HomePage() {
 
   return (
     <>
+      <AnonLimitDialog
+        open={showLimitDialog}
+        onOpenChange={setShowLimitDialog}
+      />
       {/* Mobile Layout: Vertical Stack */}
       <div className="lg:hidden flex flex-col items-center">
         <div className="w-full max-w-lg">
@@ -101,6 +119,8 @@ export default function HomePage() {
               toggleMovement={toggleMovement}
               streak={isAuthenticated ? streak : null}
               streakLoading={isAuthenticated && historyLoading}
+              anonRemaining={!isAuthenticated ? anonRemaining : null}
+              anonLimit={anonLimit}
             />
           </FancyLoadingSpinner>
         </div>
@@ -151,6 +171,8 @@ export default function HomePage() {
               toggleMovement={toggleMovement}
               streak={isAuthenticated ? streak : null}
               streakLoading={isAuthenticated && historyLoading}
+              anonRemaining={!isAuthenticated ? anonRemaining : null}
+              anonLimit={anonLimit}
             />
           </FancyLoadingSpinner>
         </div>
