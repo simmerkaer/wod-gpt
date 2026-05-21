@@ -1,4 +1,4 @@
-import { IdP } from "@/contexts/AuthContext";
+export type AuthProvider = "google" | "auth0";
 
 export interface ClientPrincipal {
   identityProvider: string;
@@ -30,7 +30,8 @@ export interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (idp: IdP) => void;
+  authProvider: AuthProvider;
+  login: () => void;
   logout: () => void;
   refreshUser: () => Promise<void>;
 }

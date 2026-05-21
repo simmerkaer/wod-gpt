@@ -1,10 +1,11 @@
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from '@azure/functions';
 import { BlobStorageService } from '../services/blobStorageService';
-import { 
-  SaveWorkoutRequest, 
-  SavedWorkout, 
-  validateSaveWorkoutRequest 
+import {
+  SaveWorkoutRequest,
+  SavedWorkout,
+  validateSaveWorkoutRequest
 } from '../types/workoutHistory';
+import { resolveBlobUserId } from '../utils/userMigration';
 import { v4 as uuidv4 } from 'uuid';
 
 export async function saveWorkout(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
@@ -28,11 +29,12 @@ export async function saveWorkout(request: HttpRequest, context: InvocationConte
       };
     }
 
+    const blobService = new BlobStorageService();
     let userId: string;
     try {
       const userInfo = JSON.parse(Buffer.from(userPrincipal, 'base64').toString());
-      userId = userInfo.userDetails || userInfo.userId;
-      
+      userId = await resolveBlobUserId(userInfo, blobService);
+
       if (!userId) {
         throw new Error('User ID not found in authentication data');
       }
@@ -83,7 +85,6 @@ export async function saveWorkout(request: HttpRequest, context: InvocationConte
     };
 
     // Save to blob storage
-    const blobService = new BlobStorageService();
     await blobService.saveWorkout(userId, savedWorkout);
 
     context.log(`Workout saved successfully for user ${userId}`);

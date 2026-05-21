@@ -1,5 +1,5 @@
 import { MovementId, MovementUsageMode } from "@/lib/movementId";
-import { Flame, Loader2, PlusIcon, ZapIcon } from "lucide-react";
+import { Flame, Loader2, LogIn, PlusIcon, ZapIcon } from "lucide-react";
 import * as React from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
@@ -72,7 +72,8 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
   streak = null,
   streakLoading = false,
 }) => {
-  const { isAuthenticated, login, isLoading: authLoading } = useAuth();
+  const { isAuthenticated, login, isLoading: authLoading, authProvider } = useAuth();
+  const isAuth0 = authProvider === "auth0";
   return (
     <Card className="flex-grow rounded-[10px]">
       <CardHeader className="pb-4">
@@ -98,11 +99,15 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
                 variant="outline"
                 size="sm"
                 className="w-full gap-2 md:w-auto"
-                onClick={() => login("google")}
+                onClick={() => login()}
                 disabled={authLoading}
               >
-                <GoogleIcon className="h-4 w-4 shrink-0" aria-hidden />
-                Sign in with Google
+                {isAuth0 ? (
+                  <LogIn className="h-4 w-4 shrink-0" aria-hidden />
+                ) : (
+                  <GoogleIcon className="h-4 w-4 shrink-0" aria-hidden />
+                )}
+                {isAuth0 ? "Sign in or create account" : "Sign in with Google"}
               </Button>
             </div>
           </div>

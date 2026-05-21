@@ -1,9 +1,10 @@
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from '@azure/functions';
 import { BlobStorageService } from '../services/blobStorageService';
-import { 
-  UpdateWorkoutRequest, 
-  validateUpdateWorkoutRequest 
+import {
+  UpdateWorkoutRequest,
+  validateUpdateWorkoutRequest
 } from '../types/workoutHistory';
+import { resolveBlobUserId } from '../utils/userMigration';
 
 export async function updateWorkout(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
   context.log('Update workout request received');
@@ -26,11 +27,12 @@ export async function updateWorkout(request: HttpRequest, context: InvocationCon
       };
     }
 
+    const blobService = new BlobStorageService();
     let userId: string;
     try {
       const userInfo = JSON.parse(Buffer.from(userPrincipal, 'base64').toString());
-      userId = userInfo.userDetails || userInfo.userId;
-      
+      userId = await resolveBlobUserId(userInfo, blobService);
+
       if (!userId) {
         throw new Error('User ID not found in authentication data');
       }
@@ -67,7 +69,6 @@ export async function updateWorkout(request: HttpRequest, context: InvocationCon
     }
 
     // Update workout in blob storage
-    const blobService = new BlobStorageService();
     const updateData: Partial<any> = {};
     
     if (requestBody.notes !== undefined) {

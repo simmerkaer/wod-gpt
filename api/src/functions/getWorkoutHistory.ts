@@ -1,6 +1,7 @@
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from '@azure/functions';
 import { BlobStorageService } from '../services/blobStorageService';
 import { WorkoutHistoryFilters, WorkoutHistoryResponse } from '../types/workoutHistory';
+import { resolveBlobUserId } from '../utils/userMigration';
 
 export async function getWorkoutHistory(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
   context.log('Get workout history request received');
@@ -23,11 +24,12 @@ export async function getWorkoutHistory(request: HttpRequest, context: Invocatio
       };
     }
 
+    const blobService = new BlobStorageService();
     let userId: string;
     try {
       const userInfo = JSON.parse(Buffer.from(userPrincipal, 'base64').toString());
-      userId = userInfo.userDetails || userInfo.userId;
-      
+      userId = await resolveBlobUserId(userInfo, blobService);
+
       if (!userId) {
         throw new Error('User ID not found in authentication data');
       }
@@ -67,7 +69,6 @@ export async function getWorkoutHistory(request: HttpRequest, context: Invocatio
     };
 
     // Get workouts from blob storage
-    const blobService = new BlobStorageService();
     const result = await blobService.getWorkoutHistory(userId, limit, offset);
 
     // Apply additional filters (that couldn't be done at storage level)

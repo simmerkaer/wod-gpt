@@ -7,6 +7,7 @@ import {
 } from "react";
 import {
   AuthContextType,
+  AuthProvider as AuthProviderName,
   AuthResponse,
   User,
   ClientPrincipal,
@@ -14,7 +15,6 @@ import {
 } from "../types/auth";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
-export type IdP = "google" | "github";
 
 export const useAuthContext = () => {
   const context = useContext(AuthContext);
@@ -28,9 +28,16 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
+const EMAIL_CLAIM_KEYS = [
+  "email",
+  "emailaddress",
+  "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress",
+];
+
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [authProvider, setAuthProvider] = useState<AuthProviderName>("google");
 
   const transformClientPrincipal = (clientPrincipal: ClientPrincipal): User => {
     const claims = clientPrincipal.claims || [];
@@ -42,10 +49,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       {},
     );
 
+    const email = EMAIL_CLAIM_KEYS.map((k) => claimsRecord[k]).find(Boolean);
+
     return {
       id: clientPrincipal.userId,
       name: clientPrincipal.userDetails,
-      email: claimsRecord.email || claimsRecord.emailaddress,
+      email,
       provider: clientPrincipal.identityProvider,
       roles: clientPrincipal.userRoles,
       claims: claimsRecord,
@@ -69,6 +78,17 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   };
 
+  const fetchConfig = async (): Promise<AuthProviderName> => {
+    try {
+      const response = await fetch("/api/config");
+      if (!response.ok) return "google";
+      const data = (await response.json()) as { authProvider?: string };
+      return data.authProvider === "auth0" ? "auth0" : "google";
+    } catch {
+      return "google";
+    }
+  };
+
   const refreshUser = async () => {
     setIsLoading(true);
     const userData = await fetchUser();
@@ -76,8 +96,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     setIsLoading(false);
   };
 
-  const login = (idp: IdP) => {
-    window.location.href = `/.auth/login/${idp}`;
+  const login = () => {
+    window.location.href = `/.auth/login/${authProvider}`;
   };
 
   const logout = () => {
@@ -85,13 +105,20 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   useEffect(() => {
-    refreshUser();
+    (async () => {
+      setIsLoading(true);
+      const [provider, userData] = await Promise.all([fetchConfig(), fetchUser()]);
+      setAuthProvider(provider);
+      setUser(userData);
+      setIsLoading(false);
+    })();
   }, []);
 
   const value: AuthContextType = {
     user,
     isAuthenticated: !!user,
     isLoading,
+    authProvider,
     login,
     logout,
     refreshUser,

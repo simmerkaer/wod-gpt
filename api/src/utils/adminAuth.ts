@@ -26,6 +26,9 @@ export function parseClientPrincipalHeader(
 }
 
 function principalEmails(claims: Record<string, string>): string[] {
+  // Auth0 emits email_verified; refuse to consider unverified emails for admin auth.
+  if (claims.email_verified === 'false') return [];
+
   const out: string[] = [];
   const keys = [
     'email',
