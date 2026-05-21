@@ -50,10 +50,16 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     );
 
     const email = EMAIL_CLAIM_KEYS.map((k) => claimsRecord[k]).find(Boolean);
+    // For Auth0 sign-ins, userDetails is the email (nameClaimType set so it is
+    // visible to the API). Prefer the `name` claim for human-readable display.
+    const displayName =
+      claimsRecord["name"] ||
+      claimsRecord["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"] ||
+      clientPrincipal.userDetails;
 
     return {
       id: clientPrincipal.userId,
-      name: clientPrincipal.userDetails,
+      name: displayName,
       email,
       provider: clientPrincipal.identityProvider,
       roles: clientPrincipal.userRoles,
