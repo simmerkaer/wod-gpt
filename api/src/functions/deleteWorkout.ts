@@ -1,5 +1,6 @@
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from '@azure/functions';
 import { BlobStorageService } from '../services/blobStorageService';
+import { resolveBlobUserId } from '../utils/userMigration';
 
 export async function deleteWorkout(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
   context.log('Delete workout request received');
@@ -22,11 +23,12 @@ export async function deleteWorkout(request: HttpRequest, context: InvocationCon
       };
     }
 
+    const blobService = new BlobStorageService();
     let userId: string;
     try {
       const userInfo = JSON.parse(Buffer.from(userPrincipal, 'base64').toString());
-      userId = userInfo.userDetails || userInfo.userId;
-      
+      userId = await resolveBlobUserId(userInfo, blobService);
+
       if (!userId) {
         throw new Error('User ID not found in authentication data');
       }
@@ -48,7 +50,6 @@ export async function deleteWorkout(request: HttpRequest, context: InvocationCon
     }
 
     // Delete workout from blob storage
-    const blobService = new BlobStorageService();
     const found = await blobService.deleteWorkout(userId, workoutId);
 
     if (!found) {

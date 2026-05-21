@@ -260,6 +260,22 @@ export class BlobStorageService {
     });
   }
 
+  /**
+   * Copy a user's workout collection from {oldUserId} to {newUserId} and delete the old blob.
+   * Used by resolveBlobUserId to lazy-migrate users from legacy identity keys when they
+   * first sign in via Auth0.
+   */
+  async migrateUserBlob(oldUserId: string, newUserId: string): Promise<void> {
+    if (oldUserId === newUserId) return;
+    await this.ensureContainerExists();
+    const oldClient = this.getBlobClient(getUserWorkoutBlobPath(oldUserId));
+    const newClient = this.getBlobClient(getUserWorkoutBlobPath(newUserId));
+    const collection = await this.loadCollection(oldClient);
+    if (!collection) return;
+    await this.saveCollection(newUserId, newClient, collection);
+    await oldClient.deleteIfExists();
+  }
+
   async saveWorkout(userId: string, workout: SavedWorkout): Promise<void> {
     await this.ensureContainerExists();
 
