@@ -1,7 +1,6 @@
 import { useToast } from "@/hooks/use-toast";
 import { ClipboardCopy, Expand, Heart, LogIn } from "lucide-react";
 import React, { useState, useEffect, useRef } from "react";
-import { GoogleIcon } from "./icons/GoogleIcon";
 import { Typewriter } from "./Typewriter";
 import { Button } from "./ui/button";
 import { Dialog, DialogContent } from "./ui/dialog";
@@ -29,8 +28,7 @@ const GeneratedWod: React.FunctionComponent<GeneratedWodProps> = ({
   toggleFavorite,
 }) => {
   const { toast } = useToast();
-  const { isAuthenticated, login, isLoading: authLoading, authProvider } = useAuth();
-  const isAuth0 = authProvider === "auth0";
+  const { isAuthenticated, login, isLoading: authLoading } = useAuth();
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [isTogglingFavorite, setIsTogglingFavorite] = useState(false);
   const workoutRef = useRef<HTMLDivElement>(null);
@@ -128,9 +126,8 @@ const GeneratedWod: React.FunctionComponent<GeneratedWodProps> = ({
           {!isAuthenticated && (
             <div className="mx-auto mt-6 max-w-2xl rounded-lg border border-primary/20 bg-muted/40 px-3 py-2.5 text-center text-sm dark:bg-muted/25">
               <p className="text-muted-foreground">
-                {isAuth0
-                  ? "Sign in or create an account to save this workout to your history."
-                  : "Sign in with Google to save this workout to your history."}
+                Sign in or create an account to save this workout to your
+                history.
               </p>
               <Button
                 type="button"
@@ -140,12 +137,8 @@ const GeneratedWod: React.FunctionComponent<GeneratedWodProps> = ({
                 onClick={() => login()}
                 disabled={authLoading}
               >
-                {isAuth0 ? (
-                  <LogIn className="h-4 w-4 shrink-0" aria-hidden />
-                ) : (
-                  <GoogleIcon className="h-4 w-4 shrink-0" aria-hidden />
-                )}
-                {isAuth0 ? "Sign in or create account" : "Sign in with Google"}
+                <LogIn className="h-4 w-4 shrink-0" aria-hidden />
+                Sign in or create account
               </Button>
             </div>
           )}
