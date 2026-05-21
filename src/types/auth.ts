@@ -1,5 +1,3 @@
-export type AuthProvider = "google" | "auth0";
-
 export interface ClientPrincipal {
   identityProvider: string;
   userId: string;
@@ -30,7 +28,6 @@ export interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  authProvider: AuthProvider;
   login: () => void;
   logout: () => void;
   refreshUser: () => Promise<void>;
