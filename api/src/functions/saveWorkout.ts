@@ -77,11 +77,10 @@ export async function saveWorkout(request: HttpRequest, context: InvocationConte
       userId,
       workout: requestBody.workout,
       savedAt: now,
-      completedAt: requestBody.completedAt || now,
+      completedAt: requestBody.completedAt,
       actualDuration: requestBody.actualDuration,
       notes: requestBody.notes,
-      favorite: false,
-      rating: undefined
+      rating: undefined,
     };
 
     // Save to blob storage

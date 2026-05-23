@@ -6,10 +6,9 @@ export interface SavedWorkout {
   userId: string;
   workout: WorkoutResponse;
   savedAt: string; // ISO timestamp when saved
-  completedAt?: string; // ISO timestamp when actually performed
+  completedAt?: string | null; // ISO timestamp when user marked the workout completed
   actualDuration?: number; // Actual minutes spent on workout
   notes?: string;
-  favorite?: boolean;
   rating?: number; // 1-5 stars
 }
 
@@ -20,7 +19,7 @@ export interface WorkoutHistoryFilters {
   };
   format?: WorkoutFormat[];
   difficulty?: DifficultyLevel[];
-  favorite?: boolean;
+  completed?: boolean;
   search?: string; // Search in workout text or notes
   limit?: number; // Number of workouts to fetch
   offset?: number; // For pagination
@@ -42,7 +41,7 @@ export interface SaveWorkoutRequest {
 export interface UpdateWorkoutRequest {
   id: string;
   notes?: string;
-  favorite?: boolean;
+  completedAt?: string | null;
   rating?: number;
 }
 

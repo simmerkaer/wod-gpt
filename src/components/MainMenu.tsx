@@ -94,7 +94,8 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
           >
             <p className="text-muted-foreground leading-snug">
               <strong className="text-foreground">Create an account</strong> to
-              save workouts, view history, use favorites, and track your streak.
+              save workouts, view history, mark workouts completed, and track
+              your weekly streak.
             </p>
             {anonRemaining !== null && anonLimit !== undefined && (
               <p
@@ -141,7 +142,7 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
                   aria-hidden
                 />
                 <span className="font-semibold text-orange-800 dark:text-orange-200">
-                  {streak} day{streak !== 1 ? "s" : ""} streak
+                  {streak} week{streak !== 1 ? "s" : ""} streak
                 </span>
               </>
             ) : (
@@ -151,7 +152,7 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
                   aria-hidden
                 />
                 <span className="text-muted-foreground">
-                  Save a workout today to start a streak
+                  Complete a workout this week to start a streak
                 </span>
               </>
             )}

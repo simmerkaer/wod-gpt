@@ -41,9 +41,6 @@ export const useWorkoutHistory = (filters?: WorkoutHistoryFilters): UseWorkoutHi
       searchParams.append('limit', '1000'); // Large number to get all workouts
       searchParams.append('offset', '0');
 
-      if (filters?.favorite) {
-        searchParams.append('favorite', 'true');
-      }
       if (filters?.search) {
         searchParams.append('search', filters.search);
       }

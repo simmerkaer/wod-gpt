@@ -70,12 +70,13 @@ export async function updateWorkout(request: HttpRequest, context: InvocationCon
 
     // Update workout in blob storage
     const updateData: Partial<any> = {};
-    
+
     if (requestBody.notes !== undefined) {
       updateData.notes = requestBody.notes;
     }
-    if (requestBody.favorite !== undefined) {
-      updateData.favorite = requestBody.favorite;
+    if (requestBody.completedAt !== undefined) {
+      // Allow null to clear the completion timestamp
+      updateData.completedAt = requestBody.completedAt;
     }
     if (requestBody.rating !== undefined) {
       updateData.rating = requestBody.rating;

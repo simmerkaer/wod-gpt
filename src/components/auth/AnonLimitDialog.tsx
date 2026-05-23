@@ -1,4 +1,4 @@
-import { Flame, Heart, History, LogIn } from "lucide-react";
+import { CheckCircle2, Flame, History, LogIn } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import {
   Dialog,
@@ -35,7 +35,7 @@ export const AnonLimitDialog = ({
         <ul className="space-y-2 text-sm">
           <li className="flex items-center gap-2">
             <Flame className="h-4 w-4 shrink-0 text-orange-500" aria-hidden />
-            Unlimited workouts &amp; daily streak
+            Unlimited workouts &amp; weekly streak
           </li>
           <li className="flex items-center gap-2">
             <History
@@ -45,8 +45,11 @@ export const AnonLimitDialog = ({
             Full workout history
           </li>
           <li className="flex items-center gap-2">
-            <Heart className="h-4 w-4 shrink-0 text-rose-500" aria-hidden />
-            Favorite workouts to revisit
+            <CheckCircle2
+              className="h-4 w-4 shrink-0 text-green-600"
+              aria-hidden
+            />
+            Mark workouts completed to grow your streak
           </li>
         </ul>
         <DialogFooter className="gap-2 sm:gap-2">

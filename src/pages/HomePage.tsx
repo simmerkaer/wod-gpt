@@ -32,7 +32,7 @@ export default function HomePage() {
     useState<WorkoutLengthOption>("medium");
   const [customMinutes, setCustomMinutes] = useState<number>(20);
   const [workoutIntent, setWorkoutIntent] = useState<WorkoutIntent>("general_fitness");
-  const [fetchWod, { wod, timing, confidence, isLoading, error, workoutResponse, savedWorkoutId, isFavorite, toggleFavorite }] =
+  const [fetchWod, { wod, timing, confidence, isLoading, error, workoutResponse, savedWorkoutId, isCompleted, toggleCompleted }] =
     useGenerateWod();
   const {
     remaining: anonRemaining,
@@ -138,8 +138,8 @@ export default function HomePage() {
             error={error}
             workoutResponse={workoutResponse}
             savedWorkoutId={savedWorkoutId}
-            isFavorite={isFavorite}
-            toggleFavorite={toggleFavorite}
+            isCompleted={isCompleted}
+            toggleCompleted={toggleCompleted}
           />
         </section>
       </div>
@@ -197,8 +197,8 @@ export default function HomePage() {
               error={error}
               workoutResponse={workoutResponse}
               savedWorkoutId={savedWorkoutId}
-              isFavorite={isFavorite}
-              toggleFavorite={toggleFavorite}
+              isCompleted={isCompleted}
+              toggleCompleted={toggleCompleted}
             />
           )}
         </section>

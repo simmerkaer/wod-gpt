@@ -26,8 +26,8 @@ interface UseWodResult {
   error: string | null;
   workoutResponse: WorkoutResponse | null;
   savedWorkoutId: string | null;
-  isFavorite: boolean;
-  toggleFavorite: () => Promise<void>;
+  isCompleted: boolean;
+  toggleCompleted: () => Promise<void>;
 }
 
 export const useGenerateWod = (): [
@@ -51,24 +51,26 @@ export const useGenerateWod = (): [
   const [error, setError] = useState<string | null>(null);
   const [workoutResponse, setWorkoutResponse] = useState<WorkoutResponse | null>(null);
   const [savedWorkoutId, setSavedWorkoutId] = useState<string | null>(null);
-  const [isFavorite, setIsFavorite] = useState<boolean>(false);
-  
+  const [isCompleted, setIsCompleted] = useState<boolean>(false);
+
   const { isAuthenticated } = useAuth();
   const { saveWorkout } = useSaveWorkout();
   const { updateWorkout } = useWorkoutHistory();
 
-  // Toggle favorite status for the current workout
-  const toggleFavorite = async () => {
+  // Toggle completion status for the current workout
+  const toggleCompleted = async () => {
     if (!savedWorkoutId || !isAuthenticated) {
-      throw new Error('Workout must be saved and user must be authenticated to toggle favorite');
+      throw new Error('Workout must be saved and user must be authenticated to mark completed');
     }
-    
+
     try {
-      const newFavoriteStatus = !isFavorite;
-      await updateWorkout(savedWorkoutId, { favorite: newFavoriteStatus });
-      setIsFavorite(newFavoriteStatus);
+      const nextCompleted = !isCompleted;
+      await updateWorkout(savedWorkoutId, {
+        completedAt: nextCompleted ? new Date().toISOString() : null,
+      });
+      setIsCompleted(nextCompleted);
     } catch (error) {
-      console.error('Error toggling favorite:', error);
+      console.error('Error toggling completion:', error);
       throw error;
     }
   };
@@ -86,7 +88,7 @@ export const useGenerateWod = (): [
     setError(null);
     // Reset workout state when generating new workout
     setSavedWorkoutId(null);
-    setIsFavorite(false);
+    setIsCompleted(false);
     
     const requestBody = {
       random: random,
@@ -105,9 +107,7 @@ export const useGenerateWod = (): [
       if (isAuthenticated && workoutData) {
         try {
           console.log('🔄 Auto-saving workout for authenticated user...');
-          const workoutId = await saveWorkout(workoutData, {
-            completedAt: new Date().toISOString(),
-          });
+          const workoutId = await saveWorkout(workoutData);
           setSavedWorkoutId(workoutId);
           console.log('✅ Workout auto-saved with ID:', workoutId);
         } catch (error) {
@@ -217,8 +217,8 @@ export const useGenerateWod = (): [
       error,
       workoutResponse,
       savedWorkoutId,
-      isFavorite,
-      toggleFavorite
+      isCompleted,
+      toggleCompleted,
     }
   ];
 };

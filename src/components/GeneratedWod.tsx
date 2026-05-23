@@ -1,5 +1,5 @@
 import { useToast } from "@/hooks/use-toast";
-import { ClipboardCopy, Expand, Heart, LogIn } from "lucide-react";
+import { CheckCircle2, ClipboardCopy, Expand, LogIn } from "lucide-react";
 import React, { useState, useEffect, useRef } from "react";
 import { Typewriter } from "./Typewriter";
 import { Button } from "./ui/button";
@@ -15,8 +15,8 @@ interface GeneratedWodProps {
   error: string | null;
   workoutResponse?: WorkoutResponse | null;
   savedWorkoutId: string | null;
-  isFavorite: boolean;
-  toggleFavorite: () => Promise<void>;
+  isCompleted: boolean;
+  toggleCompleted: () => Promise<void>;
 }
 
 const GeneratedWod: React.FunctionComponent<GeneratedWodProps> = ({
@@ -24,13 +24,13 @@ const GeneratedWod: React.FunctionComponent<GeneratedWodProps> = ({
   timing,
   error,
   savedWorkoutId,
-  isFavorite,
-  toggleFavorite,
+  isCompleted,
+  toggleCompleted,
 }) => {
   const { toast } = useToast();
   const { isAuthenticated, login, isLoading: authLoading } = useAuth();
   const [isFullScreen, setIsFullScreen] = useState(false);
-  const [isTogglingFavorite, setIsTogglingFavorite] = useState(false);
+  const [isTogglingCompleted, setIsTogglingCompleted] = useState(false);
   const workoutRef = useRef<HTMLDivElement>(null);
 
   const copyToClipboard = () => {
@@ -44,33 +44,33 @@ const GeneratedWod: React.FunctionComponent<GeneratedWodProps> = ({
     setIsFullScreen(!isFullScreen);
   };
 
-  const handleToggleFavorite = async () => {
+  const handleToggleCompleted = async () => {
     if (!savedWorkoutId || !isAuthenticated) {
       toast({
-        title: "Please sign in to favorite workouts",
+        title: "Please sign in to mark workouts completed",
         variant: "destructive",
       });
       return;
     }
 
-    setIsTogglingFavorite(true);
+    setIsTogglingCompleted(true);
     try {
-      await toggleFavorite();
+      await toggleCompleted();
       toast({
-        title: isFavorite ? "Removed from favorites 💔" : "Added to favorites ❤️",
+        title: isCompleted
+          ? "Marked as not completed"
+          : "Marked as completed ✅",
       });
     } catch (error) {
       toast({
-        title: "Failed to update favorite",
+        title: "Failed to update completion",
         description: error instanceof Error ? error.message : "Please try again",
         variant: "destructive",
       });
     } finally {
-      setIsTogglingFavorite(false);
+      setIsTogglingCompleted(false);
     }
   };
-
-  // Note: Favorite state is now managed in useGenerateWod hook
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -157,18 +157,17 @@ const GeneratedWod: React.FunctionComponent<GeneratedWodProps> = ({
             </Button>
             {isAuthenticated && savedWorkoutId && (
               <Button
-                variant={isFavorite ? "default" : "outline"}
-                onClick={handleToggleFavorite}
-                disabled={isTogglingFavorite}
-                className={isFavorite ? "bg-red-500 hover:bg-red-600" : ""}
+                variant={isCompleted ? "default" : "outline"}
+                onClick={handleToggleCompleted}
+                disabled={isTogglingCompleted}
+                className={isCompleted ? "bg-green-600 hover:bg-green-700" : ""}
               >
-                <Heart className={isFavorite ? "fill-current" : ""} />
-                {isTogglingFavorite 
-                  ? "Updating..." 
-                  : isFavorite 
-                    ? "Favorited!" 
-                    : "Add to Favorites"
-                }
+                <CheckCircle2 className={isCompleted ? "fill-current" : ""} />
+                {isTogglingCompleted
+                  ? "Updating..."
+                  : isCompleted
+                    ? "Completed!"
+                    : "Mark as completed"}
               </Button>
             )}
           </div>

@@ -14,8 +14,8 @@ import {
   User,
   Calendar,
   ArrowLeft,
+  CheckCircle2,
   Dumbbell,
-  Heart,
   TrendingUp,
   Target,
   Flame,
@@ -30,14 +30,17 @@ import { GoogleIcon } from "../components/icons/GoogleIcon";
 import { Link } from "react-router-dom";
 import { SavedWorkout } from "../types/workoutHistory";
 import { formatWorkoutDate, formatYearMonth } from "@/utils/DateHelpers";
-import { computeCurrentWorkoutStreak } from "@/utils/workoutStreak";
+import {
+  computeCurrentWorkoutStreak,
+  computeLongestWorkoutStreak,
+} from "@/utils/workoutStreak";
 
 // Helper function to calculate workout statistics
 function calculateWorkoutStats(workouts: SavedWorkout[]) {
   if (workouts.length === 0) {
     return {
       totalWorkouts: 0,
-      favoriteWorkouts: 0,
+      completedWorkouts: 0,
       averageRating: 0,
       mostCommonFormat: null,
       recentWorkouts: [],
@@ -46,7 +49,8 @@ function calculateWorkoutStats(workouts: SavedWorkout[]) {
   }
 
   const totalWorkouts = workouts.length;
-  const favoriteWorkouts = workouts.filter((w) => w.favorite).length;
+  const completedWorkouts = workouts.filter((w) => Boolean(w.completedAt))
+    .length;
 
   // Calculate average rating (only for rated workouts)
   const ratedWorkouts = workouts.filter((w) => w.rating && w.rating > 0);
@@ -82,14 +86,8 @@ function calculateWorkoutStats(workouts: SavedWorkout[]) {
     )
     .slice(0, 5);
 
-  // Calculate streaks and dates
-  const sortedByDate = [...workouts].sort(
-    (a, b) =>
-      new Date(b.completedAt || b.savedAt).getTime() -
-      new Date(a.completedAt || a.savedAt).getTime(),
-  );
-
-  // First workout date
+  // First workout date (for display; uses savedAt fallback so it's set even if
+  // the user never marks anything completed).
   const firstWorkoutDate =
     workouts.length > 0
       ? workouts.reduce((earliest, workout) => {
@@ -102,42 +100,7 @@ function calculateWorkoutStats(workouts: SavedWorkout[]) {
       : null;
 
   const workoutStreak = computeCurrentWorkoutStreak(workouts);
-
-  let longestStreak = 0;
-  let tempStreak = 0;
-
-  if (sortedByDate.length > 0) {
-    const dates = new Set<string>();
-    sortedByDate.forEach((workout) => {
-      const workoutDate = new Date(workout.completedAt || workout.savedAt);
-      dates.add(workoutDate.toDateString());
-    });
-
-    // Calculate longest streak
-    const allDates = Array.from(dates).sort(
-      (a, b) =>
-        new Date(a as string).getTime() - new Date(b as string).getTime(),
-    );
-    for (let i = 0; i < allDates.length; i++) {
-      if (i === 0) {
-        tempStreak = 1;
-      } else {
-        const prevDate = new Date(allDates[i - 1] as string);
-        const currDate = new Date(allDates[i] as string);
-        const daysDiff = Math.floor(
-          (currDate.getTime() - prevDate.getTime()) / (1000 * 60 * 60 * 24),
-        );
-
-        if (daysDiff === 1) {
-          tempStreak++;
-        } else {
-          longestStreak = Math.max(longestStreak, tempStreak);
-          tempStreak = 1;
-        }
-      }
-    }
-    longestStreak = Math.max(longestStreak, tempStreak);
-  }
+  const longestStreak = computeLongestWorkoutStreak(workouts);
 
   // Most active month
   const monthCounts = workouts.reduce(
@@ -255,7 +218,7 @@ function calculateWorkoutStats(workouts: SavedWorkout[]) {
 
   return {
     totalWorkouts,
-    favoriteWorkouts,
+    completedWorkouts,
     averageRating,
     mostCommonFormat,
     recentWorkouts,
@@ -442,24 +405,24 @@ export default function ProfilePage() {
                     </div>
                   </Link>
                   <Link
-                    to="/history?favorite=true"
+                    to="/history"
                     className="text-center rounded-lg py-2 -m-2 no-underline text-foreground hover:bg-muted/50 transition-colors cursor-pointer"
                   >
-                    <div className="text-2xl font-bold text-red-500 flex items-center justify-center gap-1">
-                      <Heart className="h-4 w-4 fill-current" />
-                      {workoutStats.favoriteWorkouts}
+                    <div className="text-2xl font-bold text-green-600 flex items-center justify-center gap-1">
+                      <CheckCircle2 className="h-4 w-4" />
+                      {workoutStats.completedWorkouts}
                     </div>
                     <div className="text-xs text-muted-foreground">
-                      Favorites
+                      Completed
                     </div>
                   </Link>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-green-500 flex items-center justify-center gap-1">
+                    <div className="text-2xl font-bold text-orange-500 flex items-center justify-center gap-1">
                       <Flame className="h-4 w-4" />
                       {workoutStats.workoutStreak}
                     </div>
                     <div className="text-xs text-muted-foreground">
-                      Day Streak
+                      Week Streak
                     </div>
                   </div>
                 </div>
@@ -540,7 +503,7 @@ export default function ProfilePage() {
                         </span>
                         <span className="text-sm font-medium">
                           {workoutStats.longestStreak}{" "}
-                          {workoutStats.longestStreak === 1 ? "day" : "days"}
+                          {workoutStats.longestStreak === 1 ? "week" : "weeks"}
                         </span>
                       </div>
                     )}
@@ -685,8 +648,8 @@ export default function ProfilePage() {
                                     workout.completedAt || workout.savedAt,
                                   )}
                                 </span>
-                                {workout.favorite && (
-                                  <Heart className="h-3 w-3 text-red-500 fill-current flex-shrink-0" />
+                                {workout.completedAt && (
+                                  <CheckCircle2 className="h-3 w-3 text-green-600 fill-current flex-shrink-0" />
                                 )}
                               </div>
                               {workout.workout.timing.duration > 0 && (

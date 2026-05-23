@@ -16,8 +16,9 @@ import { Switch } from "../components/ui/switch";
 import {
   ArrowLeft,
   Calendar,
+  CheckCircle2,
+  Circle,
   Clock,
-  Heart,
   MoreVertical,
   Star,
   Trash2,
@@ -42,23 +43,24 @@ import { useToast } from "../hooks/use-toast";
 
 interface WorkoutCardProps {
   workout: SavedWorkout;
-  onToggleFavorite: (id: string, favorite: boolean) => void;
+  onToggleCompleted: (id: string, completed: boolean) => void;
   onDelete: (id: string) => void;
   onAddNote: (id: string, notes: string) => void;
 }
 
 function WorkoutCard({
   workout,
-  onToggleFavorite,
+  onToggleCompleted,
   onDelete,
   onAddNote,
 }: WorkoutCardProps) {
   const [showFullWorkout, setShowFullWorkout] = useState(false);
   const [editingNotes, setEditingNotes] = useState(false);
   const [notesText, setNotesText] = useState(workout.notes || "");
+  const isCompleted = Boolean(workout.completedAt);
 
-  const handleToggleFavorite = () => {
-    onToggleFavorite(workout.id, !workout.favorite);
+  const handleToggleCompleted = () => {
+    onToggleCompleted(workout.id, !isCompleted);
   };
 
   const handleDelete = () => {
@@ -99,8 +101,19 @@ function WorkoutCard({
               <Badge className={difficultyStyle.color} variant="secondary">
                 {difficultyStyle.text}
               </Badge>
-              {workout.favorite && (
-                <Heart className="h-4 w-4 text-red-500 fill-current" />
+              {isCompleted ? (
+                <Badge
+                  variant="secondary"
+                  className="bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300"
+                >
+                  <CheckCircle2 className="h-3 w-3 mr-1" />
+                  Completed
+                </Badge>
+              ) : (
+                <Badge variant="outline" className="text-muted-foreground">
+                  <Circle className="h-3 w-3 mr-1" />
+                  Not completed
+                </Badge>
               )}
             </div>
             <CardTitle className="text-lg mb-1">
@@ -133,13 +146,11 @@ function WorkoutCard({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={handleToggleFavorite}>
-                <Heart
-                  className={`h-4 w-4 mr-2 ${workout.favorite ? "fill-current text-red-500" : ""}`}
+              <DropdownMenuItem onClick={handleToggleCompleted}>
+                <CheckCircle2
+                  className={`h-4 w-4 mr-2 ${isCompleted ? "fill-current text-green-600" : ""}`}
                 />
-                {workout.favorite
-                  ? "Remove from favorites"
-                  : "Add to favorites"}
+                {isCompleted ? "Unmark as completed" : "Mark as completed"}
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setEditingNotes(true)}>
                 <StickyNote className="h-4 w-4 mr-2" />
@@ -236,14 +247,16 @@ function WorkoutCard({
 export default function WorkoutHistoryPage() {
   const { isAuthenticated, isLoading: authLoading } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
-  const showFavoritesOnly = searchParams.get("favorite") === "true";
+  // Default: show completed only. `?show=all` opts into showing everything.
+  const showAll = searchParams.get("show") === "all";
+  const showCompletedOnly = !showAll;
 
-  const setShowFavoritesOnly = (checked: boolean) => {
+  const setShowCompletedOnly = (checked: boolean) => {
     setSearchParams(
       (prev) => {
         const next = new URLSearchParams(prev);
-        if (checked) next.set("favorite", "true");
-        else next.delete("favorite");
+        if (checked) next.delete("show");
+        else next.set("show", "all");
         return next;
       },
       { replace: true }
@@ -263,24 +276,28 @@ export default function WorkoutHistoryPage() {
   const { toast } = useToast();
 
   // Apply client-side filtering
-  const workouts = showFavoritesOnly
-    ? allWorkouts.filter((workout) => workout.favorite === true)
+  const workouts = showCompletedOnly
+    ? allWorkouts.filter((workout) => Boolean(workout.completedAt))
     : allWorkouts;
 
-  const favoriteCount = allWorkouts.filter(
-    (workout) => workout.favorite === true,
+  const completedCount = allWorkouts.filter(
+    (workout) => Boolean(workout.completedAt),
   ).length;
-  const displayTotalCount = showFavoritesOnly ? favoriteCount : totalCount;
+  const displayTotalCount = showCompletedOnly ? completedCount : totalCount;
 
-  const handleToggleFavorite = async (id: string, favorite: boolean) => {
+  const handleToggleCompleted = async (id: string, completed: boolean) => {
     try {
-      await updateWorkout(id, { favorite });
+      await updateWorkout(id, {
+        completedAt: completed ? new Date().toISOString() : null,
+      });
       toast({
-        title: favorite ? "Added to favorites ❤️" : "Removed from favorites",
+        title: completed
+          ? "Marked as completed ✅"
+          : "Marked as not completed",
       });
     } catch (error) {
       toast({
-        title: "Failed to update favorite",
+        title: "Failed to update completion",
         description:
           error instanceof Error ? error.message : "Please try again",
         variant: "destructive",
@@ -387,10 +404,10 @@ export default function WorkoutHistoryPage() {
         {/* Filter Controls */}
         <div className="flex items-center justify-center gap-3 p-4 bg-muted/50 rounded-lg">
           <Filter className="h-4 w-4 text-muted-foreground" />
-          <span className="text-sm font-medium">Show favorites only</span>
+          <span className="text-sm font-medium">Show completed only</span>
           <Switch
-            checked={showFavoritesOnly}
-            onCheckedChange={setShowFavoritesOnly}
+            checked={showCompletedOnly}
+            onCheckedChange={setShowCompletedOnly}
           />
         </div>
 
@@ -414,11 +431,11 @@ export default function WorkoutHistoryPage() {
 
         {displayTotalCount > 0 && (
           <div className="text-center text-sm text-muted-foreground">
-            {showFavoritesOnly ? (
-              <>Showing {workouts.length} favorite workouts</>
+            {showCompletedOnly ? (
+              <>Showing {workouts.length} completed workouts</>
             ) : (
               <>
-                Showing {workouts.length} workouts ({favoriteCount} favorites)
+                Showing {workouts.length} workouts ({completedCount} completed)
               </>
             )}
           </div>
@@ -433,14 +450,14 @@ export default function WorkoutHistoryPage() {
         ) : workouts.length === 0 ? (
           <Card className="text-center py-12">
             <CardContent>
-              {showFavoritesOnly ? (
+              {showCompletedOnly ? (
                 <>
-                  <Heart className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                  <CardTitle className="mb-2">No favorite workouts</CardTitle>
+                  <CheckCircle2 className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                  <CardTitle className="mb-2">No completed workouts</CardTitle>
                   <CardDescription className="mb-4">
                     {allWorkouts.length > 0
-                      ? "You haven't favorited any workouts yet. Add some favorites by clicking the heart icon on your saved workouts!"
-                      : "Start generating and saving workouts, then mark your favorites!"}
+                      ? "You haven't marked any workouts as completed yet. Open one and tap \"Mark as completed\" once you're done."
+                      : "Start generating workouts, then mark them as completed when you finish them."}
                   </CardDescription>
                   {allWorkouts.length === 0 ? (
                     <Button asChild>
@@ -449,7 +466,7 @@ export default function WorkoutHistoryPage() {
                   ) : (
                     <Button
                       variant="outline"
-                      onClick={() => setShowFavoritesOnly(false)}
+                      onClick={() => setShowCompletedOnly(false)}
                     >
                       Show All Workouts
                     </Button>
@@ -476,7 +493,7 @@ export default function WorkoutHistoryPage() {
               <WorkoutCard
                 key={workout.id}
                 workout={workout}
-                onToggleFavorite={handleToggleFavorite}
+                onToggleCompleted={handleToggleCompleted}
                 onDelete={handleDelete}
                 onAddNote={handleAddNote}
               />

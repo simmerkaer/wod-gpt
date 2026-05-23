@@ -3,9 +3,10 @@ export interface SavedWorkout {
   userId: string;
   workout: any; // Using any to match the existing WorkoutResponse from frontend
   savedAt: string;
-  completedAt?: string;
+  completedAt?: string | null;
   actualDuration?: number;
   notes?: string;
+  /** Legacy field kept for compatibility with pre-existing blobs. No longer written. */
   favorite?: boolean;
   rating?: number;
 }
@@ -33,7 +34,7 @@ export interface SaveWorkoutRequest {
 export interface UpdateWorkoutRequest {
   id: string;
   notes?: string;
-  favorite?: boolean;
+  completedAt?: string | null;
   rating?: number;
 }
 
@@ -122,6 +123,14 @@ export function validateUpdateWorkoutRequest(
 
   if (request.rating && (request.rating < 1 || request.rating > 5)) {
     errors.push("Rating must be between 1 and 5");
+  }
+
+  if (
+    request.completedAt !== undefined &&
+    request.completedAt !== null &&
+    Number.isNaN(new Date(request.completedAt).getTime())
+  ) {
+    errors.push("completedAt must be a valid ISO date string or null");
   }
 
   return errors;
