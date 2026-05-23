@@ -15,6 +15,7 @@ interface WorkoutLengthProps {
   customMinutes: number;
   onLengthChange: (length: WorkoutLengthOption) => void;
   onCustomMinutesChange: (minutes: number) => void;
+  disabled?: boolean;
 }
 
 const WORKOUT_LENGTH_OPTIONS = [
@@ -45,6 +46,7 @@ const WorkoutLength: React.FunctionComponent<WorkoutLengthProps> = ({
   customMinutes,
   onLengthChange,
   onCustomMinutesChange,
+  disabled = false,
 }) => {
   const handleCustomMinutesChange = (delta: number) => {
     const newMinutes = Math.max(5, Math.min(60, customMinutes + delta));
@@ -60,8 +62,8 @@ const WorkoutLength: React.FunctionComponent<WorkoutLengthProps> = ({
     <div className="space-y-3">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             className="w-full justify-between"
           >
             <div className="flex items-center gap-2">
@@ -72,10 +74,16 @@ const WorkoutLength: React.FunctionComponent<WorkoutLengthProps> = ({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56">
+          {disabled && (
+            <div className="px-2 py-1.5 text-xs text-muted-foreground border-b mb-1">
+              Sign in to choose a length
+            </div>
+          )}
           {WORKOUT_LENGTH_OPTIONS.map((option) => (
-            <DropdownMenuItem 
-              key={option.value} 
+            <DropdownMenuItem
+              key={option.value}
               onClick={() => onLengthChange(option.value)}
+              disabled={disabled && option.value !== selectedLength}
               className="flex items-center gap-2 cursor-pointer"
             >
               <Clock className="h-4 w-4 text-blue-600" />

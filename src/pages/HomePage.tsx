@@ -26,6 +26,7 @@ export default function HomePage() {
   const { selectedMovements, toggleMovement, movementUsageMode, setMovementUsageMode } = useMovements();
   const [workoutType, setWorkoutType] = useState<WorkoutType>("random");
   const [formatType, setFormatType] = useState<FormatType>("emom");
+  const effectiveFormatType: FormatType = isAuthenticated ? formatType : "random";
   const { weightUnit, setWeightUnit } = useWeightUnit();
   const [workoutLength, setWorkoutLength] =
     useState<WorkoutLengthOption>("medium");
@@ -49,7 +50,7 @@ export default function HomePage() {
     const success = await fetchWod(
       workoutType === "random",
       selectedMovements,
-      formatType,
+      effectiveFormatType,
       weightUnit,
       workoutLength,
       customMinutes,
@@ -103,7 +104,7 @@ export default function HomePage() {
             <MainMenu
               isLoading={isLoading}
               workoutType={workoutType}
-              formatType={formatType}
+              formatType={effectiveFormatType}
               weightUnit={weightUnit}
               workoutLength={workoutLength}
               customMinutes={customMinutes}
@@ -155,7 +156,7 @@ export default function HomePage() {
             <MainMenu
               isLoading={isLoading}
               workoutType={workoutType}
-              formatType={formatType}
+              formatType={effectiveFormatType}
               weightUnit={weightUnit}
               workoutLength={workoutLength}
               customMinutes={customMinutes}

@@ -233,7 +233,11 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
               </h3>
               <div className="flex-1 h-px bg-border"></div>
             </div>
-            <FormatSelector value={formatType} onValueChange={setFormatType} />
+            <FormatSelector
+              value={formatType}
+              onValueChange={setFormatType}
+              disabled={!isAuthenticated}
+            />
           </div>
 
           {/* Workout Intent Section */}
@@ -248,6 +252,7 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
             <WorkoutIntentSelector
               value={workoutIntent}
               onValueChange={setWorkoutIntent}
+              disabled={!isAuthenticated}
             />
           </div>
 
@@ -265,6 +270,7 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
               customMinutes={customMinutes}
               onLengthChange={setWorkoutLength}
               onCustomMinutesChange={setCustomMinutes}
+              disabled={!isAuthenticated}
             />
           </div>
 

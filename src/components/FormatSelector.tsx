@@ -10,6 +10,7 @@ import {
 interface FormatSelectorProps {
   value: string;
   onValueChange: (value: FormatType) => void;
+  disabled?: boolean;
 }
 
 export type FormatType = "amrap" | "emom" | "for_time" | "intervals" | "chipper" | "strength_metcon" | "random";
@@ -55,14 +56,15 @@ const FORMAT_OPTIONS = [
 const FormatSelector: React.FunctionComponent<FormatSelectorProps> = ({
   value,
   onValueChange,
+  disabled = false,
 }) => {
   const selectedFormat = FORMAT_OPTIONS.find(format => format.value === value);
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button 
-          variant="outline" 
+        <Button
+          variant="outline"
           className="w-full justify-between"
         >
           <div className="flex items-center gap-2">
@@ -73,10 +75,16 @@ const FormatSelector: React.FunctionComponent<FormatSelectorProps> = ({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
+        {disabled && (
+          <div className="px-2 py-1.5 text-xs text-muted-foreground border-b mb-1">
+            Sign in to choose a format
+          </div>
+        )}
         {FORMAT_OPTIONS.map((format) => (
-          <DropdownMenuItem 
-            key={format.value} 
+          <DropdownMenuItem
+            key={format.value}
             onClick={() => onValueChange(format.value)}
+            disabled={disabled && format.value !== value}
             className="flex items-center gap-2 cursor-pointer"
           >
             <Zap className="h-4 w-4 text-purple-600" />

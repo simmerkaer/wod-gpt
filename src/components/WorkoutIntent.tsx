@@ -19,6 +19,7 @@ export type WorkoutIntent =
 interface WorkoutIntentSelectorProps {
   value: WorkoutIntent;
   onValueChange: (value: WorkoutIntent) => void;
+  disabled?: boolean;
 }
 
 export const WORKOUT_INTENTS = [
@@ -76,6 +77,7 @@ export const WORKOUT_INTENTS = [
 const WorkoutIntentSelector: React.FunctionComponent<WorkoutIntentSelectorProps> = ({
   value,
   onValueChange,
+  disabled = false,
 }) => {
   const selectedIntent = WORKOUT_INTENTS.find(intent => intent.value === value);
   const SelectedIcon = selectedIntent?.icon || Target;
@@ -83,8 +85,8 @@ const WorkoutIntentSelector: React.FunctionComponent<WorkoutIntentSelectorProps>
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button 
-          variant="outline" 
+        <Button
+          variant="outline"
           className="w-full justify-between"
         >
           <div className="flex items-center gap-2">
@@ -95,12 +97,18 @@ const WorkoutIntentSelector: React.FunctionComponent<WorkoutIntentSelectorProps>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
+        {disabled && (
+          <div className="px-2 py-1.5 text-xs text-muted-foreground border-b mb-1">
+            Sign in to choose an intent
+          </div>
+        )}
         {WORKOUT_INTENTS.map((intent) => {
           const IconComponent = intent.icon;
           return (
-            <DropdownMenuItem 
-              key={intent.value} 
+            <DropdownMenuItem
+              key={intent.value}
               onClick={() => onValueChange(intent.value)}
+              disabled={disabled && intent.value !== value}
               className="flex items-center gap-2 cursor-pointer"
             >
               <IconComponent className={`h-4 w-4 ${intent.color}`} />
