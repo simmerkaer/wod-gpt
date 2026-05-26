@@ -5,6 +5,7 @@ import { useTheme } from "@/ThemeProvider";
 import { Switch } from "./ui/switch";
 import { Button } from "./ui/button";
 import { LoginButton, LogoutButton } from "./auth";
+import { BillingMenuItem } from "./billing/BillingMenuItem";
 import { useAuth, useUser } from "../hooks/useAuth";
 import {
   Sheet,
@@ -124,6 +125,9 @@ export function ToggleDarkMode() {
                       </Link>
                     </Button>
                   </SheetClose>
+                  <SheetClose asChild>
+                    <BillingMenuItem variant="sheet" />
+                  </SheetClose>
                   {showAdmin && (
                     <SheetClose asChild>
                       <Button
@@ -197,6 +201,7 @@ export function ToggleDarkMode() {
                   <span className="sr-only">Workout History</span>
                 </Link>
               </Button>
+              <BillingMenuItem variant="header" />
               {showAdmin && (
                 <Button asChild variant="ghost" size="sm" title="Admin">
                   <Link to="/admin">

@@ -7,7 +7,13 @@ import {
 import { EmailClient } from "@azure/communication-email";
 import { AzureClientOptions, AzureOpenAI } from "openai";
 import { BlobStorageService } from "../services/blobStorageService";
+import {
+  SubscriptionService,
+  isSubscriptionActive,
+} from "../services/subscriptionService";
 import { parseClientPrincipalHeader } from "../utils/adminAuth";
+import { getAuthedUser } from "../utils/billingAuth";
+import { DAILY_FREE_LIMIT } from "./getSubscriptionStatus";
 import { wodGenerationPrompts, getStructuredPrompt } from "../prompts/wodGeneration";
 import { WorkoutFormat, MovementId, FormatType, WeightUnit, WorkoutIntent, MovementUsageMode } from "../movements/types";
 
@@ -35,6 +41,38 @@ export async function generateWod(
 
   const client = new AzureOpenAI(configuration);
 
+  // Enforce daily free limit for logged-in non-subscribers.
+  // Anonymous users keep the existing client-side localStorage limit.
+  let limitedUserId: string | null = null;
+  let subService: SubscriptionService | null = null;
+  try {
+    const blobServiceForAuth = new BlobStorageService();
+    const authed = await getAuthedUser(request, blobServiceForAuth);
+    if (authed) {
+      subService = new SubscriptionService();
+      const [sub, usage] = await Promise.all([
+        subService.getSubscription(authed.userId),
+        subService.getDailyUsage(authed.userId),
+      ]);
+      if (!isSubscriptionActive(sub) && usage.count >= DAILY_FREE_LIMIT) {
+        return {
+          status: 429,
+          jsonBody: {
+            error: "daily_limit_reached",
+            message: "You've used today's free workouts. Subscribe for unlimited.",
+            dailyLimit: DAILY_FREE_LIMIT,
+            dailyUsed: usage.count,
+          },
+        };
+      }
+      if (!isSubscriptionActive(sub)) {
+        limitedUserId = authed.userId;
+      }
+    }
+  } catch (e) {
+    context.log("Subscription/limit check failed, proceeding without enforcement", e);
+  }
+
   try {
     const body = await request.json();
     const workoutFormat: WorkoutFormat = body["workoutFormat"] || "amrap";
@@ -58,6 +96,13 @@ export async function generateWod(
       void new BlobStorageService().incrementGenerationCount().catch(() => {});
     } catch {
       /* no storage: still return workout */
+    }
+    if (limitedUserId && subService) {
+      try {
+        void subService.incrementDailyUsage(limitedUserId).catch(() => {});
+      } catch {
+        /* don't affect response */
+      }
     }
     try {
       void notifyIfNewUser(request, context).catch(() => {});

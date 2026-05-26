@@ -35,27 +35,14 @@ const GiveFeedback: React.FunctionComponent<GiveFeedbackProps> = () => {
     </Button>
   );
 
-  const donateButton = (
-    <Button variant="outline" className="text-xs border-2 shadow-none" asChild>
-      <a
-        href="https://ko-fi.com/wodgpt"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        Buy me a coffee
-      </a>
-    </Button>
-  );
-
   const description =
     "We are always looking to improve our workout generation. Please provide feedback below if you have any suggestions or issues. Enter you email adress if you would like a message when feedback has been implemented.";
 
   const actions = (
     <ButtonGroup
       className="mx-auto w-full max-w-md justify-center sm:w-fit"
-      aria-label="Donate or send feedback"
+      aria-label="Send feedback"
     >
-      {donateButton}
       {isDesktop ? (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
           <DialogTrigger asChild>{feedbackButton}</DialogTrigger>

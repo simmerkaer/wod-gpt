@@ -1,6 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import "./App.css";
 import { ToggleDarkMode } from "./components/ToggleDarkMode";
+import { PaymentIssueBanner } from "./components/billing/PaymentIssueBanner";
 import { Toaster } from "./components/ui/toaster";
 import { DarkBackground, LightBackground } from "./lib/backgrounds";
 import { useTheme } from "./ThemeProvider";
@@ -22,6 +23,7 @@ function App() {
           {theme === "dark" ? <DarkBackground /> : <LightBackground />}
         </div>
         <ToggleDarkMode />
+        <PaymentIssueBanner />
         <main className="flex-grow">
           <Routes>
             <Route path="/" element={<HomePage />} />
