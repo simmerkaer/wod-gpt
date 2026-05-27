@@ -11,12 +11,6 @@
           "clientSecretSettingName": "GOOGLE_CLIENT_SECRET"
         }
       },
-      "github": {
-        "registration": {
-          "clientIdSettingName": "GITHUB_CLIENT_ID",
-          "clientSecretSettingName": "GITHUB_CLIENT_SECRET"
-        }
-      },
       "customOpenIdConnectProviders": {
         "auth0": {
           "registration": {
@@ -39,7 +33,7 @@
   "routes": [
     {
       "route": "/login",
-      "redirect": "/.auth/login/github"
+      "redirect": "/.auth/login/auth0"
     },
     {
       "route": "/logout",
