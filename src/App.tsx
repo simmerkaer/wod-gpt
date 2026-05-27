@@ -2,6 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import "./App.css";
 import { ToggleDarkMode } from "./components/ToggleDarkMode";
 import { PaymentIssueBanner } from "./components/billing/PaymentIssueBanner";
+import { SiteFooter } from "./components/SiteFooter";
 import { Toaster } from "./components/ui/toaster";
 import { DarkBackground, LightBackground } from "./lib/backgrounds";
 import { useTheme } from "./ThemeProvider";
@@ -11,6 +12,9 @@ import HomePage from "./pages/HomePage";
 import ProfilePage from "./pages/ProfilePage";
 import WorkoutHistoryPage from "./pages/WorkoutHistoryPage";
 import AdminDashboardPage from "./pages/AdminDashboardPage";
+import TermsPage from "./pages/TermsPage";
+import PrivacyPage from "./pages/PrivacyPage";
+import CookiePolicyPage from "./pages/CookiePolicyPage";
 
 function App() {
   const { theme } = useTheme();
@@ -30,8 +34,12 @@ function App() {
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/history" element={<WorkoutHistoryPage />} />
             <Route path="/admin" element={<AdminDashboardPage />} />
+            <Route path="/terms" element={<TermsPage />} />
+            <Route path="/privacy" element={<PrivacyPage />} />
+            <Route path="/cookies" element={<CookiePolicyPage />} />
           </Routes>
         </main>
+        <SiteFooter />
         <Toaster />
       </div>
       </WeightUnitProvider>
