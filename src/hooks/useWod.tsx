@@ -28,6 +28,9 @@ interface UseWodResult {
   savedWorkoutId: string | null;
   isCompleted: boolean;
   toggleCompleted: () => Promise<void>;
+  /** True if the most recent request was rejected by the server because the
+   *  user is out of daily free generations. */
+  limitReached: boolean;
 }
 
 export const useGenerateWod = (): [
@@ -52,6 +55,7 @@ export const useGenerateWod = (): [
   const [workoutResponse, setWorkoutResponse] = useState<WorkoutResponse | null>(null);
   const [savedWorkoutId, setSavedWorkoutId] = useState<string | null>(null);
   const [isCompleted, setIsCompleted] = useState<boolean>(false);
+  const [limitReached, setLimitReached] = useState<boolean>(false);
 
   const { isAuthenticated } = useAuth();
   const { saveWorkout } = useSaveWorkout();
@@ -86,6 +90,7 @@ export const useGenerateWod = (): [
   ): Promise<boolean> => {
     setIsLoading(true);
     setError(null);
+    setLimitReached(false);
     // Reset workout state when generating new workout
     setSavedWorkoutId(null);
     setIsCompleted(false);
@@ -126,6 +131,12 @@ export const useGenerateWod = (): [
         },
         body: JSON.stringify(requestBody),
       });
+
+      if (response.status === 429) {
+        setLimitReached(true);
+        setIsLoading(false);
+        return false;
+      }
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -219,6 +230,7 @@ export const useGenerateWod = (): [
       savedWorkoutId,
       isCompleted,
       toggleCompleted,
+      limitReached,
     }
   ];
 };

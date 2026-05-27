@@ -4,7 +4,6 @@ import * as React from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import FormatSelector, { FormatType } from "./FormatSelector";
-import { DonationSupportBlurb } from "./DonationSupportBlurb";
 import GiveFeedback from "./GiveFeedback";
 import SelectedMovements from "./SelectedMovements";
 import SelectMovements from "./SelectMovements";
@@ -310,7 +309,6 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
       <CardFooter>
         <div className="flex-grow flex flex-col gap-3">
           <Separator className="my-2" />
-          <DonationSupportBlurb />
           <GiveFeedback />
         </div>
       </CardFooter>

@@ -90,7 +90,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   const login = () => {
-    window.location.href = "/.auth/login/auth0";
+    // The SWA CLI emulator doesn't support customOpenIdConnectProviders,
+    // so /.auth/login/auth0 404s locally. Fall back to the built-in `github`
+    // provider in dev, which the emulator exposes as a mock login form.
+    const provider = import.meta.env.DEV ? "github" : "auth0";
+    window.location.href = `/.auth/login/${provider}`;
   };
 
   const logout = () => {

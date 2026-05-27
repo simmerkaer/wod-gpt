@@ -23,6 +23,7 @@
     "@opentelemetry/semantic-conventions": "^1.28.0",
     "applicationinsights": "^3.5.0",
     "openai": "^4.82.0",
+    "stripe": "^19.3.0",
     "uuid": "^11.0.5"
   },
   "devDependencies": {

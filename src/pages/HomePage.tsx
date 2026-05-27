@@ -1,4 +1,5 @@
-import { useState, useMemo } from "react";
+import { useEffect, useState, useMemo } from "react";
+import { useToast } from "@/hooks/use-toast";
 import FancyLoadingSpinner from "../components/FancyLoadingSpinner";
 import { FormatType } from "../components/FormatSelector";
 import GeneratedWod from "../components/GeneratedWod";
@@ -11,6 +12,7 @@ import { useGenerateWod } from "../hooks/useWod";
 import { useAuth } from "../hooks/useAuth";
 import { useWorkoutHistory } from "../hooks/useWorkoutHistory";
 import { useAnonGenerationLimit } from "../hooks/useAnonGenerationLimit";
+import { useSubscription } from "../hooks/useSubscription";
 import { AnonLimitDialog } from "../components/auth/AnonLimitDialog";
 import { computeCurrentWorkoutStreak } from "@/utils/workoutStreak";
 import { useWeightUnit } from "@/contexts/WeightUnitContext";
@@ -32,7 +34,7 @@ export default function HomePage() {
     useState<WorkoutLengthOption>("medium");
   const [customMinutes, setCustomMinutes] = useState<number>(20);
   const [workoutIntent, setWorkoutIntent] = useState<WorkoutIntent>("general_fitness");
-  const [fetchWod, { wod, timing, confidence, isLoading, error, workoutResponse, savedWorkoutId, isCompleted, toggleCompleted }] =
+  const [fetchWod, { wod, timing, confidence, isLoading, error, workoutResponse, savedWorkoutId, isCompleted, toggleCompleted, limitReached: serverLimitReached }] =
     useGenerateWod();
   const {
     remaining: anonRemaining,
@@ -40,10 +42,72 @@ export default function HomePage() {
     limitReached: anonLimitReached,
     recordGeneration,
   } = useAnonGenerationLimit();
+  const {
+    isSubscribed,
+    remainingToday,
+    dailyLimit: serverDailyLimit,
+    limitReached: subLimitReached,
+    refresh: refreshSubscription,
+    pollUntilSubscribed,
+  } = useSubscription();
+  const { toast } = useToast();
+
+  // Handle return from Stripe Checkout. The webhook that flips us to
+  // "active" can land a moment after the browser is redirected back, so we
+  // poll the status endpoint until it confirms — otherwise the user briefly
+  // sees the free-plan UI and gets confused.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const subscribed = params.get("subscribed");
+    if (!subscribed) return;
+
+    // Clean the URL so a refresh doesn't re-run this.
+    params.delete("subscribed");
+    params.delete("session_id");
+    const cleanQuery = params.toString();
+    const cleanUrl =
+      window.location.pathname + (cleanQuery ? `?${cleanQuery}` : "");
+    window.history.replaceState({}, "", cleanUrl);
+
+    if (subscribed === "1") {
+      void (async () => {
+        const ok = await pollUntilSubscribed();
+        if (ok) {
+          toast({
+            title: "Subscription active",
+            description: "You now have unlimited workout generation.",
+          });
+        } else {
+          toast({
+            title: "Subscription is still processing",
+            description: "Refresh in a moment if it doesn't show up.",
+          });
+        }
+      })();
+    } else if (subscribed === "0") {
+      toast({
+        title: "Subscription not completed",
+        description: "Feel free to try again any time.",
+      });
+    }
+  }, [pollUntilSubscribed, toast]);
   const [showLimitDialog, setShowLimitDialog] = useState(false);
 
+  // For logged-in non-subscribers, surface server-side count in the same UI slot
+  // the anon meter uses.
+  const displayedRemaining = isAuthenticated
+    ? isSubscribed
+      ? null
+      : remainingToday
+    : anonRemaining;
+  const displayedLimit = isAuthenticated
+    ? (serverDailyLimit ?? anonLimit)
+    : anonLimit;
+  const showRemainingMeter = !isSubscribed;
+
   const handleGenerateWod = async () => {
-    if (anonLimitReached) {
+    if (anonLimitReached || subLimitReached) {
       setShowLimitDialog(true);
       return;
     }
@@ -59,6 +123,17 @@ export default function HomePage() {
     );
     if (success) {
       recordGeneration();
+      if (isAuthenticated) {
+        refreshSubscription();
+      }
+    } else if (serverLimitReached || isAuthenticated) {
+      // Server rejected the request because the daily cap was reached
+      // (race condition: our cached state said remaining > 0 but the
+      // server disagreed). Refresh and show the dialog.
+      if (isAuthenticated) {
+        refreshSubscription();
+        setShowLimitDialog(true);
+      }
     }
   };
 
@@ -122,8 +197,8 @@ export default function HomePage() {
               toggleMovement={toggleMovement}
               streak={isAuthenticated ? streak : null}
               streakLoading={isAuthenticated && historyLoading}
-              anonRemaining={!isAuthenticated ? anonRemaining : null}
-              anonLimit={anonLimit}
+              anonRemaining={showRemainingMeter ? displayedRemaining : null}
+              anonLimit={displayedLimit}
             />
           </FancyLoadingSpinner>
         </div>
@@ -174,8 +249,8 @@ export default function HomePage() {
               toggleMovement={toggleMovement}
               streak={isAuthenticated ? streak : null}
               streakLoading={isAuthenticated && historyLoading}
-              anonRemaining={!isAuthenticated ? anonRemaining : null}
-              anonLimit={anonLimit}
+              anonRemaining={showRemainingMeter ? displayedRemaining : null}
+              anonLimit={displayedLimit}
             />
           </FancyLoadingSpinner>
         </div>

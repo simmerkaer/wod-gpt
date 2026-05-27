@@ -1,5 +1,6 @@
 import { useAuth } from "../hooks/useAuth";
 import { useWorkoutHistory } from "../hooks/useWorkoutHistory";
+import { useSubscription } from "../hooks/useSubscription";
 import {
   Card,
   CardContent,
@@ -25,6 +26,8 @@ import {
   Zap,
   History,
   ChevronRight,
+  CreditCard,
+  Sparkles,
 } from "lucide-react";
 import { GoogleIcon } from "../components/icons/GoogleIcon";
 import { Link } from "react-router-dom";
@@ -234,6 +237,18 @@ function calculateWorkoutStats(workouts: SavedWorkout[]) {
 export default function ProfilePage() {
   const { user, isAuthenticated, isLoading } = useAuth();
   const { workouts, isLoading: workoutsLoading } = useWorkoutHistory(); // Get all workouts for statistics
+  const {
+    isSubscribed,
+    data: subData,
+    isLoading: subLoading,
+    actionPending,
+    subscribe,
+    manage,
+    dailyLimit,
+    remainingToday,
+    planPriceLabel,
+    billingEnabled,
+  } = useSubscription();
 
   const workoutStats = calculateWorkoutStats(workouts);
 
@@ -331,6 +346,70 @@ export default function ProfilePage() {
             </div>
           </CardHeader>
         </Card>
+
+        {/* Subscription Card */}
+        {billingEnabled && (
+        <Card className="mx-2 sm:mx-0">
+          <CardHeader className="pb-4 sm:pb-6">
+            <div className="flex items-center space-x-3 sm:space-x-4">
+              <div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-primary/10 flex-shrink-0">
+                {isSubscribed ? (
+                  <CreditCard className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
+                ) : (
+                  <Sparkles className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
+                )}
+              </div>
+              <div className="min-w-0 flex-1">
+                <CardTitle className="text-lg sm:text-xl flex items-center gap-2">
+                  Subscription
+                  {!subLoading && (
+                    <Badge
+                      variant={isSubscribed ? "default" : "outline"}
+                      className="capitalize"
+                    >
+                      {isSubscribed
+                        ? subData?.cancelAtPeriodEnd
+                          ? "Cancels soon"
+                          : (subData?.status ?? "active")
+                        : "Free"}
+                    </Badge>
+                  )}
+                </CardTitle>
+                <CardDescription className="text-sm sm:text-base">
+                  {subLoading
+                    ? "Loading subscription…"
+                    : isSubscribed
+                      ? subData?.cancelAtPeriodEnd && subData?.currentPeriodEnd
+                        ? `Access until ${formatWorkoutDate(subData.currentPeriodEnd)}`
+                        : planPriceLabel
+                          ? `Unlimited workouts · ${planPriceLabel}`
+                          : "Unlimited workout generation"
+                      : `${remainingToday ?? dailyLimit ?? 0} of ${dailyLimit ?? 0} free workouts left today${planPriceLabel ? ` · Upgrade for ${planPriceLabel}` : ""}`}
+                </CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <Button
+              onClick={() => (isSubscribed ? manage() : subscribe())}
+              disabled={actionPending || subLoading}
+              variant={isSubscribed ? "outline" : "default"}
+              className="w-full sm:w-auto gap-2"
+            >
+              {isSubscribed ? (
+                <CreditCard className="h-4 w-4" />
+              ) : (
+                <Sparkles className="h-4 w-4" />
+              )}
+              {actionPending
+                ? "Redirecting…"
+                : isSubscribed
+                  ? "Manage subscription"
+                  : "Upgrade to unlimited"}
+            </Button>
+          </CardContent>
+        </Card>
+        )}
 
         {/* Workout Statistics Card */}
         <Card>
