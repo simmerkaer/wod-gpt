@@ -4,14 +4,21 @@ import { ArrowLeft } from "lucide-react";
 import { Button } from "../ui/button";
 
 interface LegalPageLayoutProps {
-  title: string;
-  lastUpdated: string;
+  /** Omit when the embedded content already provides its own heading. */
+  title?: string;
+  lastUpdated?: string;
+  /**
+   * When true, render children without the built-in prose styling — use for
+   * embedded HTML (e.g. a Termly export) that ships its own styles.
+   */
+  bare?: boolean;
   children: ReactNode;
 }
 
 export function LegalPageLayout({
   title,
   lastUpdated,
+  bare = false,
   children,
 }: LegalPageLayoutProps) {
   return (
@@ -24,34 +31,48 @@ export function LegalPageLayout({
           </Link>
         </Button>
 
-        <header className="space-y-1">
-          <h1 className="text-2xl font-bold sm:text-3xl">{title}</h1>
-          <p className="text-sm text-muted-foreground">
-            Last updated: {lastUpdated}
-          </p>
-        </header>
+        {title && (
+          <header className="space-y-1">
+            <h1 className="text-2xl font-bold sm:text-3xl">{title}</h1>
+            {lastUpdated && (
+              <p className="text-sm text-muted-foreground">
+                Last updated: {lastUpdated}
+              </p>
+            )}
+          </header>
+        )}
 
-        <div
-          className="space-y-6 text-sm leading-relaxed text-foreground
-            [&_a]:font-medium [&_a]:text-primary [&_a]:underline [&_a]:underline-offset-2
-            [&_h2]:mt-8 [&_h2]:text-lg [&_h2]:font-semibold
-            [&_h2]:first:mt-0
-            [&_ul]:list-disc [&_ul]:space-y-1 [&_ul]:pl-6
-            [&_p]:text-muted-foreground
-            [&_li]:text-muted-foreground"
-        >
-          {children}
-        </div>
+        {bare ? (
+          children
+        ) : (
+          <div
+            className="space-y-6 text-sm leading-relaxed text-foreground
+              [&_a]:font-medium [&_a]:text-primary [&_a]:underline [&_a]:underline-offset-2
+              [&_h2]:mt-8 [&_h2]:text-lg [&_h2]:font-semibold
+              [&_h2]:first:mt-0
+              [&_ul]:list-disc [&_ul]:space-y-1 [&_ul]:pl-6
+              [&_p]:text-muted-foreground
+              [&_li]:text-muted-foreground"
+          >
+            {children}
+          </div>
+        )}
       </div>
     </div>
   );
 }
 
-/** Visible placeholder for content the site owner must fill in before launch. */
-export function Placeholder({ children }: { children: ReactNode }) {
+/**
+ * Renders pasted legal HTML (e.g. a Termly export) on a forced-light card so
+ * the document's hardcoded black text stays readable regardless of the app
+ * theme. The content is static, owner-provided HTML — not user input.
+ */
+export function EmbeddedLegalHtml({ html }: { html: string }) {
   return (
-    <mark className="rounded bg-yellow-200 px-1 text-foreground dark:bg-yellow-900/60 dark:text-yellow-100">
-      {children}
-    </mark>
+    <div
+      className="overflow-x-auto rounded-lg bg-white p-4 text-black shadow-sm sm:p-6"
+      dangerouslySetInnerHTML={{ __html: html }}
+    />
   );
 }
+

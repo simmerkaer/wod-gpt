@@ -1,14 +1,16 @@
 import { Link } from "react-router-dom";
-import { LegalPageLayout, Placeholder } from "../components/legal/LegalPageLayout";
+import { LegalPageLayout } from "../components/legal/LegalPageLayout";
 
 export default function PrivacyPage() {
   return (
-    <LegalPageLayout title="Privacy Policy" lastUpdated="REPLACE WITH DATE">
+    <LegalPageLayout title="Privacy Policy" lastUpdated="May 27, 2026">
       <p>
-        This policy explains how WOD-GPT, operated by{" "}
-        <Placeholder>[Business / sole-proprietor name]</Placeholder> (the "data
-        controller"), processes your personal data under the GDPR. Contact:{" "}
-        <Placeholder>[support email]</Placeholder>.
+        This policy explains how WOD-GPT ("wod-gpt", "we", "us") processes your
+        personal data under the GDPR. WOD-GPT is operated as a personal project
+        by a private individual based in Denmark (Frederikssundsvej 66), who
+        acts as the data controller. For any privacy question or request,
+        contact{" "}
+        <a href="mailto:simmerkaer@gmail.com">simmerkaer@gmail.com</a>.
       </p>
 
       <h2>1. What we collect</h2>
@@ -27,8 +29,13 @@ export default function PrivacyPage() {
           reach our servers.
         </li>
         <li>
-          <strong>Technical/diagnostic data</strong>: error and performance
-          telemetry via Azure Application Insights.
+          <strong>Technical/diagnostic data</strong>: server-side error and
+          performance telemetry via Azure Application Insights.
+        </li>
+        <li>
+          <strong>Analytics data</strong>: if you consent, Google Analytics
+          collects usage statistics in your browser (see our{" "}
+          <Link to="/cookies">Cookie Policy</Link>).
         </li>
       </ul>
 
@@ -40,7 +47,8 @@ export default function PrivacyPage() {
           To keep the Service secure and working — our legitimate interests.
         </li>
         <li>
-          For optional analytics/telemetry — your consent, where required.
+          For analytics/telemetry that relies on cookies or similar
+          technologies — your consent.
         </li>
       </ul>
 
@@ -61,24 +69,29 @@ export default function PrivacyPage() {
           <strong>Azure OpenAI</strong> — generating workout content from your
           selections.
         </li>
+        <li>
+          <strong>Google (Analytics)</strong> — usage analytics, only if you
+          consent to analytics cookies.
+        </li>
       </ul>
 
       <h2>4. International transfers</h2>
       <p>
-        Data is primarily processed in the EU (Azure West Europe). Some
-        processing (e.g. AI generation, or Stripe/Auth0 infrastructure) may
-        occur outside the EU/EEA, in which case appropriate safeguards such as
-        the EU Standard Contractual Clauses apply.{" "}
-        <Placeholder>
-          [Confirm your actual regions and update this section.]
-        </Placeholder>
+        Your workout and account data are stored in the EU (Azure West Europe).
+        Workout generation uses an Azure OpenAI endpoint located in the United
+        States (East US 2), so the selections you submit for generation are
+        processed outside the EU/EEA. Other providers (e.g. Stripe, Auth0) may
+        also process limited data outside the EU/EEA. Where this happens, the
+        transfer relies on appropriate safeguards such as the EU Standard
+        Contractual Clauses.
       </p>
 
       <h2>5. Retention</h2>
       <p>
-        We keep your account and workout data while your account exists. Billing
-        records are retained as required by accounting/tax law.{" "}
-        <Placeholder>[State your retention periods.]</Placeholder>
+        We keep your account and workout data for as long as your account
+        exists. When you delete your account, that data is removed within 30
+        days. Billing records are retained as long as required by applicable
+        accounting and tax law.
       </p>
 
       <h2>6. Your rights</h2>
@@ -86,8 +99,8 @@ export default function PrivacyPage() {
         You have the right to access, correct, delete, restrict, or export your
         data, and to object to certain processing. To exercise these rights —
         including account deletion — email{" "}
-        <Placeholder>[support email]</Placeholder>. You can also complain to the
-        Danish Data Protection Agency (Datatilsynet).
+        <a href="mailto:simmerkaer@gmail.com">simmerkaer@gmail.com</a>. You can
+        also complain to the Danish Data Protection Agency (Datatilsynet).
       </p>
 
       <h2>7. Cookies</h2>
