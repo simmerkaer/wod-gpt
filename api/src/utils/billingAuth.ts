@@ -42,9 +42,16 @@ export async function getAuthedUser(
   }
   if (!principal.userId) return null;
   const userId = await resolveBlobUserId(principal, blobService);
+  // SWA does not forward the full claims array to the API in the
+  // x-ms-client-principal header, so fall back to userDetails, which the
+  // auth0 provider populates with the email (via nameClaimType config).
+  const claimEmail = pickClaim(principal, EMAIL_CLAIM_KEYS);
+  const email =
+    claimEmail ??
+    (principal.userDetails?.includes('@') ? principal.userDetails : undefined);
   return {
     userId,
-    email: pickClaim(principal, EMAIL_CLAIM_KEYS),
+    email,
     displayName: pickClaim(principal, NAME_CLAIM_KEYS) || principal.userDetails,
     principal,
   };
