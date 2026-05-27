@@ -50,6 +50,25 @@ export async function createCheckoutSession(
       billing_address_collection: 'auto',
       success_url: `${baseUrl}/?subscribed=1&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${baseUrl}/?subscribed=0`,
+      // Require the customer to tick a Terms-of-Service box before paying.
+      // NOTE: this requires a Terms-of-Service URL configured in
+      // Stripe Dashboard -> Settings -> Public details, otherwise the API
+      // call errors with "terms of service URL is not set".
+      consent_collection: {
+        terms_of_service: 'required',
+      },
+      custom_text: {
+        terms_of_service_acceptance: {
+          // EU right-of-withdrawal waiver: the customer must acknowledge that
+          // the service starts immediately and they give up the 14-day
+          // withdrawal right. Keeping this on the ToS checkbox stores proof of
+          // consent on Stripe's side.
+          message:
+            'I agree to the Terms of Service and Privacy Policy. I understand my ' +
+            'subscription starts immediately and I waive my 14-day right of ' +
+            'withdrawal for the portion of the service already delivered.',
+        },
+      },
       subscription_data: {
         metadata: { userId: user.userId },
       },
