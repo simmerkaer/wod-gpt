@@ -1,7 +1,9 @@
 import { Link } from "react-router-dom";
+import { useCookieConsent } from "@/hooks/useCookieConsent";
 
 export function SiteFooter() {
   const year = new Date().getFullYear();
+  const { reset } = useCookieConsent();
   return (
     <footer className="mt-8 border-t border-border/50 py-6 text-center text-xs text-muted-foreground">
       <nav
@@ -26,6 +28,13 @@ export function SiteFooter() {
         >
           Cookies
         </Link>
+        <button
+          type="button"
+          onClick={reset}
+          className="hover:text-foreground hover:underline underline-offset-2"
+        >
+          Cookie settings
+        </button>
       </nav>
       <p className="mt-3">© {year} WOD-GPT</p>
     </footer>

@@ -3,6 +3,8 @@ import "./App.css";
 import { ToggleDarkMode } from "./components/ToggleDarkMode";
 import { PaymentIssueBanner } from "./components/billing/PaymentIssueBanner";
 import { SiteFooter } from "./components/SiteFooter";
+import { CookieConsentBanner } from "./components/CookieConsentBanner";
+import { CookieConsentProvider } from "./hooks/useCookieConsent";
 import { Toaster } from "./components/ui/toaster";
 import { DarkBackground, LightBackground } from "./lib/backgrounds";
 import { useTheme } from "./ThemeProvider";
@@ -22,6 +24,7 @@ function App() {
   return (
     <AuthProvider>
       <WeightUnitProvider>
+      <CookieConsentProvider>
       <div className="flex flex-col flex-grow">
         <div className="fixed left-0 top-0 -z-10 h-full w-full">
           {theme === "dark" ? <DarkBackground /> : <LightBackground />}
@@ -40,8 +43,10 @@ function App() {
           </Routes>
         </main>
         <SiteFooter />
+        <CookieConsentBanner />
         <Toaster />
       </div>
+      </CookieConsentProvider>
       </WeightUnitProvider>
     </AuthProvider>
   );
