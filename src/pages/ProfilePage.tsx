@@ -247,6 +247,7 @@ export default function ProfilePage() {
     dailyLimit,
     remainingToday,
     planPriceLabel,
+    billingEnabled,
   } = useSubscription();
 
   const workoutStats = calculateWorkoutStats(workouts);
@@ -347,6 +348,7 @@ export default function ProfilePage() {
         </Card>
 
         {/* Subscription Card */}
+        {billingEnabled && (
         <Card className="mx-2 sm:mx-0">
           <CardHeader className="pb-4 sm:pb-6">
             <div className="flex items-center space-x-3 sm:space-x-4">
@@ -407,6 +409,7 @@ export default function ProfilePage() {
             </Button>
           </CardContent>
         </Card>
+        )}
 
         {/* Workout Statistics Card */}
         <Card>

@@ -7,6 +7,7 @@ import {
 import { BlobStorageService } from '../services/blobStorageService';
 import { SubscriptionService } from '../services/subscriptionService';
 import { getAuthedUser } from '../utils/billingAuth';
+import { isBillingEnabledForEmail } from '../utils/billingFlag';
 import {
   getAppBaseUrl,
   getStripeClient,
@@ -22,6 +23,9 @@ export async function createCheckoutSession(
     const user = await getAuthedUser(request, blobService);
     if (!user) {
       return { status: 401, jsonBody: { error: 'Sign in required' } };
+    }
+    if (!isBillingEnabledForEmail(user.email)) {
+      return { status: 403, jsonBody: { error: 'Billing is not available' } };
     }
 
     const subService = new SubscriptionService();

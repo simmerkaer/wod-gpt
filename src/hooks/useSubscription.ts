@@ -24,6 +24,8 @@ export interface PlanInfo {
 
 export interface SubscriptionStatusResponse {
   authenticated: boolean;
+  /** Feature flag — when false the billing UI is hidden and no cap applies. */
+  billingEnabled: boolean;
   isSubscribed: boolean;
   status?: SubscriptionStatus;
   cancelAtPeriodEnd?: boolean;
@@ -147,6 +149,7 @@ export const useSubscription = () => {
     }
   }, []);
 
+  const billingEnabled = !!data?.billingEnabled;
   const isSubscribed = !!data?.isSubscribed;
   const dailyLimit = data?.dailyLimit ?? null;
   const dailyUsed = data?.dailyUsed ?? 0;
@@ -160,6 +163,7 @@ export const useSubscription = () => {
     data,
     isLoading,
     error,
+    billingEnabled,
     isSubscribed,
     dailyLimit,
     dailyUsed,

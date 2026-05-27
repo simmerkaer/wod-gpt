@@ -11,6 +11,7 @@ import {
 } from '../services/subscriptionService';
 import { getAuthedUser } from '../utils/billingAuth';
 import { getPlanInfo } from '../utils/stripe';
+import { isBillingEnabledForEmail } from '../utils/billingFlag';
 
 export const DAILY_FREE_LIMIT = 3;
 
@@ -27,35 +28,41 @@ export async function getSubscriptionStatus(
         status: 200,
         jsonBody: {
           authenticated: false,
+          billingEnabled: false,
           isSubscribed: false,
-          dailyLimit: DAILY_FREE_LIMIT,
+          dailyLimit: null,
           dailyUsed: 0,
-          remainingToday: DAILY_FREE_LIMIT,
+          remainingToday: null,
           plan,
         },
       };
     }
 
+    const billingEnabled = isBillingEnabledForEmail(user.email);
     const subService = new SubscriptionService();
     const [sub, usage] = await Promise.all([
       subService.getSubscription(user.userId),
       subService.getDailyUsage(user.userId),
     ]);
     const active = isSubscriptionActive(sub);
+    // When billing is disabled for this user, behave like the pre-billing app:
+    // no cap, no subscribe UI (the frontend hides everything on billingEnabled).
+    const capped = billingEnabled && !active;
 
     return {
       status: 200,
       jsonBody: {
         authenticated: true,
+        billingEnabled,
         isSubscribed: active,
         status: sub?.status ?? 'none',
         cancelAtPeriodEnd: sub?.cancelAtPeriodEnd ?? false,
         currentPeriodEnd: sub?.currentPeriodEnd ?? null,
-        dailyLimit: active ? null : DAILY_FREE_LIMIT,
+        dailyLimit: capped ? DAILY_FREE_LIMIT : null,
         dailyUsed: usage.count,
-        remainingToday: active
-          ? null
-          : Math.max(0, DAILY_FREE_LIMIT - usage.count),
+        remainingToday: capped
+          ? Math.max(0, DAILY_FREE_LIMIT - usage.count)
+          : null,
         plan,
       },
     };

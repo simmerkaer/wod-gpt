@@ -14,8 +14,10 @@ export const BillingMenuItem = ({
   variant = "header",
   onBeforeAction,
 }: BillingMenuItemProps) => {
-  const { isSubscribed, subscribe, manage, actionPending, isLoading } =
+  const { isSubscribed, subscribe, manage, actionPending, isLoading, billingEnabled } =
     useSubscription();
+
+  if (!billingEnabled) return null;
 
   const handleClick = () => {
     onBeforeAction?.();

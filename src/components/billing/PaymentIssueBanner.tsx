@@ -18,10 +18,16 @@ const STATUS_MESSAGES: Partial<Record<SubscriptionStatus, string>> = {
 };
 
 export const PaymentIssueBanner = () => {
-  const { data, manage, actionPending, isLoading } = useSubscription();
+  const { data, manage, actionPending, isLoading, billingEnabled } =
+    useSubscription();
   const status = data?.status;
 
-  if (isLoading || !status || !ATTENTION_STATUSES.includes(status)) {
+  if (
+    isLoading ||
+    !billingEnabled ||
+    !status ||
+    !ATTENTION_STATUSES.includes(status)
+  ) {
     return null;
   }
 

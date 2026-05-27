@@ -24,6 +24,22 @@ Add these to Azure SWA app settings (production) and `api/local.settings.json`
 | `STRIPE_WEBHOOK_SECRET` | `whsec_…` from your webhook endpoint                                  |
 | `STRIPE_PRICE_ID`       | `price_…` of the recurring Price under your Product                   |
 | `PUBLIC_APP_BASE_URL`   | (optional) e.g. `https://wod-gpt.example.com` — used for Checkout success/cancel URLs. Falls back to `x-forwarded-host`/`host` if not set. |
+| `BILLING_ALLOWLIST`     | Feature flag. Comma-separated emails that see billing + get the daily cap. `*` enables it for everyone (launch). Unset/empty = billing hidden for all (logged-in users stay unlimited). |
+
+## Feature flag / staged rollout
+
+Billing is gated behind `BILLING_ALLOWLIST` so the code can ship to prod while
+staying invisible to regular users:
+
+- **Preview**: set it to your own email (e.g. `you@example.com`). Only you see
+  the subscribe/manage UI and have the 3/day cap enforced; everyone else gets
+  the pre-billing experience (logged-in = unlimited, anonymous = 3/day client
+  side as before).
+- **Launch**: set it to `*` to enable billing for all users.
+- The flag is read server-side in `utils/billingFlag.ts`. `getSubscriptionStatus`
+  returns `billingEnabled`, which the frontend uses to show/hide all billing UI;
+  `generateWod` only enforces the cap for enabled users; and the
+  checkout/portal endpoints 403 for non-enabled users.
 
 ## Stripe Dashboard setup
 

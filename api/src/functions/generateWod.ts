@@ -13,6 +13,7 @@ import {
 } from "../services/subscriptionService";
 import { parseClientPrincipalHeader } from "../utils/adminAuth";
 import { getAuthedUser } from "../utils/billingAuth";
+import { isBillingEnabledForEmail } from "../utils/billingFlag";
 import { DAILY_FREE_LIMIT } from "./getSubscriptionStatus";
 import { wodGenerationPrompts, getStructuredPrompt } from "../prompts/wodGeneration";
 import { WorkoutFormat, MovementId, FormatType, WeightUnit, WorkoutIntent, MovementUsageMode } from "../movements/types";
@@ -48,7 +49,9 @@ export async function generateWod(
   try {
     const blobServiceForAuth = new BlobStorageService();
     const authed = await getAuthedUser(request, blobServiceForAuth);
-    if (authed) {
+    // Only enforce the cap for users the billing feature is enabled for.
+    // Everyone else keeps the pre-billing behaviour (logged-in = unlimited).
+    if (authed && isBillingEnabledForEmail(authed.email)) {
       subService = new SubscriptionService();
       const [sub, usage] = await Promise.all([
         subService.getSubscription(authed.userId),
