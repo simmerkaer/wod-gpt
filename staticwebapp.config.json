@@ -11,7 +11,7 @@
           "clientSecretSettingName": "GOOGLE_CLIENT_SECRET"
         }
       },
-      "gitHub": {
+      "github": {
         "registration": {
           "clientIdSettingName": "GITHUB_CLIENT_ID",
           "clientSecretSettingName": "GITHUB_CLIENT_SECRET"
