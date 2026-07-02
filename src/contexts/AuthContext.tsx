@@ -90,10 +90,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   const login = () => {
-    // The SWA CLI emulator doesn't support customOpenIdConnectProviders,
-    // so /.auth/login/auth0 404s locally. Fall back to the built-in `github`
-    // provider in dev, which the emulator exposes as a mock login form.
-    const provider = import.meta.env.DEV ? "github" : "auth0";
+    // The SWA CLI emulator can't run a real login for custom OIDC providers:
+    // its route regex only matches letter-only provider names ("auth0" 404s),
+    // and google/github/aad/facebook/twitter/dummy are routed to a real OAuth
+    // flow that requires client-id env vars. Any other letters-only name falls
+    // through to the emulator's mock login form, so use one in dev.
+    const provider = import.meta.env.DEV ? "mock" : "auth0";
     window.location.href = `/.auth/login/${provider}`;
   };
 
