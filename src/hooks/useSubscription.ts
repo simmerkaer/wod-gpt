@@ -154,8 +154,9 @@ export const useSubscription = () => {
   const dailyLimit = data?.dailyLimit ?? null;
   const dailyUsed = data?.dailyUsed ?? 0;
   const remainingToday = data?.remainingToday ?? null;
+  // Applies to anonymous visitors too — the server tracks their allowance by IP.
   const limitReached =
-    isAuthenticated && !isSubscribed && remainingToday !== null && remainingToday <= 0;
+    !isSubscribed && remainingToday !== null && remainingToday <= 0;
   const plan = data?.plan ?? null;
   const planPriceLabel = plan ? formatPlanPrice(plan) : null;
 

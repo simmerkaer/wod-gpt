@@ -13,8 +13,8 @@ import {
 } from "../services/subscriptionService";
 import { parseClientPrincipalHeader } from "../utils/adminAuth";
 import { getAuthedUser } from "../utils/billingAuth";
-import { isBillingEnabledForEmail } from "../utils/billingFlag";
-import { DAILY_FREE_LIMIT } from "./getSubscriptionStatus";
+import { getClientIpHash } from "../utils/clientIp";
+import { ANON_DAILY_LIMIT, DAILY_FREE_LIMIT } from "../utils/limits";
 import { wodGenerationPrompts, getStructuredPrompt } from "../prompts/wodGeneration";
 import { WorkoutFormat, MovementId, FormatType, WeightUnit, WorkoutIntent, MovementUsageMode } from "../movements/types";
 
@@ -42,56 +42,90 @@ export async function generateWod(
 
   const client = new AzureOpenAI(configuration);
 
-  // Enforce daily free limit for logged-in non-subscribers.
-  // Anonymous users keep the existing client-side localStorage limit.
-  let limitedUserId: string | null = null;
-  let subService: SubscriptionService | null = null;
+  // Entitlement gate. Subscribers are unlimited; logged-in non-subscribers
+  // get DAILY_FREE_LIMIT/day; anonymous visitors get ANON_DAILY_LIMIT/day
+  // keyed by hashed IP. Fails closed: if we cannot verify entitlement, we do
+  // not generate. Usage is counted before generation so concurrent requests
+  // cannot race past the cap.
+  let isSubscriber = false;
   try {
     const blobServiceForAuth = new BlobStorageService();
     const authed = await getAuthedUser(request, blobServiceForAuth);
-    // Only enforce the cap for users the billing feature is enabled for.
-    // Everyone else keeps the pre-billing behaviour (logged-in = unlimited).
-    if (authed && isBillingEnabledForEmail(authed.email)) {
-      subService = new SubscriptionService();
+    const subService = new SubscriptionService();
+    if (authed) {
       const [sub, usage] = await Promise.all([
         subService.getSubscription(authed.userId),
         subService.getDailyUsage(authed.userId),
       ]);
-      if (!isSubscriptionActive(sub) && usage.count >= DAILY_FREE_LIMIT) {
+      isSubscriber = isSubscriptionActive(sub);
+      if (!isSubscriber) {
+        if (usage.count >= DAILY_FREE_LIMIT) {
+          return {
+            status: 429,
+            jsonBody: {
+              error: "daily_limit_reached",
+              message: "You've used today's free workouts. Subscribe for unlimited.",
+              dailyLimit: DAILY_FREE_LIMIT,
+              dailyUsed: usage.count,
+            },
+          };
+        }
+        await subService.incrementDailyUsage(authed.userId);
+      }
+    } else {
+      const ipHash = getClientIpHash(request);
+      const usage = await subService.getAnonDailyUsage(ipHash);
+      if (usage.count >= ANON_DAILY_LIMIT) {
         return {
           status: 429,
           jsonBody: {
-            error: "daily_limit_reached",
-            message: "You've used today's free workouts. Subscribe for unlimited.",
-            dailyLimit: DAILY_FREE_LIMIT,
+            error: "anon_limit_reached",
+            message: "You've used today's free workout. Sign in and subscribe for unlimited.",
+            dailyLimit: ANON_DAILY_LIMIT,
             dailyUsed: usage.count,
           },
         };
       }
-      if (!isSubscriptionActive(sub)) {
-        limitedUserId = authed.userId;
-      }
+      await subService.incrementAnonDailyUsage(ipHash);
     }
   } catch (e) {
-    context.log("Subscription/limit check failed, proceeding without enforcement", e);
+    context.error("Entitlement check failed, refusing to generate", e);
+    return {
+      status: 503,
+      jsonBody: {
+        error: "entitlement_check_failed",
+        message: "Could not verify your access right now. Please try again shortly.",
+      },
+    };
   }
 
   try {
     const body = await request.json();
-    const workoutFormat: WorkoutFormat = body["workoutFormat"] || "amrap";
-    
+    // Non-subscribers get the locked free-tier experience regardless of what
+    // the client sent: random format, default intent and length. Mirrors the
+    // disabled selectors in the UI so the API can't be used to bypass them.
+    const workoutFormat: WorkoutFormat = isSubscriber
+      ? body["workoutFormat"] || "amrap"
+      : "amrap";
+    const formatType = isSubscriber ? body["formatType"] : "random";
+    const workoutLength = isSubscriber ? body["workoutLength"] : "medium";
+    const customMinutes = isSubscriber ? body["customMinutes"] : undefined;
+    const workoutIntent = isSubscriber
+      ? body["workoutIntent"] || "general_fitness"
+      : "general_fitness";
+
     // Attempt structured workout generation with multiple fallback layers
     const workoutResult = await generateStructuredWorkout(
       client,
       context,
       body["random"],
       body["exercises"],
-      body["formatType"],
+      formatType,
       workoutFormat,
       body["weightUnit"] || "kg",
-      body["workoutLength"],
-      body["customMinutes"],
-      body["workoutIntent"] || "general_fitness",
+      workoutLength,
+      customMinutes,
+      workoutIntent,
       body["movementUsageMode"] || "some"
     );
 
@@ -99,13 +133,6 @@ export async function generateWod(
       void new BlobStorageService().incrementGenerationCount().catch(() => {});
     } catch {
       /* no storage: still return workout */
-    }
-    if (limitedUserId && subService) {
-      try {
-        void subService.incrementDailyUsage(limitedUserId).catch(() => {});
-      } catch {
-        /* don't affect response */
-      }
     }
     try {
       void notifyIfNewUser(request, context).catch(() => {});
@@ -121,7 +148,9 @@ export async function generateWod(
     
     // Final fallback: return default workout
     const requestBody = await request.json().catch(() => ({}));
-    const workoutFormat: WorkoutFormat = requestBody["workoutFormat"] || "amrap";
+    const workoutFormat: WorkoutFormat = isSubscriber
+      ? requestBody["workoutFormat"] || "amrap"
+      : "amrap";
     const defaultWorkout = createDefaultWorkoutResponse(
       workoutFormat,
       "Error generating workout - please try again"

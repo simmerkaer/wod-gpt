@@ -1,17 +1,22 @@
 # Stripe subscription setup
 
-This branch (`feat/stripe-subscriptions`) wires up a recurring subscription
-that lifts the 3-workouts-per-day cap.
+A recurring subscription lifts the daily free generation cap.
 
 ## Free tier
 
-- Anonymous visitors: 3/day, enforced client-side via localStorage
-  (`src/lib/anonLimit.ts`).
-- Logged-in non-subscribers: 3/day, enforced server-side in `generateWod`.
-  State lives in `users/{userId}/usage.json`.
-- Subscribers: unlimited.
+- Anonymous visitors: `ANON_DAILY_LIMIT`/day, enforced server-side in
+  `generateWod`, keyed by hashed client IP. State lives in
+  `anon-usage/{ipHash}.json`.
+- Logged-in non-subscribers: `DAILY_FREE_LIMIT`/day, enforced server-side in
+  `generateWod`. State lives in `users/{userId}/usage.json`.
+- Non-subscribers (logged in or not) are locked to the free-tier workout
+  options (random format, default intent/length) — enforced both in the UI and
+  in `generateWod`.
+- Subscribers: unlimited, all options unlocked.
+- The entitlement check fails closed: if subscription/usage state can't be
+  read, `generateWod` returns 503 instead of generating.
 
-`DAILY_FREE_LIMIT` is in `api/src/functions/getSubscriptionStatus.ts`.
+Both limits are in `api/src/utils/limits.ts`.
 
 ## Environment variables
 
@@ -24,22 +29,11 @@ Add these to Azure SWA app settings (production) and `api/local.settings.json`
 | `STRIPE_WEBHOOK_SECRET` | `whsec_…` from your webhook endpoint                                  |
 | `STRIPE_PRICE_ID`       | `price_…` of the recurring Price under your Product                   |
 | `PUBLIC_APP_BASE_URL`   | (optional) e.g. `https://wod-gpt.example.com` — used for Checkout success/cancel URLs. Falls back to `x-forwarded-host`/`host` if not set. |
-| `BILLING_ALLOWLIST`     | Feature flag. Comma-separated emails that see billing + get the daily cap. `*` enables it for everyone (launch). Unset/empty = billing hidden for all (logged-in users stay unlimited). |
 
-## Feature flag / staged rollout
-
-Billing is gated behind `BILLING_ALLOWLIST` so the code can ship to prod while
-staying invisible to regular users:
-
-- **Preview**: set it to your own email (e.g. `you@example.com`). Only you see
-  the subscribe/manage UI and have the 3/day cap enforced; everyone else gets
-  the pre-billing experience (logged-in = unlimited, anonymous = 3/day client
-  side as before).
-- **Launch**: set it to `*` to enable billing for all users.
-- The flag is read server-side in `utils/billingFlag.ts`. `getSubscriptionStatus`
-  returns `billingEnabled`, which the frontend uses to show/hide all billing UI;
-  `generateWod` only enforces the cap for enabled users; and the
-  checkout/portal endpoints 403 for non-enabled users.
+Billing is always on — the `BILLING_ALLOWLIST` staged-rollout flag was removed
+when the free-tier limits launched for everyone. The Stripe env vars above are
+therefore required in production: without them the daily caps still apply but
+checkout fails, leaving users no way to subscribe.
 
 ## Stripe Dashboard setup
 
@@ -100,6 +94,9 @@ In the existing `workout-history` blob container:
 
 - `users/{userId}/subscription.json` — current subscription record per user.
 - `users/{userId}/usage.json` — `{ date, count }` for today's generation count.
+- `anon-usage/{ipHash}.json` — `{ date, count }` for today's anonymous
+  generation count, keyed by SHA-256 of the client IP (raw IPs are never
+  stored).
 - `billing/stripe-customers/{customerId}.json` — index from Stripe customer ID
   to our internal `userId`. Used by webhooks since Stripe events only carry
   the customer ID.

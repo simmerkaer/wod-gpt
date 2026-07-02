@@ -1,5 +1,18 @@
 import { MovementId, MovementUsageMode } from "@/lib/movementId";
-import { Flame, Loader2, LogIn, PlusIcon, ZapIcon } from "lucide-react";
+import {
+  Clock,
+  Dumbbell,
+  Flame,
+  Loader2,
+  Lock,
+  LogIn,
+  LucideIcon,
+  PlusIcon,
+  Scale,
+  Sparkles,
+  Target,
+  ZapIcon,
+} from "lucide-react";
 import * as React from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
@@ -46,10 +59,34 @@ interface MainMenuProps {
   /** When logged in; null while history loading */
   streak?: number | null;
   streakLoading?: boolean;
-  /** Remaining anonymous generations today; null when authenticated */
-  anonRemaining?: number | null;
-  anonLimit?: number;
+  /** Remaining free generations today (anonymous or logged-in non-subscriber);
+   *  null when the meter should be hidden (subscribers). */
+  freeRemaining?: number | null;
+  freeLimit?: number;
+  /** True for non-subscribers: format, intent and length selectors are locked. */
+  customizationLocked?: boolean;
+  /** Starts Stripe Checkout; shown in the free-tier banner for logged-in users. */
+  onSubscribe?: () => void;
+  subscribePending?: boolean;
 }
+
+const SectionHeading: React.FunctionComponent<{
+  icon: LucideIcon;
+  label: string;
+  locked?: boolean;
+}> = ({ icon: Icon, label, locked = false }) => (
+  <div className="flex items-center gap-2">
+    <div className="flex-1 h-px bg-border"></div>
+    <h3 className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground whitespace-nowrap px-2">
+      <Icon className="h-3.5 w-3.5" aria-hidden />
+      {label}
+      {locked && (
+        <Lock className="h-3 w-3 opacity-70" aria-label="Subscribers only" />
+      )}
+    </h3>
+    <div className="flex-1 h-px bg-border"></div>
+  </div>
+);
 
 const MainMenu: React.FunctionComponent<MainMenuProps> = ({
   isLoading,
@@ -72,8 +109,11 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
   handleGenerateWod,
   streak = null,
   streakLoading = false,
-  anonRemaining = null,
-  anonLimit,
+  freeRemaining = null,
+  freeLimit,
+  customizationLocked = true,
+  onSubscribe,
+  subscribePending = false,
 }) => {
   const { isAuthenticated, login, isLoading: authLoading } = useAuth();
   return (
@@ -84,7 +124,7 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
             wod-gpt
           </p>
         </CardTitle>
-        <CardDescription>Free AI driven crossfit workouts</CardDescription>
+        <CardDescription>AI-powered CrossFit workouts</CardDescription>
         {!isAuthenticated && (
           <div
             className="mt-3 rounded-lg border border-primary/20 bg-muted/50 px-3 py-2.5 text-left text-sm dark:bg-muted/30"
@@ -96,18 +136,18 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
               save workouts, view history, mark workouts completed, and track
               your weekly streak.
             </p>
-            {anonRemaining !== null && anonLimit !== undefined && (
+            {freeRemaining !== null && freeLimit !== undefined && (
               <p
                 className="mt-1.5 text-xs font-medium text-muted-foreground"
                 aria-live="polite"
               >
-                {anonRemaining > 0 ? (
+                {freeRemaining > 0 ? (
                   <>
-                    {anonRemaining} of {anonLimit} free workout
-                    {anonLimit === 1 ? "" : "s"} left today
+                    {freeRemaining} of {freeLimit} free workout
+                    {freeLimit === 1 ? "" : "s"} left today
                   </>
                 ) : (
-                  <>Daily free limit reached — sign in for unlimited</>
+                  <>Daily free limit reached — subscribe for unlimited</>
                 )}
               </p>
             )}
@@ -157,18 +197,50 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
             )}
           </Link>
         )}
+        {isAuthenticated && freeRemaining !== null && freeLimit !== undefined && (
+          <div
+            className="mt-3 rounded-lg border border-primary/20 bg-muted/50 px-3 py-2.5 text-left text-sm dark:bg-muted/30"
+            role="region"
+            aria-label="Free plan usage"
+          >
+            <p
+              className="text-xs font-medium text-muted-foreground"
+              aria-live="polite"
+            >
+              {freeRemaining > 0 ? (
+                <>
+                  {freeRemaining} of {freeLimit} free workout
+                  {freeLimit === 1 ? "" : "s"} left today
+                </>
+              ) : (
+                <>Daily free limit reached</>
+              )}{" "}
+              — subscribe for unlimited workouts and to unlock format, intent
+              and length.
+            </p>
+            {onSubscribe && (
+              <div className="mt-2 md:flex md:justify-center">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="w-full gap-2 md:w-auto"
+                  onClick={onSubscribe}
+                  disabled={subscribePending}
+                >
+                  <Sparkles className="h-4 w-4 shrink-0" aria-hidden />
+                  {subscribePending ? "Redirecting…" : "Subscribe"}
+                </Button>
+              </div>
+            )}
+          </div>
+        )}
       </CardHeader>
       <CardContent className="pb-2">
         <div className="flex-grow flex flex-col gap-4">
           {/* Movement Selection Section */}
           <div className="space-y-2">
-            <div className="flex items-center gap-2">
-              <div className="flex-1 h-px bg-border"></div>
-              <h3 className="text-sm font-medium text-muted-foreground text-center whitespace-nowrap px-2">
-                Movement Selection
-              </h3>
-              <div className="flex-1 h-px bg-border"></div>
-            </div>
+            <SectionHeading icon={Dumbbell} label="Movement Selection" />
             <WorkoutSelector
               value={workoutType}
               onValueChange={setWorkoutType}
@@ -226,63 +298,51 @@ const MainMenu: React.FunctionComponent<MainMenuProps> = ({
 
           {/* Workout Format Section */}
           <div className="space-y-2">
-            <div className="flex items-center gap-2">
-              <div className="flex-1 h-px bg-border"></div>
-              <h3 className="text-sm font-medium text-muted-foreground text-center whitespace-nowrap px-2">
-                Workout Format
-              </h3>
-              <div className="flex-1 h-px bg-border"></div>
-            </div>
+            <SectionHeading
+              icon={ZapIcon}
+              label="Workout Format"
+              locked={customizationLocked}
+            />
             <FormatSelector
               value={formatType}
               onValueChange={setFormatType}
-              disabled={!isAuthenticated}
+              disabled={customizationLocked}
             />
           </div>
 
           {/* Workout Intent Section */}
           <div className="space-y-2">
-            <div className="flex items-center gap-2">
-              <div className="flex-1 h-px bg-border"></div>
-              <h3 className="text-sm font-medium text-muted-foreground text-center whitespace-nowrap px-2">
-                Workout Intent
-              </h3>
-              <div className="flex-1 h-px bg-border"></div>
-            </div>
+            <SectionHeading
+              icon={Target}
+              label="Workout Intent"
+              locked={customizationLocked}
+            />
             <WorkoutIntentSelector
               value={workoutIntent}
               onValueChange={setWorkoutIntent}
-              disabled={!isAuthenticated}
+              disabled={customizationLocked}
             />
           </div>
 
           {/* Workout Length Section */}
           <div className="space-y-2">
-            <div className="flex items-center gap-2">
-              <div className="flex-1 h-px bg-border"></div>
-              <h3 className="text-sm font-medium text-muted-foreground text-center whitespace-nowrap px-2">
-                Workout Length
-              </h3>
-              <div className="flex-1 h-px bg-border"></div>
-            </div>
+            <SectionHeading
+              icon={Clock}
+              label="Workout Length"
+              locked={customizationLocked}
+            />
             <WorkoutLength
               selectedLength={workoutLength}
               customMinutes={customMinutes}
               onLengthChange={setWorkoutLength}
               onCustomMinutesChange={setCustomMinutes}
-              disabled={!isAuthenticated}
+              disabled={customizationLocked}
             />
           </div>
 
           {/* Weight Unit Section — desktop only; mobile uses nav menu */}
           <div className="hidden space-y-2 md:block">
-            <div className="flex items-center gap-2">
-              <div className="flex-1 h-px bg-border"></div>
-              <h3 className="text-sm font-medium text-muted-foreground text-center whitespace-nowrap px-2">
-                Weight Units
-              </h3>
-              <div className="flex-1 h-px bg-border"></div>
-            </div>
+            <SectionHeading icon={Scale} label="Weight Units" />
             <UnitSelector value={weightUnit} onValueChange={setWeightUnit} />
           </div>
 

@@ -10,7 +10,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { ANON_DAILY_LIMIT } from "@/lib/anonLimit";
 
 interface AnonLimitDialogProps {
   open: boolean;
@@ -25,7 +24,7 @@ export const AnonLimitDialog = ({
   const { subscribe, actionPending, dailyLimit, planPriceLabel } =
     useSubscription();
 
-  const limit = dailyLimit ?? ANON_DAILY_LIMIT;
+  const limit = dailyLimit ?? 1;
 
   if (isAuthenticated) {
     return (
@@ -34,7 +33,8 @@ export const AnonLimitDialog = ({
           <DialogHeader>
             <DialogTitle>You've hit today's free limit</DialogTitle>
             <DialogDescription>
-              You've used your {limit} free workouts for today.
+              You've used your {limit} free workout{limit === 1 ? "" : "s"} for
+              today.
               {planPriceLabel ? (
                 <>
                   {" "}Subscribe for{" "}
@@ -98,11 +98,16 @@ export const AnonLimitDialog = ({
         <DialogHeader>
           <DialogTitle>You've hit today's free limit</DialogTitle>
           <DialogDescription>
-            You've used your {ANON_DAILY_LIMIT} free workouts for today. Sign in
-            to keep going — it's free and takes a few seconds.
+            You've used your {limit} free workout{limit === 1 ? "" : "s"} for
+            today. Create a free account and subscribe for unlimited workouts —
+            it takes a few seconds.
           </DialogDescription>
         </DialogHeader>
         <ul className="space-y-2 text-sm">
+          <li className="flex items-center gap-2">
+            <Sparkles className="h-4 w-4 shrink-0 text-orange-500" aria-hidden />
+            Subscribe for unlimited workouts every day
+          </li>
           <li className="flex items-center gap-2">
             <Flame className="h-4 w-4 shrink-0 text-orange-500" aria-hidden />
             Track your weekly streak

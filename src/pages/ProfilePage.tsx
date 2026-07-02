@@ -27,9 +27,9 @@ import {
   History,
   ChevronRight,
   CreditCard,
+  LogIn,
   Sparkles,
 } from "lucide-react";
-import { GoogleIcon } from "../components/icons/GoogleIcon";
 import { Link } from "react-router-dom";
 import { SavedWorkout } from "../types/workoutHistory";
 import { formatWorkoutDate, formatYearMonth } from "@/utils/DateHelpers";
@@ -235,7 +235,7 @@ function calculateWorkoutStats(workouts: SavedWorkout[]) {
 }
 
 export default function ProfilePage() {
-  const { user, isAuthenticated, isLoading } = useAuth();
+  const { user, isAuthenticated, isLoading, login } = useAuth();
   const { workouts, isLoading: workoutsLoading } = useWorkoutHistory(); // Get all workouts for statistics
   const {
     isSubscribed,
@@ -247,7 +247,6 @@ export default function ProfilePage() {
     dailyLimit,
     remainingToday,
     planPriceLabel,
-    billingEnabled,
   } = useSubscription();
 
   const workoutStats = calculateWorkoutStats(workouts);
@@ -268,13 +267,19 @@ export default function ProfilePage() {
         <Card className="w-full max-w-md mx-auto">
           <CardHeader className="text-center">
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-muted">
-              <GoogleIcon className="h-6 w-6" aria-hidden />
+              <User className="h-6 w-6 text-muted-foreground" aria-hidden />
             </div>
             <CardTitle>Sign In Required</CardTitle>
             <CardDescription>
               Please sign in to view your profile.
             </CardDescription>
           </CardHeader>
+          <CardContent className="flex justify-center">
+            <Button type="button" className="gap-2" onClick={() => login()}>
+              <LogIn className="h-4 w-4 shrink-0" aria-hidden />
+              Sign in or create account
+            </Button>
+          </CardContent>
         </Card>
       </div>
     );
@@ -287,10 +292,10 @@ export default function ProfilePage() {
           <Button asChild variant="ghost" size="sm" className="text-sm">
             <Link to="/">
               <ArrowLeft className="h-4 w-4 mr-1 sm:mr-2" />
-              <span className="hidden xs:inline">
+              <span className="hidden sm:inline">
                 Back to workout generation
               </span>
-              <span className="xs:hidden">Back</span>
+              <span className="sm:hidden">Back</span>
             </Link>
           </Button>
         </div>
@@ -298,7 +303,7 @@ export default function ProfilePage() {
           <h1 className="text-2xl sm:text-3xl font-bold">Profile</h1>
         </div>
 
-        <Card className="mx-2 sm:mx-0">
+        <Card>
           <CardHeader className="pb-4 sm:pb-6">
             <div className="space-y-4">
               <div className="flex items-center space-x-3 sm:space-x-4">
@@ -348,8 +353,7 @@ export default function ProfilePage() {
         </Card>
 
         {/* Subscription Card */}
-        {billingEnabled && (
-        <Card className="mx-2 sm:mx-0">
+        <Card>
           <CardHeader className="pb-4 sm:pb-6">
             <div className="flex items-center space-x-3 sm:space-x-4">
               <div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-primary/10 flex-shrink-0">
@@ -384,7 +388,7 @@ export default function ProfilePage() {
                         : planPriceLabel
                           ? `Unlimited workouts · ${planPriceLabel}`
                           : "Unlimited workout generation"
-                      : `${remainingToday ?? dailyLimit ?? 0} of ${dailyLimit ?? 0} free workouts left today${planPriceLabel ? ` · Upgrade for ${planPriceLabel}` : ""}`}
+                      : `${remainingToday ?? dailyLimit ?? 0} of ${dailyLimit ?? 0} free workout${(dailyLimit ?? 0) === 1 ? "" : "s"} left today${planPriceLabel ? ` · Upgrade for ${planPriceLabel}` : ""}`}
                 </CardDescription>
               </div>
             </div>
@@ -409,7 +413,6 @@ export default function ProfilePage() {
             </Button>
           </CardContent>
         </Card>
-        )}
 
         {/* Workout Statistics Card */}
         <Card>
@@ -471,7 +474,7 @@ export default function ProfilePage() {
                 </Button>
 
                 {/* Key Statistics Grid */}
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                <div className="grid grid-cols-3 gap-4">
                   <Link
                     to="/history"
                     className="text-center rounded-lg py-2 -m-2 no-underline text-foreground hover:bg-muted/50 transition-colors cursor-pointer"
@@ -495,7 +498,10 @@ export default function ProfilePage() {
                       Completed
                     </div>
                   </Link>
-                  <div className="text-center">
+                  <Link
+                    to="/history"
+                    className="text-center rounded-lg py-2 -m-2 no-underline text-foreground hover:bg-muted/50 transition-colors cursor-pointer"
+                  >
                     <div className="text-2xl font-bold text-orange-500 flex items-center justify-center gap-1">
                       <Flame className="h-4 w-4" />
                       {workoutStats.workoutStreak}
@@ -503,7 +509,7 @@ export default function ProfilePage() {
                     <div className="text-xs text-muted-foreground">
                       Week Streak
                     </div>
-                  </div>
+                  </Link>
                 </div>
 
                 <Separator />
@@ -670,7 +676,7 @@ export default function ProfilePage() {
                         <div className="space-y-1">
                           <div className="w-full bg-muted rounded-full h-2">
                             <div
-                              className="bg-gradient-to-r from-blue-500 to-green-500 h-2 rounded-full transition-all duration-300"
+                              className="bg-gradient-to-r from-red-500 to-purple-600 h-2 rounded-full transition-all duration-300"
                               style={{
                                 width: `${(workoutStats.progressToNext.progress / workoutStats.progressToNext.milestone.threshold) * 100}%`,
                               }}

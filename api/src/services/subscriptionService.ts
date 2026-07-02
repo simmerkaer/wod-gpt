@@ -53,6 +53,10 @@ function usageBlobPath(userId: string): string {
   return `users/${userId}/usage.json`;
 }
 
+function anonUsageBlobPath(ipHash: string): string {
+  return `anon-usage/${ipHash}.json`;
+}
+
 function customerIndexBlobPath(stripeCustomerId: string): string {
   return `billing/stripe-customers/${stripeCustomerId}.json`;
 }
@@ -161,19 +165,36 @@ export class SubscriptionService {
   }
 
   async getDailyUsage(userId: string): Promise<DailyUsage> {
+    return this.readUsage(usageBlobPath(userId));
+  }
+
+  async incrementDailyUsage(userId: string): Promise<DailyUsage> {
+    return this.incrementUsage(usageBlobPath(userId));
+  }
+
+  /** Daily usage for anonymous visitors, keyed by hashed client IP. */
+  async getAnonDailyUsage(ipHash: string): Promise<DailyUsage> {
+    return this.readUsage(anonUsageBlobPath(ipHash));
+  }
+
+  async incrementAnonDailyUsage(ipHash: string): Promise<DailyUsage> {
+    return this.incrementUsage(anonUsageBlobPath(ipHash));
+  }
+
+  private async readUsage(path: string): Promise<DailyUsage> {
     await this.ensure();
     const today = todayKey();
-    const data = await this.readJson<DailyUsage>(usageBlobPath(userId));
+    const data = await this.readJson<DailyUsage>(path);
     if (!data || data.date !== today) {
       return { date: today, count: 0, updatedAt: new Date().toISOString() };
     }
     return data;
   }
 
-  async incrementDailyUsage(userId: string): Promise<DailyUsage> {
+  private async incrementUsage(path: string): Promise<DailyUsage> {
     await this.ensure();
     const today = todayKey();
-    const current = await this.readJson<DailyUsage>(usageBlobPath(userId));
+    const current = await this.readJson<DailyUsage>(path);
     const base: DailyUsage =
       current && current.date === today
         ? current
@@ -183,7 +204,7 @@ export class SubscriptionService {
       count: base.count + 1,
       updatedAt: new Date().toISOString(),
     };
-    await this.writeJson(usageBlobPath(userId), next);
+    await this.writeJson(path, next);
     return next;
   }
 }
