@@ -10,10 +10,9 @@ import {
   isSubscriptionActive,
 } from '../services/subscriptionService';
 import { getAuthedUser } from '../utils/billingAuth';
+import { getClientIpHash } from '../utils/clientIp';
 import { getPlanInfo } from '../utils/stripe';
-import { isBillingEnabledForEmail } from '../utils/billingFlag';
-
-export const DAILY_FREE_LIMIT = 3;
+import { ANON_DAILY_LIMIT, DAILY_FREE_LIMIT } from '../utils/limits';
 
 export async function getSubscriptionStatus(
   request: HttpRequest,
@@ -23,46 +22,49 @@ export async function getSubscriptionStatus(
     const blobService = new BlobStorageService();
     const user = await getAuthedUser(request, blobService);
     const plan = await getPlanInfo().catch(() => null);
+    const subService = new SubscriptionService();
+
     if (!user) {
+      // Report the server-tracked anonymous allowance for this IP so the
+      // frontend meter reflects what generateWod will actually enforce.
+      const usage = await subService
+        .getAnonDailyUsage(getClientIpHash(request))
+        .catch(() => null);
+      const used = usage?.count ?? 0;
       return {
         status: 200,
         jsonBody: {
           authenticated: false,
-          billingEnabled: false,
+          billingEnabled: true,
           isSubscribed: false,
-          dailyLimit: null,
-          dailyUsed: 0,
-          remainingToday: null,
+          dailyLimit: ANON_DAILY_LIMIT,
+          dailyUsed: used,
+          remainingToday: Math.max(0, ANON_DAILY_LIMIT - used),
           plan,
         },
       };
     }
 
-    const billingEnabled = isBillingEnabledForEmail(user.email);
-    const subService = new SubscriptionService();
     const [sub, usage] = await Promise.all([
       subService.getSubscription(user.userId),
       subService.getDailyUsage(user.userId),
     ]);
     const active = isSubscriptionActive(sub);
-    // When billing is disabled for this user, behave like the pre-billing app:
-    // no cap, no subscribe UI (the frontend hides everything on billingEnabled).
-    const capped = billingEnabled && !active;
 
     return {
       status: 200,
       jsonBody: {
         authenticated: true,
-        billingEnabled,
+        billingEnabled: true,
         isSubscribed: active,
         status: sub?.status ?? 'none',
         cancelAtPeriodEnd: sub?.cancelAtPeriodEnd ?? false,
         currentPeriodEnd: sub?.currentPeriodEnd ?? null,
-        dailyLimit: capped ? DAILY_FREE_LIMIT : null,
+        dailyLimit: active ? null : DAILY_FREE_LIMIT,
         dailyUsed: usage.count,
-        remainingToday: capped
-          ? Math.max(0, DAILY_FREE_LIMIT - usage.count)
-          : null,
+        remainingToday: active
+          ? null
+          : Math.max(0, DAILY_FREE_LIMIT - usage.count),
         plan,
       },
     };

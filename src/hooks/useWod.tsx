@@ -33,6 +33,12 @@ interface UseWodResult {
   limitReached: boolean;
 }
 
+export interface FetchWodOutcome {
+  success: boolean;
+  /** True when the server rejected the request with 429 (daily cap). */
+  limitReached: boolean;
+}
+
 export const useGenerateWod = (): [
   (
     random: boolean,
@@ -43,7 +49,7 @@ export const useGenerateWod = (): [
     customMinutes: number,
     workoutIntent: WorkoutIntent,
     movementUsageMode: MovementUsageMode,
-  ) => Promise<boolean>,
+  ) => Promise<FetchWodOutcome>,
   UseWodResult,
 ] => {
   const [wod, setWod] = useState<string | null>(null);
@@ -87,7 +93,7 @@ export const useGenerateWod = (): [
     customMinutes: number,
     workoutIntent: WorkoutIntent,
     movementUsageMode: MovementUsageMode,
-  ): Promise<boolean> => {
+  ): Promise<FetchWodOutcome> => {
     setIsLoading(true);
     setError(null);
     setLimitReached(false);
@@ -135,7 +141,7 @@ export const useGenerateWod = (): [
       if (response.status === 429) {
         setLimitReached(true);
         setIsLoading(false);
-        return false;
+        return { success: false, limitReached: true };
       }
 
       if (!response.ok) {
@@ -214,7 +220,7 @@ export const useGenerateWod = (): [
     } finally {
       setIsLoading(false);
     }
-    return success;
+    return { success, limitReached: false };
   };
 
   return [

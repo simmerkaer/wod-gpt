@@ -11,7 +11,6 @@ import { useMovements } from "../hooks/useExercises";
 import { useGenerateWod } from "../hooks/useWod";
 import { useAuth } from "../hooks/useAuth";
 import { useWorkoutHistory } from "../hooks/useWorkoutHistory";
-import { useAnonGenerationLimit } from "../hooks/useAnonGenerationLimit";
 import { useSubscription } from "../hooks/useSubscription";
 import { AnonLimitDialog } from "../components/auth/AnonLimitDialog";
 import { computeCurrentWorkoutStreak } from "@/utils/workoutStreak";
@@ -28,28 +27,26 @@ export default function HomePage() {
   const { selectedMovements, toggleMovement, movementUsageMode, setMovementUsageMode } = useMovements();
   const [workoutType, setWorkoutType] = useState<WorkoutType>("random");
   const [formatType, setFormatType] = useState<FormatType>("emom");
-  const effectiveFormatType: FormatType = isAuthenticated ? formatType : "random";
   const { weightUnit, setWeightUnit } = useWeightUnit();
   const [workoutLength, setWorkoutLength] =
     useState<WorkoutLengthOption>("medium");
   const [customMinutes, setCustomMinutes] = useState<number>(20);
   const [workoutIntent, setWorkoutIntent] = useState<WorkoutIntent>("general_fitness");
-  const [fetchWod, { wod, timing, confidence, isLoading, error, workoutResponse, savedWorkoutId, isCompleted, toggleCompleted, limitReached: serverLimitReached }] =
+  const [fetchWod, { wod, timing, confidence, isLoading, error, workoutResponse, savedWorkoutId, isCompleted, toggleCompleted }] =
     useGenerateWod();
-  const {
-    remaining: anonRemaining,
-    limit: anonLimit,
-    limitReached: anonLimitReached,
-    recordGeneration,
-  } = useAnonGenerationLimit();
   const {
     isSubscribed,
     remainingToday,
     dailyLimit: serverDailyLimit,
-    limitReached: subLimitReached,
+    limitReached: freeLimitReached,
     refresh: refreshSubscription,
     pollUntilSubscribed,
+    subscribe,
+    actionPending: subscribePending,
   } = useSubscription();
+  // Non-subscribers (logged in or not) get the locked free-tier experience:
+  // random format, default intent and length. The API enforces this too.
+  const effectiveFormatType: FormatType = isSubscribed ? formatType : "random";
   const { toast } = useToast();
 
   // Handle return from Stripe Checkout. The webhook that flips us to
@@ -94,24 +91,18 @@ export default function HomePage() {
   }, [pollUntilSubscribed, toast]);
   const [showLimitDialog, setShowLimitDialog] = useState(false);
 
-  // For logged-in non-subscribers, surface server-side count in the same UI slot
-  // the anon meter uses.
-  const displayedRemaining = isAuthenticated
-    ? isSubscribed
-      ? null
-      : remainingToday
-    : anonRemaining;
-  const displayedLimit = isAuthenticated
-    ? (serverDailyLimit ?? anonLimit)
-    : anonLimit;
+  // The server tracks the free allowance for everyone — by user id when
+  // logged in, by hashed IP when anonymous.
+  const displayedRemaining = isSubscribed ? null : remainingToday;
+  const displayedLimit = serverDailyLimit ?? 1;
   const showRemainingMeter = !isSubscribed;
 
   const handleGenerateWod = async () => {
-    if (anonLimitReached || subLimitReached) {
+    if (freeLimitReached) {
       setShowLimitDialog(true);
       return;
     }
-    const success = await fetchWod(
+    const outcome = await fetchWod(
       workoutType === "random",
       selectedMovements,
       effectiveFormatType,
@@ -121,19 +112,13 @@ export default function HomePage() {
       workoutIntent,
       movementUsageMode,
     );
-    if (success) {
-      recordGeneration();
-      if (isAuthenticated) {
-        refreshSubscription();
-      }
-    } else if (serverLimitReached || isAuthenticated) {
+    // Keep the meter in sync with the server after every attempt.
+    refreshSubscription();
+    if (outcome.limitReached) {
       // Server rejected the request because the daily cap was reached
       // (race condition: our cached state said remaining > 0 but the
-      // server disagreed). Refresh and show the dialog.
-      if (isAuthenticated) {
-        refreshSubscription();
-        setShowLimitDialog(true);
-      }
+      // server disagreed).
+      setShowLimitDialog(true);
     }
   };
 
@@ -197,8 +182,11 @@ export default function HomePage() {
               toggleMovement={toggleMovement}
               streak={isAuthenticated ? streak : null}
               streakLoading={isAuthenticated && historyLoading}
-              anonRemaining={showRemainingMeter ? displayedRemaining : null}
-              anonLimit={displayedLimit}
+              freeRemaining={showRemainingMeter ? displayedRemaining : null}
+              freeLimit={displayedLimit}
+              customizationLocked={!isSubscribed}
+              onSubscribe={subscribe}
+              subscribePending={subscribePending}
             />
           </FancyLoadingSpinner>
         </div>
@@ -249,8 +237,11 @@ export default function HomePage() {
               toggleMovement={toggleMovement}
               streak={isAuthenticated ? streak : null}
               streakLoading={isAuthenticated && historyLoading}
-              anonRemaining={showRemainingMeter ? displayedRemaining : null}
-              anonLimit={displayedLimit}
+              freeRemaining={showRemainingMeter ? displayedRemaining : null}
+              freeLimit={displayedLimit}
+              customizationLocked={!isSubscribed}
+              onSubscribe={subscribe}
+              subscribePending={subscribePending}
             />
           </FancyLoadingSpinner>
         </div>
