@@ -5,6 +5,7 @@ import {
   InvocationContext,
 } from '@azure/functions';
 import type Stripe from 'stripe';
+import { EmailClient } from '@azure/communication-email';
 import {
   SubscriptionService,
   SubscriptionStatus,
@@ -71,6 +72,11 @@ export async function stripeWebhook(
               : session.subscription.id;
           const subscription = await stripe.subscriptions.retrieve(subscriptionId);
           await persistSubscription(subService, stripe, subscription, event, userId);
+          // Fire-and-forget: a failed notification must not fail the webhook,
+          // or Stripe will retry and we'd double-process the event.
+          void notifyNewSubscriber(session, context).catch((err) =>
+            context.error('New subscriber notification failed', err),
+          );
         }
         break;
       }
@@ -103,6 +109,50 @@ export async function stripeWebhook(
     context.error('Webhook handler error', err);
     return { status: 500, body: 'Webhook handler error' };
   }
+}
+
+const NOTIFICATION_EMAIL_SENDER =
+  'DoNotReply@cfb782b4-b261-44b6-84df-c552ce46488d.azurecomm.net';
+
+/** Email the admin when a checkout completes for a new subscription. */
+async function notifyNewSubscriber(
+  session: Stripe.Checkout.Session,
+  context: InvocationContext,
+): Promise<void> {
+  const connectionString = process.env.EMAIL_CONNECTION_STRING;
+  if (!connectionString) {
+    context.warn('EMAIL_CONNECTION_STRING not set; skipping new subscriber email');
+    return;
+  }
+
+  const dateUtc = new Date().toISOString();
+  const userId =
+    session.client_reference_id ||
+    (session.metadata && session.metadata.userId) ||
+    '(unknown)';
+  const customerEmail =
+    session.customer_details?.email || session.customer_email || '';
+
+  const html = `
+<html>
+  <body>
+    <h1>wod-gpt: New subscriber 🎉</h1>
+    <p><b>Date (UTC):</b> ${dateUtc}</p>
+    <p><b>UserId:</b> ${userId}</p>
+    ${customerEmail ? `<p><b>Email:</b> ${customerEmail}</p>` : ''}
+  </body>
+</html>`;
+
+  const emailClient = new EmailClient(connectionString);
+  const poller = await emailClient.beginSend({
+    senderAddress: NOTIFICATION_EMAIL_SENDER,
+    content: {
+      subject: 'wod-gpt: New subscriber',
+      html,
+    },
+    recipients: { to: [{ address: 'simmerkaer@gmail.com' }] },
+  });
+  await poller.pollUntilDone();
 }
 
 function getInvoiceSubscriptionId(invoice: Stripe.Invoice): string | null {

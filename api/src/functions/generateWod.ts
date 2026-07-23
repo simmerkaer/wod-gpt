@@ -4,14 +4,12 @@ import {
   HttpResponseInit,
   InvocationContext,
 } from "@azure/functions";
-import { EmailClient } from "@azure/communication-email";
 import { AzureClientOptions, AzureOpenAI } from "openai";
 import { BlobStorageService } from "../services/blobStorageService";
 import {
   SubscriptionService,
   isSubscriptionActive,
 } from "../services/subscriptionService";
-import { parseClientPrincipalHeader } from "../utils/adminAuth";
 import { getAuthedUser } from "../utils/billingAuth";
 import { getClientIpHash } from "../utils/clientIp";
 import { ANON_DAILY_LIMIT, DAILY_FREE_LIMIT } from "../utils/limits";
@@ -134,11 +132,6 @@ export async function generateWod(
     } catch {
       /* no storage: still return workout */
     }
-    try {
-      void notifyIfNewUser(request, context).catch(() => {});
-    } catch {
-      /* don't affect response */
-    }
     return {
       status: 200,
       jsonBody: workoutResult,
@@ -165,68 +158,6 @@ export async function generateWod(
       jsonBody: defaultWorkout,
     };
   }
-}
-
-const NEW_USER_EMAIL_SENDER =
-  "DoNotReply@cfb782b4-b261-44b6-84df-c552ce46488d.azurecomm.net";
-
-async function notifyIfNewUser(
-  request: HttpRequest,
-  context: InvocationContext,
-): Promise<void> {
-  const principalRaw = request.headers.get("x-ms-client-principal");
-  if (!principalRaw) return;
-
-  const parsed = parseClientPrincipalHeader(principalRaw);
-  if (!parsed?.userId) return;
-
-  const { userId, userDetails, claims } = parsed;
-  let blobService: BlobStorageService;
-  try {
-    blobService = new BlobStorageService();
-  } catch {
-    return;
-  }
-  const exists = await blobService.userWorkoutBlobExists(userId);
-  if (exists) return;
-
-  const alreadyNotified = await blobService.userNotifiedBlobExists(userId);
-  if (alreadyNotified) return;
-
-  const connectionString = process.env.EMAIL_CONNECTION_STRING;
-  if (!connectionString) return;
-
-  await blobService.markUserNotified(userId);
-
-  const dateUtc = new Date().toISOString();
-  const claimEmail =
-    claims["email"] ||
-    claims["emails"] ||
-    claims["emailaddress"] ||
-    claims["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"] ||
-    "";
-
-  const html = `
-<html>
-  <body>
-    <h1>wod-gpt: New user generated first WOD</h1>
-    <p><b>Date (UTC):</b> ${dateUtc}</p>
-    <p><b>UserId:</b> ${userId}</p>
-    <p><b>User details:</b> ${userDetails || "(none)"}</p>
-    ${claimEmail ? `<p><b>Email (from claims):</b> ${claimEmail}</p>` : ""}
-  </body>
-</html>`;
-
-  const emailClient = new EmailClient(connectionString);
-  const poller = await emailClient.beginSend({
-    senderAddress: NEW_USER_EMAIL_SENDER,
-    content: {
-      subject: "wod-gpt: New user generated first WOD",
-      html,
-    },
-    recipients: { to: [{ address: "simmerkaer@gmail.com" }] },
-  });
-  await poller.pollUntilDone();
 }
 
 // Multi-layer fallback system for robust workout generation
