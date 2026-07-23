@@ -4,7 +4,6 @@ import {
   UserWorkoutCollection,
   BLOB_CONTAINER_NAME,
   getUserWorkoutBlobPath,
-  getUserNotifiedBlobPath,
   MAX_WORKOUTS_WARN,
   SINGLE_USER_WORKOUT_BLOB_REGEX,
   ADMIN_GENERATIONS_BLOB_PATH,
@@ -237,27 +236,6 @@ export class BlobStorageService {
     } catch {
       return false;
     }
-  }
-
-  /** Returns true if we have already sent the "new user" email for this userId. */
-  async userNotifiedBlobExists(userId: string): Promise<boolean> {
-    try {
-      await this.ensureContainerExists();
-      const blobClient = this.getBlobClient(getUserNotifiedBlobPath(userId));
-      return await blobClient.exists();
-    } catch {
-      return false;
-    }
-  }
-
-  /** Record that we have sent the "new user" email for this userId (so we do not send again). */
-  async markUserNotified(userId: string): Promise<void> {
-    await this.ensureContainerExists();
-    const blobClient = this.getBlobClient(getUserNotifiedBlobPath(userId));
-    const payload = JSON.stringify({ notifiedAt: new Date().toISOString() });
-    await blobClient.upload(payload, Buffer.byteLength(payload), {
-      blobHTTPHeaders: { blobContentType: 'application/json' },
-    });
   }
 
   /**
